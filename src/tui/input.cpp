@@ -277,7 +277,8 @@ std::optional<Event> InputParser::parse_csi(std::size_t start) {
 
     const auto params = parse_params(body);
     const int first = params.empty() ? 0 : params[0];
-    const std::uint8_t mods = params.size() >= 2 ? mods_from_param(params[1]) : ModNone;
+    const std::uint8_t mods =
+        params.size() >= 2 ? mods_from_param(params[1]) : std::uint8_t{ModNone};
 
     if (final == '~') return take(total, tilde_key(first), 0, mods);
     if (final == 'Z') return take(total, Key::Tab, 0, ModShift);
