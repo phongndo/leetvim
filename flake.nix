@@ -25,15 +25,23 @@
       ];
     in
     {
-      packages = forAllSystems (pkgs: rec {
-        leetvim = pkgs.callPackage ./nix/package.nix {
-          inherit (llvmFor pkgs) stdenv;
+      packages = forAllSystems (
+        pkgs:
+        let
           tomlplusplus = pkgs.callPackage ./nix/tomlplusplus.nix { };
-        };
-        default = leetvim;
-        # `nix run .#fuzz -- TARGET [SECONDS]`
-        fuzz = pkgs.callPackage ./nix/fuzz.nix { inherit leetvim; };
-      });
+        in
+        rec {
+          leetvim = pkgs.callPackage ./nix/package.nix {
+            inherit (llvmFor pkgs) stdenv;
+            inherit tomlplusplus;
+          };
+          default = leetvim;
+          # `nix run .#fuzz -- TARGET [SECONDS]`
+          fuzz = pkgs.callPackage ./nix/fuzz.nix { inherit leetvim; };
+          # This system's release archive and its checksum, in ./result
+          dist = import ./nix/dist.nix { inherit pkgs tomlplusplus; };
+        }
+      );
 
       apps = forAllSystems (pkgs: rec {
         leetvim = {
@@ -139,6 +147,11 @@
                 cd ${self} && actionlint .github/workflows/*.yml
                 touch $out
               '';
+
+          shellcheck = pkgs.runCommand "leetvim-shellcheck" { nativeBuildInputs = [ pkgs.shellcheck ]; } ''
+            shellcheck ${self}/scripts/install.sh
+            touch $out
+          '';
 
           format = pkgs.runCommand "leetvim-format-check" { nativeBuildInputs = formatTools pkgs; } ''
             cp -r ${self} src && chmod -R u+w src && cd src

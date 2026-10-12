@@ -1,6 +1,7 @@
 #include "app/home.hpp"
 #include "app/overlays.hpp"
 #include "app/ui.hpp"
+#include "app/update.hpp"
 
 #include <doctest/doctest.h>
 
@@ -113,4 +114,16 @@ TEST_CASE("hints highlight the key inside the word like btop") {
     const auto hl = ui::hint(t, "o", "sort");
     CHECK(hl[1].style.fg == t.hi_fg);
     CHECK(hl[0].style.fg == t.main_fg);
+}
+
+TEST_CASE("the install script's receipt says where it installed leetvim") {
+    const auto found = parse_installation("release=v0.1.0\ninstall_dir=/home/me/.local/"
+                                          "bin\ndata_dir=/home/me/.local/share/leetvim\n");
+    REQUIRE(found);
+    CHECK(found->install_dir == "/home/me/.local/bin");
+    CHECK(found->data_dir == "/home/me/.local/share/leetvim");
+
+    CHECK_FALSE(parse_installation(""));
+    CHECK_FALSE(parse_installation("install_dir=/bin\n"));                // no data_dir
+    CHECK_FALSE(parse_installation("install_dir=bin\ndata_dir=/data\n")); // relative
 }

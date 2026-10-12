@@ -16,7 +16,10 @@
 
 stdenv.mkDerivation {
   pname = "leetvim";
-  version = "0.1.0";
+  # Set once, in CMakeLists.txt's project().
+  version = builtins.head (
+    builtins.match ".*project\\(leetvim VERSION ([0-9.]+).*" (builtins.readFile ../CMakeLists.txt)
+  );
 
   src = lib.fileset.toSource {
     root = ../.;
