@@ -1,0 +1,15 @@
+excludes = ["tests/fixtures/*", "flake.lock", "build*/*"]
+
+[formatter.clang-format]
+command = "clang-format"
+options = ["-i"]
+includes = ["*.cpp", "*.hpp"]
+
+[formatter.nixfmt]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.gersemi]
+command = "gersemi"
+options = ["-i"]
+includes = ["CMakeLists.txt", "*.cmake"]

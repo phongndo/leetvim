@@ -1,0 +1,7 @@
+---
+InheritParentConfig: true
+# doctest's REQUIRE guards optionals and pointers, which the analysis can't see.
+Checks: >
+  -bugprone-unchecked-optional-access,
+  -cppcoreguidelines-avoid-do-while,
+  -misc-use-internal-linkage
