@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      checks: ${{ steps.checks.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - id: checks
+        name: List the flake checks
+        # One job per flake check and platform, so a new check runs here without touching
+        # this file. aarch64 Linux shares x86_64's code paths, and the linters only need one
+        # platform, so those platforms run a subset.
+        run: |
+          matrix=$(nix eval --json .#checks --apply 'builtins.mapAttrs (_: builtins.attrNames)' | jq -c '
+            {
+              "x86_64-linux": {runner: "ubuntu-latest", only: null},
+              "aarch64-linux": {runner: "ubuntu-24.04-arm", only: ["leetvim", "sanitize"]},
+              "aarch64-darwin": {runner: "macos-latest", only: ["leetvim", "sanitize", "tsan", "clang-tidy"]}
+            } as $platforms
+            | [to_entries[]
+               | select($platforms[.key])
+               | .key as $system
+               | $platforms[$system] as $platform
+               | .value[]
+               | select(. as $check | $platform.only == null or ($platform.only | index($check)))
+               | {system: $system, check: ., runner: $platform.runner}]
+            | {include: .}')
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          jq -r '.include[] | "\(.system)  \(.check)"' <<< "$matrix"
+
+  check:
+    name: ${{ matrix.check }} (${{ matrix.system }})
+    needs: plan
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.checks) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - run: nix build --print-build-logs --no-link '.#checks.${{ matrix.system }}.${{ matrix.check }}'
+
+  fuzz:
+    # Open-ended fuzzing on top of the corpus earlier runs found (the deterministic
+    # `fuzz` check above replays the seeds and past crashes).
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - run: nix build --print-build-logs --no-link .#fuzz
+      - uses: actions/cache/restore@v6
+        with:
+          path: fuzz-corpus
+          key: fuzz-corpus-${{ github.run_id }}
+          restore-keys: fuzz-corpus-
+      - name: Fuzz every target for two minutes
+        run: nix run .#fuzz -- all 120
+      - uses: actions/cache/save@v6
+        if: always()
+        with:
+          path: fuzz-corpus
+          key: fuzz-corpus-${{ github.run_id }}
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: fuzz-crashes
+          path: |
+            fuzz-crashes/
+            fuzz-logs/
