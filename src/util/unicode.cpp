@@ -87,6 +87,11 @@ constexpr char32_t emoji_presentation = 0xFE0F;
 
 bool is_regional_indicator(char32_t cp) { return cp >= 0x1F1E6 && cp <= 0x1F1FF; }
 
+/// Whether VS16 can turn `cp` into a wide emoji: the only ASCII ones are keycap bases ("1️⃣").
+bool has_emoji_presentation(char32_t cp) {
+    return cp >= 0x80 || (cp >= '0' && cp <= '9') || cp == '#' || cp == '*';
+}
+
 } // namespace
 
 char32_t decode(std::string_view s, std::size_t& pos) {
@@ -185,7 +190,8 @@ Grapheme next_grapheme(std::string_view s, std::size_t& pos) {
             continue;
         }
         if (cp == emoji_presentation) {
-            width = 2;
+            // After a space, a letter or nothing visible it selects nothing.
+            if (width == 1 && has_emoji_presentation(base)) width = 2;
             pos = peek;
             continue;
         }

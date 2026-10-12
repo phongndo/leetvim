@@ -41,6 +41,11 @@ TEST_CASE("display width") {
     CHECK(unicode::display_width(" ‍") == 1);
     CHECK(unicode::display_width("a‍b") == 2);
     CHECK(unicode::display_width(unicode::pad_left("‍", 48)) == 48);
+    // Likewise VS16 only widens characters that have an emoji form.
+    CHECK(unicode::display_width("❤️") == 2);
+    CHECK(unicode::display_width("1️⃣") == 2);
+    CHECK(unicode::display_width(" ️") == 1);
+    CHECK(unicode::display_width("️") == 0);
     CHECK(unicode::display_width("╭─╮■≤") == 5);
 }
 
