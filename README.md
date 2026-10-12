@@ -3,6 +3,10 @@
 <p align="center"><b>LeetCode in your terminal, solved in your own vim.</b></p>
 
 <p align="center">
+  <a href="https://github.com/phongndo/leetvim/actions/workflows/ci.yml"><img src="https://github.com/phongndo/leetvim/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</p>
+
+<p align="center">
   <img src="docs/screenshots/solve.png" alt="leetvim's solve view: the problem description and an accepted submission's runtime distribution beside nvim">
 </p>
 
@@ -225,9 +229,45 @@ cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLEETVIM_SANITIZE=ON
 cmake --build build && ctest --test-dir build
 ```
 
-`LEETVIM_LIVE_TESTS=1 ./build/test_leetcode` also queries the real public API. `nix fmt`
-formats everything (clang-format, nixfmt, gersemi), and `nix flake check` runs the build and
-tests, clang-tidy and the format check.
+`LEETVIM_SANITIZE` takes `address,undefined` (or `ON`) or `thread`, and any sanitizer report
+fails the test. `LEETVIM_LIVE_TESTS=1 ./build/test_leetcode` also queries the real public API,
+and `nix fmt` formats everything (clang-format, nixfmt, gersemi).
+
+### Checks
+
+`nix flake check` runs the same checks as CI, which runs each one as its own job on Linux
+(x86_64 and arm64) and macOS:
+
+| Check | What it catches |
+| --- | --- |
+| `leetvim` | build errors and warnings (as errors), failing unit tests |
+| `sanitize` | memory errors, leaks and undefined behaviour in the tests (AddressSanitizer, UBSan) |
+| `tsan` | data races (ThreadSanitizer) |
+| `gcc` | non-portable code, by building with GCC and libstdc++ (Linux) |
+| `clang-tidy` | bug-prone patterns and static-analyzer findings in `src/`, `tests/` and `fuzz/` |
+| `fuzz` | crashes on the fuzz seeds and past findings, plus a fixed-seed burst of mutations |
+| `format`, `actionlint` | unformatted files, mistakes in the CI workflows |
+
+### Fuzzing
+
+`fuzz/` has libFuzzer targets for everything that reads input leetvim doesn't control:
+LeetCode's HTML and API responses, browser cookie stores, terminal input, the config file,
+solution files, and text measuring. Besides crashes and sanitizer reports, they check
+properties such as laid-out lines fitting their width and solution files handing back exactly
+the code between the markers.
+
+```sh
+nix run '.#fuzz' -- html 300
+nix run '.#fuzz' -- all 120
+```
+
+The corpus collects in `fuzz-corpus/` and failing inputs in `fuzz-crashes/`. Once a finding is
+fixed, copy its input into `fuzz/seeds/<target>/` so the `fuzz` check replays it. CI fuzzes
+every target for two minutes on each push and for 25 minutes nightly, carrying the corpus
+between runs; the nightly run also checks that LeetCode's API still matches what leetvim
+parses.
+
+### Layout
 
 `src/` is split into layered libraries, each with tests under `tests/<module>/`:
 
