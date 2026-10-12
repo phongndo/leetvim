@@ -13,6 +13,10 @@ concurrency:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash # with pipefail, unlike the default shell
+
 jobs:
   plan:
     runs-on: ubuntu-latest
@@ -41,6 +45,7 @@ jobs:
                | select(. as $check | $platform.only == null or ($platform.only | index($check)))
                | {system: $system, check: ., runner: $platform.runner}]
             | {include: .}')
+          jq -e '.include | length > 0' <<< "$matrix" > /dev/null
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           jq -r '.include[] | "\(.system)  \(.check)"' <<< "$matrix"
 

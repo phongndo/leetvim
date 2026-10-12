@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash # with pipefail, unlike the default shell
+
 jobs:
   fuzz:
     runs-on: ubuntu-latest
