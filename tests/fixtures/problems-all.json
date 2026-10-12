@@ -1,0 +1,7 @@
+{"user_name": "dp", "num_solved": 2, "num_total": 4, "ac_easy": 1, "ac_medium": 1, "ac_hard": 0,
+ "stat_status_pairs": [
+  {"stat": {"question_id": 1, "question__title": "Two Sum", "question__title_slug": "two-sum", "frontend_question_id": 1}, "status": "ac", "difficulty": {"level": 1}, "paid_only": false},
+  {"stat": {"question_id": 2, "question__title": "Add Two Numbers", "question__title_slug": "add-two-numbers", "frontend_question_id": 2}, "status": "notac", "difficulty": {"level": 2}, "paid_only": false},
+  {"stat": {"question_id": 3, "question__title_slug": "longest-substring-without-repeating-characters", "frontend_question_id": 3}, "status": null, "difficulty": {"level": 2}, "paid_only": false},
+  {"stat": {"question_id": 4}, "status": "ac"}
+ ]}

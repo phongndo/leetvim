@@ -1,0 +1,38 @@
+{
+  "data": {
+    "questionSubmissionList": {
+      "lastKey": null,
+      "hasNext": false,
+      "submissions": [
+        {
+          "id": "1791090123",
+          "title": "Two Sum",
+          "titleSlug": "two-sum",
+          "status": 10,
+          "statusDisplay": "Accepted",
+          "lang": "cpp",
+          "langName": "C++",
+          "runtime": "3 ms",
+          "timestamp": "1791090123",
+          "url": "/submissions/detail/1791090123/",
+          "isPending": "Not Pending",
+          "memory": "14.2 MB"
+        },
+        {
+          "id": "1791089001",
+          "title": "Two Sum",
+          "titleSlug": "two-sum",
+          "status": 11,
+          "statusDisplay": "Wrong Answer",
+          "lang": "python3",
+          "langName": "Python3",
+          "runtime": "N/A",
+          "timestamp": "1791089001",
+          "url": "/submissions/detail/1791089001/",
+          "isPending": "Not Pending",
+          "memory": "N/A"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+ "data": {
+  "question": {
+   "questionId": "252",
+   "questionFrontendId": "252",
+   "title": "Meeting Rooms",
+   "titleSlug": "meeting-rooms",
+   "content": null,
+   "isPaidOnly": true,
+   "difficulty": "Easy",
+   "likes": 2135,
+   "dislikes": 117,
+   "exampleTestcaseList": [
+    "[[0,30],[5,10],[15,20]]",
+    "[[7,10],[2,4]]"
+   ],
+   "sampleTestCase": "[[0,30],[5,10],[15,20]]",
+   "topicTags": [
+    {
+     "name": "Array",
+     "slug": "array"
+    },
+    {
+     "name": "Sorting",
+     "slug": "sorting"
+    },
+    {
+     "name": "Quicksort",
+     "slug": "quicksort"
+    }
+   ],
+   "codeSnippets": null,
+   "stats": "{\"totalAccepted\": \"536.3K\", \"totalSubmission\": \"899.9K\", \"totalAcceptedRaw\": 536314, \"totalSubmissionRaw\": 899882, \"acRate\": \"59.6%\"}",
+   "hints": [],
+   "similarQuestions": "[{\"title\": \"Merge Intervals\", \"titleSlug\": \"merge-intervals\", \"difficulty\": \"Medium\", \"translatedTitle\": null}, {\"title\": \"Meeting Rooms II\", \"titleSlug\": \"meeting-rooms-ii\", \"difficulty\": \"Medium\", \"translatedTitle\": null}, {\"title\": \"Meeting Rooms III\", \"titleSlug\": \"meeting-rooms-iii\", \"difficulty\": \"Hard\", \"translatedTitle\": null}, {\"title\": \"Points That Intersect With Cars\", \"titleSlug\": \"points-that-intersect-with-cars\", \"difficulty\": \"Easy\", \"translatedTitle\": null}]",
+   "metaData": "{\r\n  \"name\": \"canAttendMeetings\",\r\n  \"params\": [\r\n    {\r\n      \"name\": \"intervals\",\r\n      \"type\": \"integer[][]\"\r\n    }\r\n  ],\r\n  \"return\": {\r\n    \"type\": \"boolean\"\r\n  }\r\n}",
+   "status": null,
+   "categoryTitle": "Algorithms"
+  }
+ }
+}

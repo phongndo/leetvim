@@ -1,0 +1,39 @@
+{
+    "data": {
+        "activeDailyCodingChallengeQuestion": {
+            "date": "2026-10-12",
+            "userStatus": "NotStart",
+            "link": "/problems/apply-operations-on-array-to-maximize-sum-of-squares/",
+            "question": {
+                "acRate": 54.026390870185445,
+                "difficulty": "Hard",
+                "frontendQuestionId": "2897",
+                "isFavor": false,
+                "paidOnly": false,
+                "status": null,
+                "title": "Apply Operations on Array to Maximize Sum of Squares",
+                "titleSlug": "apply-operations-on-array-to-maximize-sum-of-squares",
+                "topicTags": [
+                    {
+                        "name": "Array",
+                        "slug": "array"
+                    },
+                    {
+                        "name": "Hash Table",
+                        "slug": "hash-table"
+                    },
+                    {
+                        "name": "Greedy",
+                        "slug": "greedy"
+                    },
+                    {
+                        "name": "Bit Manipulation",
+                        "slug": "bit-manipulation"
+                    }
+                ],
+                "hasSolution": true,
+                "hasVideoSolution": false
+            }
+        }
+    }
+}
