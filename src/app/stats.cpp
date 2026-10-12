@@ -187,6 +187,11 @@ void StatsView::draw_calendar(const tui::Painter& p, Rect r, const leetcode::Use
         const year_month_day ymd{first + days{w * 7}};
         if (static_cast<unsigned>(ymd.month()) == last_month) continue;
         last_month = static_cast<unsigned>(ymd.month());
+        // The leading month is usually partial: leave it unlabelled rather than crowd out the
+        // next month when that starts before a label (3 letters and a gap) would fit.
+        const int label_weeks = (4 + col_w - 1) / col_w;
+        if (w == 0 && year_month_day{first + days{(label_weeks - 1) * 7}}.month() != ymd.month())
+            continue;
         static constexpr std::array<std::string_view, 12> names{
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         const int x = gx + (w * col_w);
