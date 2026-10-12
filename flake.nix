@@ -28,6 +28,8 @@
       packages = forAllSystems (pkgs: rec {
         leetvim = pkgs.callPackage ./nix/package.nix { inherit (llvmFor pkgs) stdenv; };
         default = leetvim;
+        # `nix run .#fuzz -- TARGET [SECONDS]`
+        fuzz = pkgs.callPackage ./nix/fuzz.nix { inherit leetvim; };
       });
 
       apps = forAllSystems (pkgs: rec {
@@ -37,6 +39,11 @@
           meta.description = "LeetCode TUI with an embedded vim";
         };
         default = leetvim;
+        fuzz = {
+          type = "app";
+          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.fuzz}/bin/leetvim-fuzz";
+          meta.description = "Run one of leetvim's libFuzzer targets";
+        };
       });
 
       devShells = forAllSystems (
@@ -67,12 +74,69 @@
       checks = forAllSystems (
         pkgs:
         let
+          inherit (pkgs) lib;
           llvm = llvmFor pkgs;
-          leetvim = self.packages.${pkgs.stdenv.hostPlatform.system}.leetvim;
+          inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) leetvim fuzz;
+
+          # Warnings are errors, and failing tests print their output.
+          strict =
+            drv:
+            drv.overrideAttrs (old: {
+              cmakeFlags = old.cmakeFlags ++ [ (lib.cmakeBool "LEETVIM_WERROR" true) ];
+              env = (old.env or { }) // {
+                CTEST_OUTPUT_ON_FAILURE = "1";
+              };
+            });
+
+          # The unit tests under sanitizers; any report fails the check.
+          sanitized =
+            name: sanitizers:
+            (strict leetvim).overrideAttrs (old: {
+              pname = "leetvim-${name}";
+              cmakeFlags = old.cmakeFlags ++ [ "-DLEETVIM_SANITIZE=${sanitizers}" ];
+              cmakeBuildType = "RelWithDebInfo";
+              # The wrapper's _FORTIFY_SOURCE checks get in the way of the sanitizers' interceptors.
+              hardeningDisable = [
+                "fortify"
+                "fortify3"
+              ];
+              dontStrip = true;
+              env = old.env // {
+                UBSAN_OPTIONS = "print_stacktrace=1";
+                # die_after_fork=0: the abort_all test forks a child that starts threads.
+                TSAN_OPTIONS = "halt_on_error=1 second_deadlock_stack=1 die_after_fork=0";
+              };
+              installPhase = "touch $out";
+            });
         in
         {
-          # Building the package also runs the unit tests (doCheck).
-          inherit leetvim;
+          # The package itself; building it runs the unit tests.
+          leetvim = strict leetvim;
+          sanitize = sanitized "sanitize" "address,undefined";
+          tsan = sanitized "tsan" "thread";
+
+          # Every fuzz target over its seeds plus a fixed-seed burst of mutations, so this
+          # is deterministic; open-ended fuzzing runs in CI and with `nix run .#fuzz`.
+          fuzz = pkgs.runCommand "leetvim-fuzz-smoke" { nativeBuildInputs = [ fuzz ]; } ''
+            export LEETVIM_FUZZ_CORPUS=$TMPDIR/corpus LEETVIM_FUZZ_ARTIFACTS=$TMPDIR/crashes
+            for bin in ${fuzz.fuzzers}/bin/fuzz_*; do
+              leetvim-fuzz "''${bin##*/fuzz_}" 0 -runs=50000 -seed=1 -print_final_stats=0
+            done
+            touch $out
+          '';
+
+          actionlint =
+            pkgs.runCommand "leetvim-actionlint"
+              {
+                nativeBuildInputs = [
+                  pkgs.actionlint
+                  pkgs.shellcheck
+                ];
+              }
+              ''
+                cd ${self} && actionlint .github/workflows/*.yml
+                touch $out
+              '';
 
           format = pkgs.runCommand "leetvim-format-check" { nativeBuildInputs = formatTools pkgs; } ''
             cp -r ${self} src && chmod -R u+w src && cd src
@@ -88,15 +152,22 @@
             ];
             # The tests are linted too, so their dependencies must be present.
             buildInputs = old.buildInputs ++ old.checkInputs;
-            cmakeFlags = (old.cmakeFlags or [ ]) ++ [ "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON" ];
+            cmakeFlags = old.cmakeFlags ++ [
+              "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+              (lib.cmakeBool "LEETVIM_FUZZ" true) # so fuzz/ is linted as well
+            ];
             buildPhase = ''
               runHook preBuild
-              run-clang-tidy -quiet -p . -j $NIX_BUILD_CORES "$NIX_BUILD_TOP/source/(src|tests)/.*\.cpp$"
+              run-clang-tidy -quiet -p . -j $NIX_BUILD_CORES "$NIX_BUILD_TOP/source/(src|tests|fuzz)/.*\.cpp$"
               runHook postBuild
             '';
             doCheck = false;
             installPhase = "touch $out";
           });
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          # A second compiler and standard library catch non-portable code.
+          gcc = strict (leetvim.override { stdenv = pkgs.gccStdenv; });
         }
       );
     };
