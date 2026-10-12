@@ -2,15 +2,13 @@
 
 #include "util/log.hpp"
 #include "util/paths.hpp"
+#include "util/process.hpp"
 #include "util/strings.hpp"
 
 #include <nlohmann/json.hpp>
 
-#include <fcntl.h>
 #include <openssl/evp.h>
-#include <spawn.h>
 #include <sqlite3.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -23,9 +21,6 @@
 #include <map>
 #include <memory>
 #include <system_error>
-
-// glibc's <unistd.h> declares this too, but macOS and other libcs don't.
-extern char** environ; // NOLINT(readability-redundant-declaration)
 
 namespace lv::leetcode {
 
@@ -102,46 +97,6 @@ std::int64_t now_unix() {
     return std::chrono::duration_cast<std::chrono::seconds>(
                std::chrono::system_clock::now().time_since_epoch())
         .count();
-}
-
-/// Runs a helper and returns its stdout (trailing newline removed), or nullopt on failure.
-std::optional<std::string> capture(const std::vector<std::string>& argv) {
-    std::array<int, 2> out{};
-    if (pipe(out.data()) != 0) return std::nullopt;
-    posix_spawn_file_actions_t actions{};
-    posix_spawn_file_actions_init(&actions);
-    posix_spawn_file_actions_adddup2(&actions, out[1], STDOUT_FILENO);
-    posix_spawn_file_actions_addclose(&actions, out[0]);
-    posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/null", O_WRONLY, 0);
-    posix_spawn_file_actions_addopen(&actions, STDIN_FILENO, "/dev/null", O_RDONLY, 0);
-    std::vector<std::string> args = argv;
-    std::vector<char*> ptrs;
-    ptrs.reserve(args.size() + 1);
-    for (auto& a : args) ptrs.push_back(a.data());
-    ptrs.push_back(nullptr);
-    pid_t pid = -1;
-    const int rc = posix_spawnp(&pid, ptrs[0], &actions, nullptr, ptrs.data(), environ);
-    posix_spawn_file_actions_destroy(&actions);
-    close(out[1]);
-    std::string result;
-    if (rc == 0) {
-        std::array<char, 4096> buf{};
-        while (true) {
-            const ssize_t n = read(out[0], buf.data(), buf.size());
-            if (n > 0) {
-                result.append(buf.data(), static_cast<std::size_t>(n));
-            } else if (n == 0 || errno != EINTR) {
-                break;
-            }
-        }
-    }
-    close(out[0]);
-    if (rc != 0) return std::nullopt;
-    int status = 0;
-    while (waitpid(pid, &status, 0) < 0 && errno == EINTR) {}
-    if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) return std::nullopt;
-    while (result.ends_with('\n') || result.ends_with('\r')) result.pop_back();
-    return result;
 }
 
 /// Copies a SQLite database (plus its WAL) to a private temp dir, so a running browser's
@@ -352,15 +307,15 @@ void scan_chromium(BrowserScan& scan, const ScanOptions& options) {
                                             b.name));
                 std::optional<std::string> password;
                 if (macos) {
-                    password = capture({"/usr/bin/security", "find-generic-password", "-w", "-s",
-                                        std::string(b.keychain_service), "-a",
-                                        std::string(b.keychain_account)});
+                    password = process::capture({"/usr/bin/security", "find-generic-password", "-w",
+                                                 "-s", std::string(b.keychain_service), "-a",
+                                                 std::string(b.keychain_account)});
                     if (!password) {
-                        password = capture({"/usr/bin/security", "find-generic-password", "-w",
-                                            "-s", std::string(b.keychain_service)});
+                        password = process::capture({"/usr/bin/security", "find-generic-password",
+                                                     "-w", "-s", std::string(b.keychain_service)});
                     }
                 } else if (!b.secret_app.empty()) {
-                    password = capture(
+                    password = process::capture(
                         {"secret-tool", "lookup", "application", std::string(b.secret_app)});
                 }
                 keys[key_id] = password;

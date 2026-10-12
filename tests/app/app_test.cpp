@@ -127,3 +127,45 @@ TEST_CASE("the install script's receipt says where it installed leetvim") {
     CHECK_FALSE(parse_installation("install_dir=/bin\n"));                // no data_dir
     CHECK_FALSE(parse_installation("install_dir=bin\ndata_dir=/data\n")); // relative
 }
+
+TEST_CASE("leetvim update tells installs apart by where the executable lives") {
+    using Method = Origin::Method;
+    const auto brew = classify("/opt/homebrew/Cellar/leetvim/0.1.0/bin/leetvim", "");
+    CHECK(brew.method == Method::homebrew);
+    CHECK(brew.brew == "/opt/homebrew/bin/brew");
+    CHECK(brew.formula == "leetvim");
+    const auto linuxbrew =
+        classify("/home/linuxbrew/.linuxbrew/Cellar/leetvim/0.1.0/bin/leetvim", "");
+    CHECK(linuxbrew.brew == "/home/linuxbrew/.linuxbrew/bin/brew");
+
+    CHECK(classify("/home/me/.local/share/mise/installs/github-phongndo-leetvim/0.1.0/bin/leetvim",
+                   "")
+              .method
+          == Method::mise);
+    CHECK(
+        classify("/opt/mise/installs/github-phongndo-leetvim/0.1.0/bin/leetvim", "/opt/mise").method
+        == Method::mise);
+    CHECK(classify("/opt/tools/installs/leetvim/bin/leetvim", "/opt/mise").method == Method::other);
+
+    const auto nix =
+        classify("/nix/store/qszz10qw8ija6svx1sr603cf2744dh7n-leetvim-0.1.0/bin/leetvim", "");
+    CHECK(nix.method == Method::nix);
+    CHECK(nix.store_dir == "/nix/store/qszz10qw8ija6svx1sr603cf2744dh7n-leetvim-0.1.0");
+
+    CHECK(classify("/home/me/src/leetvim/build/leetvim", "").method == Method::other);
+}
+
+TEST_CASE("leetvim update finds its element in the Nix profile") {
+    // `nix profile list --json` from Nix 2.35, trimmed.
+    constexpr std::string_view listing = R"({"elements": {
+        "ripgrep": {"active": true, "storePaths": ["/nix/store/aaaa-ripgrep-15.1.0"]},
+        "leetvim": {"active": true, "attrPath": "packages.x86_64-linux.default",
+                    "originalUrl": "github:phongndo/leetvim",
+                    "storePaths": ["/nix/store/qszz10qw8ija6svx1sr603cf2744dh7n-leetvim-0.1.0"]}
+    }, "version": 3})";
+    CHECK(nix_profile_element(listing, "/nix/store/qszz10qw8ija6svx1sr603cf2744dh7n-leetvim-0.1.0")
+          == "leetvim");
+    CHECK_FALSE(nix_profile_element(listing, "/nix/store/bbbb-leetvim-0.1.0"));
+    CHECK_FALSE(nix_profile_element("not json", "/nix/store/bbbb-leetvim-0.1.0"));
+    CHECK_FALSE(nix_profile_element(R"({"elements": []})", "/nix/store/bbbb-leetvim-0.1.0"));
+}

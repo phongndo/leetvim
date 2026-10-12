@@ -581,9 +581,10 @@ int run_cli(int argc, const char* const* argv) {
     config->add_flag("--init", config_init, "write a commented default config");
     config->add_flag("--edit", config_edit, "open the config in your editor");
 
-    auto* update = cli.add_subcommand("update", "update a leetvim installed by the install script");
+    auto* update = cli.add_subcommand("update", "update leetvim the way it was installed");
     std::string update_version;
-    update->add_option("version", update_version, "a release such as 0.2.0; the latest by default");
+    update->add_option("version", update_version,
+                       "a release such as 0.2.0 (install script only); the latest by default");
 
     try {
         cli.parse(argc, argv);
