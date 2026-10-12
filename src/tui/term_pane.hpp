@@ -42,6 +42,8 @@ public:
 
     /// Pseudo-terminal master to poll for readability; -1 when not running.
     [[nodiscard]] int fd() const { return master_; }
+    /// True while the pty is open. The exit status comes from reap(), and the process may
+    /// only become reapable just after the pty closes.
     [[nodiscard]] bool running() const { return master_ >= 0; }
     [[nodiscard]] std::optional<int> exit_status() const { return exit_status_; }
 

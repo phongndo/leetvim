@@ -17,10 +17,11 @@ std::string row_text(const Canvas& c, int y) {
     return out;
 }
 
-/// Pumps the pane until the program exits or the timeout passes.
+/// Pumps the pane until the program has exited and been reaped, or the timeout passes. The
+/// pty can close a moment before the process can be reaped, so wait for both.
 void run_to_exit(TermPane& pane) {
     const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-    while (pane.running() && std::chrono::steady_clock::now() < deadline) {
+    while ((pane.running() || !pane.exit_status()) && std::chrono::steady_clock::now() < deadline) {
         pollfd pfd{.fd = pane.fd(), .events = POLLIN, .revents = 0};
         poll(&pfd, 1, 50);
         pane.pump();
