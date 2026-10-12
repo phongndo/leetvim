@@ -53,9 +53,9 @@ let
         nghttp2 = static pkgs.nghttp2;
         curl = (minimalCurl (static pkgs.curlMinimal)).override { inherit openssl zlib nghttp2; };
         sqlite = static pkgs.sqlite;
-        # Its Makefile builds both kinds; without the dylib the linker takes the archive.
+        # libtool's -static builds only the archive.
         libvterm-neovim = pkgs.libvterm-neovim.overrideAttrs (old: {
-          postInstall = (old.postInstall or "") + "rm $out/lib/*.dylib";
+          makeFlags = old.makeFlags ++ [ "LDFLAGS=-static" ];
         });
         inherit (pkgs) nlohmann_json cli11;
       };
