@@ -28,6 +28,9 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size
         (void)u::next_grapheme(s, pos);
         require(pos > before, "next_grapheme() advances");
     }
+    // Measuring is compositional at a space: what follows can't change the space's width.
+    require(u::display_width(" " + s) == 1 + u::display_width(s),
+            "a leading space adds one column");
     require(u::display_width(u::truncate(s, width)) <= width, "truncate() fits the width");
     require(u::display_width(u::pad_right(s, width)) == width, "pad_right() is exactly the width");
     require(u::display_width(u::pad_left(s, width)) == width, "pad_left() is exactly the width");
