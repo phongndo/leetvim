@@ -1,91 +1,122 @@
-# leetvim
+<h1 align="center">leetvim</h1>
 
-LeetCode in your terminal, solved in your own vim.
+<p align="center"><b>LeetCode in your terminal, solved in your own vim.</b></p>
 
-leetvim is a btop-style TUI for LeetCode: browse and filter the whole problem set, read
-problems rendered as rich text, and solve them in a split where the right pane is your real
-`nvim`/`vim` (your config, plugins and LSP) running inside leetvim. Nothing is installed into
-your editor: leetvim embeds it through a pseudo-terminal.
+<p align="center">
+  <img src="docs/screenshots/solve.png" alt="leetvim's solve view: the problem description and an accepted submission's runtime distribution beside nvim">
+</p>
 
-- **Dashboard**: submission activity graph, solved meters per difficulty, streak, today's
-  daily question and a preview of the selected problem.
-- **Problem list**: all problems with vim motions, fuzzy search, filters (difficulty, status,
-  premium, topics), sorting and random pick.
-- **Solve view**: description (with hints, topics and similar questions) beside your editor;
-  run the testcases or submit without leaving vim; per-case results, compile/runtime errors,
-  runtime and memory percentiles with the runtime distribution, past submissions, and custom
-  testcases edited in a second embedded editor.
-- **Stats**: profile, contest rating, a GitHub-style heatmap, languages and skills.
-- **Themes**: `default` (btop's palette), `tokyo-night`, `gruvbox`, `catppuccin`, `nord`, `light`.
+leetvim is a [btop](https://github.com/aristocratos/btop)-style TUI for LeetCode. Browse the
+whole problem set, read problems as rich text, and solve them in a split where the right pane is
+your real `nvim` or `vim`, with your config, plugins and LSP, running inside leetvim. Run the
+testcases and submit without leaving the editor. Nothing is installed into your editor.
+
+- **Your editor, embedded**: leetvim hosts vim in a pseudo-terminal and saves your buffers
+  before every run or submit.
+- **The whole problem set**: fuzzy search, filters for difficulty, status and topic, sorting,
+  the daily question and random picks, all with vim motions.
+- **Judge results in place**: per-case output against expected, compile and runtime errors,
+  runtime and memory percentiles with the distribution, past submissions and custom testcases.
+- **One-command sign-in**: `leetvim login` uses the session from the browser you already use
+  and renews it when it expires.
+- **Your progress**: activity graph, solved meters, streak, heatmap, languages, skills and
+  contest rating.
+- **Themes**: btop's palette, `tokyo-night`, `gruvbox`, `catppuccin`, `nord` and `light`.
+
+<p align="center">
+  <img src="docs/screenshots/home.png" width="49%" alt="Problem list with the activity graph, solved meters and a problem preview">
+  <img src="docs/screenshots/stats.png" width="49%" alt="Stats: profile, solved by difficulty, submission heatmap, languages and skills">
+</p>
 
 ## Install
 
-From a checkout:
+With [Nix](https://nixos.org) (flakes enabled):
 
 ```sh
-nix run .                  # try it
-nix profile install .      # put `leetvim` on your PATH
+nix run github:phongndo/leetvim              # try it
+nix profile install github:phongndo/leetvim  # put `leetvim` on your PATH
 ```
 
-leetvim needs `nvim`, `vim` or `vi` on `PATH` (or set `editor` in the config).
+leetvim runs `nvim`, `vim` or `vi` from your `PATH`; set `editor` in the config to use
+something else.
+
+<details>
+<summary>Building without Nix</summary>
+
+The Nix build is the tested one. Elsewhere you need a C++23 compiler and standard library,
+CMake 3.28+, Ninja, pkg-config, and the development packages for libcurl, nlohmann_json 3.11+,
+CLI11, SQLite 3, OpenSSL (libcrypto) and libvterm; doctest too unless you pass
+`-DLEETVIM_BUILD_TESTS=OFF`.
+
+```sh
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+./build/leetvim
+```
+
+</details>
 
 ## Quick start
 
 ```sh
-leetvim login    # link your account from the browser you're signed in with
-leetvim daily    # straight into today's question
+leetvim login    # link your LeetCode account from your browser
+leetvim daily    # open today's question
 leetvim          # the dashboard
 ```
+
+In the solve view the editor has focus, so leetvim's own keys follow a prefix, `Ctrl-g` by
+default (like tmux): `C-g t` runs the testcases, `C-g s` submits, `C-g q` goes back to the
+list. Press `?` anywhere for every key.
 
 ## Your account
 
 LeetCode has no API tokens or OAuth for third-party apps; everything, including running and
-submitting, works with the website's session cookies. So leetvim links your account by using
-the session your browser already has:
+submitting, works with the website's session cookie. So leetvim uses the session your browser
+already has:
 
-1. Sign in at leetcode.com in your browser (as you normally would: password, Google, GitHub…).
+1. Sign in at leetcode.com in your browser as usual.
 2. Run `leetvim login`, or press `l` on the welcome screen the first time the TUI starts
    (`:login` later).
 
-leetvim finds `LEETCODE_SESSION` and `csrftoken` in Chrome, Helium, Arc, Brave, Edge, Vivaldi,
-Opera, Chromium, Firefox, Zen, LibreWolf, Safari or Orion, checks with LeetCode which sessions
-are signed in, and links the account (asking which one if several are). Chromium-based browsers
-encrypt cookies with a key in the macOS Keychain, so macOS asks once to unlock it; choose
-**Always Allow**. Safari's cookies need Full Disk Access for your terminal.
+leetvim looks for the session in Chrome, Helium, Arc, Brave, Edge, Vivaldi, Opera, Chromium,
+Firefox, Zen, LibreWolf, Safari and Orion, asks LeetCode which sessions are signed in, and
+links that account (asking which one if there are several). Chromium-based browsers encrypt
+cookies with a key in the macOS Keychain, so macOS asks once to unlock it: choose
+**Always Allow**. Reading Safari's cookies needs Full Disk Access for your terminal.
 
-Sessions expire every couple of weeks. Because leetvim remembers which browser profile the
-session came from, it renews it from there automatically when LeetCode rejects it (at
-startup, and before a run or submit); as long as you stay signed in in the browser you never
-log in to leetvim again.
+When LeetCode rejects an expired session (at startup, or before a run or submit), leetvim takes
+a fresh one from the same browser profile and retries, so as long as you stay signed in to
+leetcode.com in that browser you don't log in to leetvim again.
 
-Other ways in: `leetvim login --browser helium` limits the search to one browser,
-`leetvim login --paste` (or `:login paste`) takes a pasted `Cookie` header from DevTools,
-and `LEETCODE_SESSION` / `LEETCODE_CSRF_TOKEN` environment variables override everything.
-The session is stored in `$XDG_DATA_HOME/leetvim/credentials` with mode 0600;
-`leetvim logout` deletes it.
+Other ways in:
+
+- `leetvim login --browser helium` searches only one browser.
+- `leetvim login --paste` (or `:login paste`) takes a `Cookie` header copied from DevTools.
+- The `LEETCODE_SESSION` and `LEETCODE_CSRF_TOKEN` environment variables override the saved
+  session.
+
+`leetvim logout` deletes the saved session.
 
 ### What leetvim keeps track of
 
-LeetCode is the source of truth for your progress; leetvim reads it rather than keeping a
+LeetCode stays the source of truth for your progress; leetvim reads it instead of keeping a
 second copy:
 
 | Data | Where it lives | When it updates |
 | --- | --- | --- |
-| Solved / attempted per problem | LeetCode; cached in `$XDG_CACHE_HOME/leetvim/problems.json` | every launch (one request), after each submit |
-| Submissions, runtime/memory percentiles | LeetCode | the results panel's submissions tab |
-| Stats, streak, calendar, contest rating, skills | LeetCode | launch, after accepted submissions, `R` |
-| Daily question and whether you did it | LeetCode | launch, after accepted submissions |
-| Your solution code | `<workspace>/<id>.<slug>.<ext>` (default `~/leetcode`) | you edit it; leetvim never overwrites it |
+| Solved / attempted per problem | LeetCode, cached in `$XDG_CACHE_HOME/leetvim` | every launch (one request) and after each submit |
+| Submissions, runtime and memory percentiles | LeetCode | the results panel's submissions tab |
+| Stats, streak, calendar, contest rating, skills | LeetCode | launch, accepted submissions, `R` |
+| Daily question and whether you've done it | LeetCode | launch, accepted submissions |
+| Your solutions | `~/leetcode/<id>.<slug>.<ext>` (the `workspace` setting) | you edit them; leetvim never overwrites one |
 | Custom testcases | `<workspace>/.leetvim/testcases/<slug>.txt` | the testcases tab |
-| Session | `$XDG_DATA_HOME/leetvim/credentials` | login, automatic renewal |
-| Settings | `$XDG_CONFIG_HOME/leetvim/config.toml` | `leetvim config --edit`, theme/language pickers |
+| Session | `$XDG_DATA_HOME/leetvim/credentials` (mode 0600) | login and automatic renewal |
+| Settings | `$XDG_CONFIG_HOME/leetvim/config.toml` | `leetvim config --edit`, the theme and language pickers |
 
 Problems you solve on the website show up the next time leetvim starts. The workspace is a
 plain directory of solution files, so it works well as a git repository.
 
 ## Keys
-
-Press `?` anywhere for the full list.
 
 **Problem list**
 
@@ -95,7 +126,7 @@ Press `?` anywhere for the full list.
 | `Enter` / `l` | solve the selected problem |
 | `/` | fuzzy search by title or id |
 | `f` / `t` | filters / topics |
-| `o` / `O` | cycle sort / reverse |
+| `o` / `O` | cycle the sort / reverse it |
 | `d` / `r` | daily question / random pick |
 | `J` `K` | scroll the preview |
 | `1` `2` | toggle the stats / preview boxes |
@@ -104,52 +135,50 @@ Press `?` anywhere for the full list.
 | `L` / `T` | default language / theme |
 | `R` | re-sync problems and stats |
 
-**Solve view**: while the editor has focus every key goes to vim, so leetvim's own keys
-follow a prefix (`ctrl-g` by default, like tmux's leader):
+**Solve view**, with the editor focused:
 
 | Key | Action |
 | --- | --- |
 | `C-g t` | run the testcases on LeetCode |
 | `C-g s` | submit |
-| `C-g h` / `C-g j` / `C-g l` | focus description / results / editor |
+| `C-g h` / `C-g j` / `C-g l` | focus the description / results / editor |
 | `C-g r` | toggle the results panel |
 | `C-g c` | testcases |
 | `C-g z` | zoom the editor |
 | `C-g q` | back to the list (the editor keeps running) |
 | `C-g C-g` | send `C-g` to vim |
 
-In the description: `j` `k` `C-d` `C-u` `gg` `G` scroll, `H` reveals hints, `<` `>` resize the
-split, `L` switches the solution language (in the same vim, via `:edit`). In the results
-panel: `h` `l` or `1`–`9` pick a testcase, `Tab` cycles result / testcases / submissions,
-`e` edits custom testcases, `x` resets them to the examples.
+In the description, `j` `k` `C-d` `C-u` `gg` `G` scroll, `H` reveals hints, `<` `>` resize the
+split and `L` switches the solution language in the same vim. In the results panel, `h` `l` or
+`1`–`9` pick a testcase, `Tab` cycles result / testcases / submissions, `e` edits the custom
+testcases and `x` resets them to the examples.
 
-Before running or submitting, leetvim asks vim to save (`:wall`), so you don't have to.
-
-**Commands** (`:`): `:daily`, `:random`, `:open <id|slug|title>` (or just `:42`), `:lang <slug>`,
-`:theme <name>`, `:set <key>=<value>`, `:login`, `:logout`, `:sync`, `:stats`, `:run`,
-`:submit`, `:q`.
+**Commands** (`:`): `:daily`, `:random`, `:open <id|slug|title>` (or just `:42`),
+`:lang <slug>`, `:theme <name>`, `:set <key>=<value>`, `:login`, `:logout`, `:sync`, `:stats`,
+`:run`, `:submit`, `:q`.
 
 ## Command line
 
 ```text
-leetvim                      the TUI
-leetvim daily [--print]      open (or print) today's question
-leetvim open <problem>       open a problem by id, slug or title
-leetvim show <problem> [-m]  print the description (-m: Markdown)
+leetvim                          the TUI
+leetvim daily [--print]          open (or print) today's question
+leetvim open <problem>           open a problem by id, slug or title
+leetvim show <problem> [-m]      print the description (-m: as Markdown)
 leetvim list [-d hard] [-s todo] [-t dynamic-programming] [-q query] [-n 20]
-leetvim test <file>          run a solution file's testcases (exit 1 on failure)
-leetvim submit <file>        submit a solution file
-leetvim stats [username]     print profile statistics
-leetvim login [-b browser] [-p]  link your account (see "Your account")
+leetvim test <file>              run a solution file's testcases (exit status 1 on failure)
+leetvim submit <file>            submit a solution file
+leetvim stats [username]         print profile statistics
+leetvim login [-b browser] [-p] [--cookie header]
 leetvim logout | sync
-leetvim config [--init|--edit]
+leetvim config [--init | --edit]
+leetvim -c <file> ...            use another config file
 ```
 
 `test` and `submit` work from any editor, e.g. `:!leetvim test %` in vim.
 
 ## Solutions and testcases
 
-Solution files live in the workspace (`~/leetcode` by default) as `<id>.<slug>.<ext>`:
+Solutions live in the workspace (`~/leetcode` by default) as `<id>.<slug>.<ext>`:
 
 ```python
 # @leetvim id=1 slug=two-sum lang=python3
@@ -164,22 +193,21 @@ class Solution:
 ```
 
 Only the code between the markers is sent to LeetCode (leetcode.nvim's `@leet start` /
-`@leet end` markers work too), so helpers or includes for your LSP can live outside them; the
+`@leet end` markers work too), so includes and helpers for your LSP can live outside them. The
 `inject_before` / `inject_after` config tables add such text to new files. Custom testcases are
-saved in `<workspace>/.leetvim/testcases/<slug>.txt`, one input line per parameter.
+stored one input line per parameter.
 
 ## Configuration
 
-`leetvim config --init` writes a commented `$XDG_CONFIG_HOME/leetvim/config.toml` with every
+`leetvim config --init` writes a commented `$XDG_CONFIG_HOME/leetvim/config.toml` listing every
 option: `lang`, `editor`, `workspace`, `prefix`, `save_before_run`, `theme`,
 `theme_background`, `rounded_corners`, `truecolor`, `mouse`, `split`, `show_paid`, `username`,
 `refresh_hours`, `[inject_before]` and `[inject_after]`. Picking a theme or default language
-in the TUI updates this file in place.
+in the TUI updates the file in place, keeping your comments.
 
-The problem list and question details are cached in `$XDG_CACHE_HOME/leetvim` and refreshed
-every `refresh_hours` (24 by default) or on `R` / `leetvim sync`.
-
-Set `LEETVIM_LOG=/path/to/file` to log HTTP requests and notifications.
+The problem list and question details are cached and refreshed every `refresh_hours` (24 by
+default), or on `R` / `leetvim sync`. Set `LEETVIM_LOG=/path/to/file` to log HTTP requests and
+notifications.
 
 ## Development
 
@@ -190,9 +218,9 @@ clang-format), CMake, Ninja, treefmt, nixfmt and gersemi.
 nix develop
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLEETVIM_SANITIZE=ON
 cmake --build build && ctest --test-dir build
-LEETVIM_LIVE_TESTS=1 ./build/test_leetcode   # also hit the real public API
+LEETVIM_LIVE_TESTS=1 ./build/test_leetcode   # also query the real public API
 nix fmt                                      # clang-format, nixfmt, gersemi
-nix flake check                              # build + tests, clang-tidy, format check
+nix flake check                              # build and tests, clang-tidy, format check
 ```
 
 `src/` is split into layered libraries, each with tests under `tests/<module>/`:
@@ -200,10 +228,10 @@ nix flake check                              # build + tests, clang-tidy, format
 | Module | Role |
 | --- | --- |
 | `util` | UTF-8 and display width, strings, fuzzy matching, XDG paths, logging |
-| `content` | LeetCode HTML → document model → terminal lines or Markdown |
-| `leetcode` | API client (GraphQL + judge endpoints over libcurl), credentials, cache |
+| `content` | LeetCode HTML to a document model, then terminal lines or Markdown |
+| `leetcode` | API client (GraphQL and judge endpoints over libcurl), browser sessions, credentials, cache |
 | `tui` | raw terminal, input parsing, diffing renderer, btop-style widgets, themes, and the pty + libvterm pane that hosts the editor |
-| `core` | config, languages, workspace files, editor resolution |
+| `core` | config, languages, workspace files, editor resolution, account linking |
 | `app` | the event loop, views, overlays and the command line |
 
-Only leetcode.com is supported (not leetcode.cn).
+Only leetcode.com is supported (not leetcode.cn). leetvim is not affiliated with LeetCode.
