@@ -1,3 +1,4 @@
+#include "core/account.hpp"
 #include "core/config.hpp"
 #include "core/editor.hpp"
 #include "core/languages.hpp"
@@ -175,4 +176,16 @@ TEST_CASE("editor commands") {
     CHECK_FALSE(is_vim_like({"nano"}));
     CHECK(resolve_editor("hx --flag") == std::vector<std::string>{"hx", "--flag"});
     CHECK_FALSE(find_executable("sh").empty());
+}
+
+TEST_CASE("cookie domains come from the base url") {
+    CHECK(cookie_domain("https://leetcode.com") == "leetcode.com");
+    CHECK(cookie_domain("https://www.leetcode.com/") == "leetcode.com");
+    CHECK(cookie_domain("http://localhost:8080/api") == "localhost:8080");
+    CHECK(cookie_domain("leetcode.cn") == "leetcode.cn");
+}
+
+TEST_CASE("pasted credentials without a browser source can't be refreshed") {
+    CHECK_FALSE(refresh_account({.session = "s", .csrf = "c", .source = ""}, "https://leetcode.com")
+                    .has_value());
 }
