@@ -3,3 +3,6 @@
 /compile_commands.json
 /.cache/
 /.direnv/
+/fuzz-corpus/
+/fuzz-crashes/
+/fuzz-logs/
