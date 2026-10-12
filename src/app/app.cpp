@@ -27,7 +27,8 @@
 #include <cstdio>
 #include <format>
 
-extern char** environ;
+// glibc's <unistd.h> declares this too, but macOS and other libcs don't.
+extern char** environ; // NOLINT(readability-redundant-declaration)
 
 namespace lv::app {
 
