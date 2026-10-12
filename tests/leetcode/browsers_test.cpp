@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <bit>
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
@@ -241,6 +242,14 @@ TEST_CASE("safari binarycookies are parsed") {
     CHECK(parse_binarycookies("").empty());
     CHECK(parse_binarycookies("cook\xff\xff\xff\xff").empty());
     CHECK(parse_binarycookies(file.substr(0, file.size() - 20)).size() <= 2); // truncated: no crash
+
+    // Expiry doubles that don't fit an int64 (found by fuzz/cookies.cpp) read as session cookies.
+    const auto corrupt = parse_binarycookies(
+        binarycookies_file({binary_cookie("leetcode.com", "a", "1", 1.7e156),
+                            binary_cookie("leetcode.com", "b", "2", std::nan(""))}));
+    REQUIRE(corrupt.size() == 2);
+    CHECK(corrupt[0].expires == 0);
+    CHECK(corrupt[1].expires == 0);
 }
 
 TEST_CASE("scanning finds a signed-in Firefox-family profile and skips expired ones") {

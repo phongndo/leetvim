@@ -17,6 +17,7 @@
 #include <array>
 #include <bit>
 #include <cerrno>
+#include <cmath>
 #include <cstring>
 #include <format>
 #include <map>
@@ -571,7 +572,12 @@ std::vector<RawCookie> parse_binarycookies(std::string_view data) {
             c.host = c_string(cookie, read_le<std::uint32_t>(cookie, 16));
             c.name = c_string(cookie, read_le<std::uint32_t>(cookie, 20));
             c.value = c_string(cookie, read_le<std::uint32_t>(cookie, 28));
-            c.expires = static_cast<std::int64_t>(read_le<double>(cookie, 40)) + mac_epoch;
+            // A corrupt file can hold any double, and converting one outside int64's range
+            // is undefined; treat those like session cookies.
+            const auto expiry = read_le<double>(cookie, 40);
+            c.expires = std::isfinite(expiry) && std::abs(expiry) < 1e15
+                            ? static_cast<std::int64_t>(expiry) + mac_epoch
+                            : 0;
             out.push_back(std::move(c));
         }
     }
