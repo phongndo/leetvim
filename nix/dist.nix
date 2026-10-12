@@ -74,7 +74,7 @@ let
           ];
         })
     else
-      pkgs.callPackage ./package.nix {
+      (pkgs.callPackage ./package.nix {
         inherit (llvm) stdenv;
         inherit tomlplusplus;
         inherit (deps)
@@ -83,7 +83,14 @@ let
           sqlite
           libvterm-neovim
           ;
-      };
+      }).overrideAttrs
+        (old: {
+          cmakeFlags = old.cmakeFlags ++ [
+            # Static curl reads the system proxy settings through these, but its CMake package
+            # doesn't say so.
+            "-DCMAKE_EXE_LINKER_FLAGS=-Wl,-framework,CoreFoundation,-framework,SystemConfiguration"
+          ];
+        });
 
   # Sources whose licenses ask for their notice in binary distributions. (SQLite is in the
   # public domain; libstdc++ and libgcc carry the GCC Runtime Library Exception.)
