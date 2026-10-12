@@ -87,7 +87,7 @@ suite on the way, so the first install takes a few minutes. Try it without insta
 nix run github:phongndo/leetvim
 ```
 
-Install it into your profile:
+Install it into your profile (Lix and Nix before 2.30 spell `add` as `install`):
 
 ```sh
 nix profile add github:phongndo/leetvim
