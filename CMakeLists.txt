@@ -10,7 +10,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 option(LEETVIM_BUILD_TESTS "Build the unit tests" ON)
-option(LEETVIM_SANITIZE "Build with AddressSanitizer and UBSan" OFF)
+option(LEETVIM_WERROR "Treat compiler warnings as errors" OFF)
+option(LEETVIM_FUZZ "Build the libFuzzer targets in fuzz/ (clang)" OFF)
+set(LEETVIM_SANITIZE
+    ""
+    CACHE STRING
+    "Sanitizers to build with: address,undefined (or ON), or thread"
+)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE RelWithDebInfo)
@@ -40,12 +46,29 @@ target_compile_options(
         -Wimplicit-fallthrough
         -Wno-missing-designated-field-initializers # fields have defaults
 )
+if(LEETVIM_WERROR)
+    target_compile_options(leetvim_options INTERFACE -Werror)
+endif()
+if(LEETVIM_SANITIZE STREQUAL "ON" OR (LEETVIM_FUZZ AND NOT LEETVIM_SANITIZE))
+    set(LEETVIM_SANITIZE address,undefined)
+endif()
 if(LEETVIM_SANITIZE)
+    # Any finding fails the run; UBSan would otherwise print and carry on.
     target_compile_options(
         leetvim_options
-        INTERFACE -fsanitize=address,undefined -fno-omit-frame-pointer
+        INTERFACE
+            -fsanitize=${LEETVIM_SANITIZE}
+            -fno-sanitize-recover=all
+            -fno-omit-frame-pointer
     )
-    target_link_options(leetvim_options INTERFACE -fsanitize=address,undefined)
+    target_link_options(
+        leetvim_options
+        INTERFACE -fsanitize=${LEETVIM_SANITIZE}
+    )
+endif()
+if(LEETVIM_FUZZ)
+    # Coverage feedback for libFuzzer in every library; the fuzz targets link its driver.
+    target_compile_options(leetvim_options INTERFACE -fsanitize=fuzzer-no-link)
 endif()
 
 # Each directory under src/ is a static library; dependencies only point downward:
@@ -97,6 +120,17 @@ endif()
 add_executable(leetvim src/main.cpp)
 target_link_libraries(leetvim PRIVATE leetvim_app)
 install(TARGETS leetvim)
+
+if(LEETVIM_FUZZ)
+    file(GLOB fuzz_sources CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/fuzz/*.cpp")
+    foreach(source ${fuzz_sources})
+        get_filename_component(target ${source} NAME_WE)
+        add_executable(fuzz_${target} ${source})
+        target_link_libraries(fuzz_${target} PRIVATE leetvim_app)
+        target_link_options(fuzz_${target} PRIVATE -fsanitize=fuzzer)
+        install(TARGETS fuzz_${target})
+    endforeach()
+endif()
 
 if(LEETVIM_BUILD_TESTS)
     find_package(doctest REQUIRED)
