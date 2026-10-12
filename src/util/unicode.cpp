@@ -171,15 +171,17 @@ Grapheme next_grapheme(std::string_view s, std::size_t& pos) {
     const char32_t base = decode(s, pos);
     int width = codepoint_width(base);
     const bool regional = is_regional_indicator(base);
-    bool joined = false;
     while (pos < s.size()) {
         std::size_t peek = pos;
         const char32_t cp = decode(s, peek);
         if (cp == zwj) {
-            // Absorb the joiner and the code point it joins.
+            // The joiner is zero-width. Only emoji fuse with what follows into one glyph (as
+            // in family emoji); after anything else it joins nothing and the width stays.
             pos = peek;
-            if (pos < s.size()) decode(s, pos);
-            joined = true;
+            if (width == 2 && pos < s.size()) {
+                std::size_t next = pos;
+                if (codepoint_width(decode(s, next)) == 2) pos = next;
+            }
             continue;
         }
         if (cp == emoji_presentation) {
@@ -199,7 +201,6 @@ Grapheme next_grapheme(std::string_view s, std::size_t& pos) {
         }
         break;
     }
-    if (joined && width < 2) width = 2;
     return {.bytes = s.substr(start, pos - start), .width = width};
 }
 

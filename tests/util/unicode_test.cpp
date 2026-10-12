@@ -35,7 +35,12 @@ TEST_CASE("display width") {
     CHECK(unicode::display_width("😀") == 2);
     CHECK(unicode::display_width("👍🏽") == 2);
     CHECK(unicode::display_width("👨‍👩‍👧") == 2);
+    CHECK(unicode::display_width("❤️‍🔥") == 2);
     CHECK(unicode::display_width("🇺🇸") == 2);
+    // A joiner that follows no emoji joins nothing (found by fuzz/unicode.cpp).
+    CHECK(unicode::display_width(" ‍") == 1);
+    CHECK(unicode::display_width("a‍b") == 2);
+    CHECK(unicode::display_width(unicode::pad_left("‍", 48)) == 48);
     CHECK(unicode::display_width("╭─╮■≤") == 5);
 }
 
