@@ -119,9 +119,8 @@
           # is deterministic; open-ended fuzzing runs in CI and with `nix run .#fuzz`.
           fuzz = pkgs.runCommand "leetvim-fuzz-smoke" { nativeBuildInputs = [ fuzz ]; } ''
             export LEETVIM_FUZZ_CORPUS=$TMPDIR/corpus LEETVIM_FUZZ_ARTIFACTS=$TMPDIR/crashes
-            for bin in ${fuzz.fuzzers}/bin/fuzz_*; do
-              leetvim-fuzz "''${bin##*/fuzz_}" 0 -runs=50000 -seed=1 -print_final_stats=0
-            done
+            export LEETVIM_FUZZ_LOGS=$TMPDIR/logs
+            leetvim-fuzz all 0 -runs=50000 -seed=1
             touch $out
           '';
 
