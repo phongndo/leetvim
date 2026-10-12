@@ -1,0 +1,9 @@
+---
+InheritParentConfig: true
+CheckOptions:
+  # libFuzzer fixes the entry point's name.
+  - key: readability-identifier-naming.FunctionIgnoredRegexp
+    value: '^LLVMFuzzerTestOneInput$'
+  # Harnesses call parsers for their side effects and discard the results on purpose.
+  - key: bugprone-unused-return-value.AllowCastToVoid
+    value: true

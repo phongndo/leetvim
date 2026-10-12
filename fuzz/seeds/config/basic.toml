@@ -1,0 +1,14 @@
+# leetvim
+lang = "cpp"
+editor = 'nvim -u NONE'
+workspace = "~/leet code"
+prefix = ctrl-g # comment
+split = 0.42
+theme = tokyo-night
+mouse = true
+
+[inject_before]
+cpp = """
+#include <vector>
+using namespace std;
+"""
