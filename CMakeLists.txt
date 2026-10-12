@@ -44,7 +44,10 @@ target_compile_options(
         -Woverloaded-virtual
         -Wnull-dereference
         -Wimplicit-fallthrough
-        -Wno-missing-designated-field-initializers # fields have defaults
+        # Designated initializers leave fields at their defaults on purpose; GCC's
+        # missing-field-initializers covers them too.
+        $<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-missing-designated-field-initializers>
+        $<$<CXX_COMPILER_ID:GNU>:-Wno-missing-field-initializers>
 )
 if(LEETVIM_WERROR)
     target_compile_options(leetvim_options INTERFACE -Werror)
