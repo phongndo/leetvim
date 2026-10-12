@@ -1,0 +1,53 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: "23 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - run: nix build --print-build-logs --no-link .#fuzz
+      - uses: actions/cache/restore@v6
+        with:
+          path: fuzz-corpus
+          key: fuzz-corpus-${{ github.run_id }}
+          restore-keys: fuzz-corpus-
+      - name: Fuzz every target for 25 minutes
+        run: nix run .#fuzz -- all 1500
+      - uses: actions/cache/save@v6
+        if: always()
+        with:
+          path: fuzz-corpus
+          key: fuzz-corpus-${{ github.run_id }}
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: fuzz-crashes
+          path: |
+            fuzz-crashes/
+            fuzz-logs/
+
+  leetcode-api:
+    # LeetCode's API is unofficial and changes without notice; this catches it the day
+    # it happens instead of when someone's submit breaks.
+    name: LeetCode API
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - name: Query the live public API
+        run: |
+          nix develop --command sh -c '
+            cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo &&
+            cmake --build build --target test_leetcode &&
+            LEETVIM_LIVE_TESTS=1 ./build/test_leetcode --test-case="live*"'
