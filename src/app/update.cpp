@@ -146,8 +146,14 @@ int cmd_update(const std::string& version) {
         return fail(std::format("cannot run {}: {}", script, std::strerror(errno)));
     }
 
-    const char* mise_data_dir = std::getenv("MISE_DATA_DIR");
-    const Origin origin = classify(executable, mise_data_dir != nullptr ? mise_data_dir : "");
+    // Resolved like the executable's path, so a symlinked data directory still matches.
+    std::string mise_data_dir;
+    if (const char* dir = std::getenv("MISE_DATA_DIR"); dir != nullptr && *dir != '\0') {
+        std::error_code ec;
+        const auto resolved = fs::weakly_canonical(dir, ec);
+        mise_data_dir = ec ? std::string(dir) : resolved.string();
+    }
+    const Origin origin = classify(executable, mise_data_dir);
     switch (origin.method) {
     case Origin::Method::homebrew: {
         if (!version.empty()) {
