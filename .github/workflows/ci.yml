@@ -28,14 +28,15 @@ jobs:
       - id: checks
         name: List the flake checks
         # One job per flake check and platform, so a new check runs here without touching
-        # this file. aarch64 Linux shares x86_64's code paths, and the linters only need one
-        # platform, so those platforms run a subset.
+        # this file. Other platforms run a subset: the code is nearly all portable, so what
+        # they add is their own libc, pty and C++ library (and GitHub is slow to hand out
+        # macOS runners). `nix flake check` on a Mac still runs everything.
         run: |
           matrix=$(nix eval --json .#checks --apply 'builtins.mapAttrs (_: builtins.attrNames)' | jq -c '
             {
               "x86_64-linux": {runner: "ubuntu-latest", only: null},
               "aarch64-linux": {runner: "ubuntu-24.04-arm", only: ["leetvim", "sanitize"]},
-              "aarch64-darwin": {runner: "macos-latest", only: ["leetvim", "sanitize", "tsan", "clang-tidy"]}
+              "aarch64-darwin": {runner: "macos-latest", only: ["leetvim", "sanitize"]}
             } as $platforms
             | [to_entries[]
                | select($platforms[.key])
