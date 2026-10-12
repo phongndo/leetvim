@@ -34,37 +34,26 @@ testcases and submit without leaving the editor. Nothing is installed into your 
 
 ## Install
 
-With [Nix](https://nixos.org) (flakes enabled), try it:
+Homebrew on macOS or Linux:
 
 ```sh
-nix run github:phongndo/leetvim
+brew install phongndo/tap/leetvim
 ```
 
-or put `leetvim` on your `PATH`:
+Or use the install script, [mise](https://mise.jdx.dev) or [Nix](https://nixos.org):
 
 ```sh
-nix profile install github:phongndo/leetvim
+curl -fsSL https://raw.githubusercontent.com/phongndo/leetvim/main/scripts/install.sh | sh
+mise use -g github:phongndo/leetvim
+nix profile add github:phongndo/leetvim
 ```
+
+Releases run on Apple Silicon macOS 14 or newer and on x86_64 and ARM64 Linux. Update with the
+method that installed leetvim; the install script's copy updates with `leetvim update`.
+[Installation](docs/installation.md) covers pinning a version, removal and building from source.
 
 leetvim runs `nvim`, `vim` or `vi` from your `PATH`; set `command` under `[editor]` in the
 [config](#configuration) to use something else.
-
-<details>
-<summary>Building without Nix</summary>
-
-The Nix build is the tested one. Elsewhere you need a C++23 compiler and standard library,
-CMake 3.28+, Ninja, pkg-config, and the development packages for libcurl, nlohmann_json 3.11+,
-CLI11, SQLite 3, OpenSSL (libcrypto) and libvterm, plus the toml++ headers from a commit newer
-than 3.4.0, whose parser has bugs on malformed files (`nix/tomlplusplus.nix` has the one
-leetvim is tested with); doctest too unless you pass `-DLEETVIM_BUILD_TESTS=OFF`.
-
-```sh
-cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-./build/leetvim
-```
-
-</details>
 
 ## Quick start
 
@@ -183,6 +172,7 @@ leetvim stats [username]         print profile statistics
 leetvim login [-b browser] [-p] [--cookie header]
 leetvim logout | sync
 leetvim config [--init | --edit]
+leetvim update [version]         update a copy the install script installed
 leetvim -c <file> ...            use another config file
 ```
 
@@ -282,7 +272,7 @@ and `nix fmt` formats everything (clang-format, nixfmt, gersemi).
 | `gcc` | non-portable code, by building with GCC and libstdc++ (Linux) |
 | `clang-tidy` | bug-prone patterns and static-analyzer findings in `src/`, `tests/` and `fuzz/` |
 | `fuzz` | crashes on the fuzz seeds and past findings, plus a fixed-seed burst of mutations |
-| `format`, `actionlint` | unformatted files, mistakes in the CI workflows |
+| `format`, `actionlint`, `shellcheck` | unformatted files, mistakes in the CI workflows and the install script |
 
 ### Fuzzing
 
@@ -302,6 +292,28 @@ fixed, copy its input into `fuzz/seeds/<target>/` so the `fuzz` check replays it
 every target for two minutes on each push and for 25 minutes nightly, carrying the corpus
 between runs; the nightly run also checks that LeetCode's API still matches what leetvim
 parses.
+
+### Releases
+
+`nix build .#dist` builds this system's release archive into `./result`: the executable, the
+install script and the licenses of everything linked in. On Linux the executable is static
+(musl); on macOS it links only system libraries. The Distribution workflow builds the archive
+for each platform on every push and pull request, then installs it on fresh runners without Nix,
+with the install script and with the Homebrew formula a release would publish.
+`scripts/dist.py check result` runs the same install, update and failure checks locally.
+
+To release, set the new version in `project()` in `CMakeLists.txt`, push it to `main`, then
+push its tag:
+
+```sh
+git tag v0.2.0 && git push origin v0.2.0
+```
+
+The Release workflow waits for that commit's CI and Distribution runs, then publishes the
+archives Distribution built, their checksums, the install script and the Homebrew formula, and
+asks the [tap](https://github.com/phongndo/homebrew-tap) to update (with a `HOMEBREW_TAP_TOKEN`
+secret; without one the tap updates within six hours). The workflow never changes a published
+release, so fix a mistake with a new version.
 
 ### Layout
 

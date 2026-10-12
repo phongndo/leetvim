@@ -10,7 +10,7 @@ let
     hash = "sha256-NVt6C2OH4CIYWBZlY3M7QWI+H7NY5NBfWhrXGyQL/dc=";
   };
 in
-runCommand "tomlplusplus-headers-3.4.0-unstable-2026-07-21" { } ''
+runCommand "tomlplusplus-headers-3.4.0-unstable-2026-07-21" { passthru = { inherit src; }; } ''
   mkdir -p $out/include
   cp -r ${src}/include/toml++ $out/include/
 ''

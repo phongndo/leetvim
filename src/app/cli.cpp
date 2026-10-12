@@ -2,6 +2,7 @@
 
 #include "app/app.hpp"
 #include "app/ui.hpp"
+#include "app/update.hpp"
 #include "content/html.hpp"
 #include "content/layout.hpp"
 #include "content/markdown.hpp"
@@ -580,11 +581,16 @@ int run_cli(int argc, const char* const* argv) {
     config->add_flag("--init", config_init, "write a commented default config");
     config->add_flag("--edit", config_edit, "open the config in your editor");
 
+    auto* update = cli.add_subcommand("update", "update a leetvim installed by the install script");
+    std::string update_version;
+    update->add_option("version", update_version, "a release such as 0.2.0; the latest by default");
+
     try {
         cli.parse(argc, argv);
     } catch (const CLI::ParseError& e) {
         return cli.exit(e);
     }
+    if (*update) return cmd_update(update_version);
 
     const fs::path config_path = paths::expand_user(config_file);
     const auto loaded = core::load_config(config_path);
