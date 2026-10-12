@@ -30,11 +30,16 @@ testcases and submit without leaving the editor. Nothing is installed into your 
 
 ## Install
 
-With [Nix](https://nixos.org) (flakes enabled):
+With [Nix](https://nixos.org) (flakes enabled), try it:
 
 ```sh
-nix run github:phongndo/leetvim              # try it
-nix profile install github:phongndo/leetvim  # put `leetvim` on your PATH
+nix run github:phongndo/leetvim
+```
+
+or put `leetvim` on your `PATH`:
+
+```sh
+nix profile install github:phongndo/leetvim
 ```
 
 leetvim runs `nvim`, `vim` or `vi` from your `PATH`; set `editor` in the config to use
@@ -59,12 +64,12 @@ cmake --build build
 ## Quick start
 
 ```sh
-leetvim login    # link your LeetCode account from your browser
-leetvim daily    # open today's question
-leetvim          # the dashboard
+leetvim login
+leetvim daily
 ```
 
-In the solve view the editor has focus, so leetvim's own keys follow a prefix, `Ctrl-g` by
+`login` links your LeetCode account from your browser and `daily` opens today's question;
+`leetvim` on its own opens the dashboard. In the solve view the editor has focus, so leetvim's own keys follow a prefix, `Ctrl-g` by
 default (like tmux): `C-g t` runs the testcases, `C-g s` submits, `C-g q` goes back to the
 list. Press `?` anywhere for every key.
 
@@ -218,10 +223,11 @@ clang-format), CMake, Ninja, treefmt, nixfmt and gersemi.
 nix develop
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLEETVIM_SANITIZE=ON
 cmake --build build && ctest --test-dir build
-LEETVIM_LIVE_TESTS=1 ./build/test_leetcode   # also query the real public API
-nix fmt                                      # clang-format, nixfmt, gersemi
-nix flake check                              # build and tests, clang-tidy, format check
 ```
+
+`LEETVIM_LIVE_TESTS=1 ./build/test_leetcode` also queries the real public API. `nix fmt`
+formats everything (clang-format, nixfmt, gersemi), and `nix flake check` runs the build and
+tests, clang-tidy and the format check.
 
 `src/` is split into layered libraries, each with tests under `tests/<module>/`:
 
