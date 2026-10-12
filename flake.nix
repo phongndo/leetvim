@@ -158,7 +158,8 @@
             ];
             buildPhase = ''
               runHook preBuild
-              run-clang-tidy -quiet -p . -j $NIX_BUILD_CORES "$NIX_BUILD_TOP/source/(src|tests|fuzz)/.*\.cpp$"
+              # Through python3: the script's /usr/bin/env shebang doesn't exist in the Linux sandbox.
+              python3 "$(type -P run-clang-tidy)" -quiet -p . -j $NIX_BUILD_CORES "$NIX_BUILD_TOP/source/(src|tests|fuzz)/.*\.cpp$"
               runHook postBuild
             '';
             doCheck = false;
