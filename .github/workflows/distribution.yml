@@ -83,3 +83,6 @@ jobs:
           brew install leetvim/test/leetvim
           brew test leetvim/test/leetvim
           "$(brew --prefix)/bin/leetvim" --version
+          # leetvim update hands a Homebrew install to brew, which finds it current.
+          "$(brew --prefix)/bin/leetvim" update 2>&1 | tee "$RUNNER_TEMP/update.log"
+          grep -q 'Updating with: .*brew upgrade leetvim' "$RUNNER_TEMP/update.log"

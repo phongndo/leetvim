@@ -193,15 +193,15 @@ def check(archive: Path, online: bool) -> None:
         if "checksum verification failed" not in output or command.readlink() != before:
             raise SystemExit("a corrupt download changed the installation")
 
-        # The installer leaves commands it did not install alone, and `leetvim update` only
-        # manages its own installations.
+        # The installer leaves commands it did not install alone, and `leetvim update` won't
+        # guess how to update a copy that no installer owns.
         foreign = root / "foreign"
         foreign.mkdir()
         (foreign / "leetvim").write_text("#!/bin/sh\n")
         run("sh", installer, ok=False, LEETVIM_INSTALL_DIR=str(foreign))
         extracted = extract(archive, root / "extracted") / "bin/leetvim"
-        if "brew upgrade leetvim" not in run(str(extracted), "update", ok=False):
-            raise SystemExit("leetvim update offered to manage an installation it did not make")
+        if "can only update a leetvim installed by" not in run(str(extracted), "update", ok=False):
+            raise SystemExit("leetvim update tried to update a copy that no installer owns")
 
         if online:
             # The static build finds the system's CA certificates.
