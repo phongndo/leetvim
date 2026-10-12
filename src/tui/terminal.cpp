@@ -26,6 +26,7 @@ constexpr std::string_view enter_seq = "\x1b[?1049h" // alternate screen
                                        "\x1b[?1004h" // focus events
                                        "\x1b[?25l";
 constexpr std::string_view mouse_on = "\x1b[?1002h\x1b[?1006h";
+constexpr std::string_view mouse_off = "\x1b[?1002l\x1b[?1006l";
 constexpr std::string_view leave_seq = "\x1b[?1002l\x1b[?1006l" // mouse off
                                        "\x1b[?2004l\x1b[?1004l"
                                        "\x1b[0 q" // default cursor shape
@@ -115,6 +116,11 @@ void Terminal::apply_modes() const {
     std::string seq(enter_seq);
     if (options_.mouse) seq += mouse_on;
     write_all(STDOUT_FILENO, seq);
+}
+
+void Terminal::set_mouse(bool on) {
+    options_.mouse = on;
+    if (active_) write_all(STDOUT_FILENO, on ? mouse_on : mouse_off);
 }
 
 void Terminal::leave() {

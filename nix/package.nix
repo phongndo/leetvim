@@ -10,6 +10,7 @@
   sqlite,
   libvterm-neovim,
   cli11,
+  tomlplusplus,
   doctest,
 }:
 
@@ -41,6 +42,7 @@ stdenv.mkDerivation {
     sqlite # browser cookie stores
     libvterm-neovim
     cli11
+    tomlplusplus # config.toml
   ];
 
   checkInputs = [ doctest ];

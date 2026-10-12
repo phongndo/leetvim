@@ -27,7 +27,7 @@ enum class SortKey : std::uint8_t { Id, Difficulty, Acceptance, Title, Status };
 /// The dashboard: stats box, problem list and preview.
 class HomeView : public View {
 public:
-    explicit HomeView(App& app) : app_(app) {}
+    explicit HomeView(App& app);
 
     void draw(const tui::Painter& p, tui::Rect area) override;
     bool on_key(const tui::KeyEvent& ev) override;
@@ -40,6 +40,8 @@ public:
     void refilter() { built_version_ = UINT64_MAX; }
     void pick_random();
     void select_slug(const std::string& slug);
+    /// Applies a changed [list] option, e.g. "sort".
+    void apply_option(std::string_view name);
 
 private:
     void rebuild();

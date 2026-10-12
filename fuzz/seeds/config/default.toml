@@ -1,0 +1,98 @@
+# leetvim settings, each at its default. Change them here, with :set <option>=<value>,
+# or in the settings screen (press , or type :settings).
+
+[solution]
+# Language for new solutions, as a LeetCode slug: cpp, python3, java, rust, golang, ...
+lang = "cpp"
+
+# Directory for solution files and custom testcases.
+workspace = "~/leetcode"
+
+# Solution file inside the workspace; {id} {slug} {lang} {ext} are filled in, and / makes
+# subdirectories.
+filename = "{id}.{slug}.{ext}"
+
+# Text added before the code in new solution files, per language, e.g. for your LSP;
+# [solution.inject_after] adds it after. It isn't submitted.
+# [solution.inject_before]
+# cpp = """
+# #include <bits/stdc++.h>
+# using namespace std;
+# """
+
+[editor]
+# Editor for the solution pane. Empty: nvim, vim or vi from PATH, then $VISUAL or $EDITOR.
+command = ""
+
+# Have vim/nvim save the file before running or submitting.
+save_before_run = true
+
+# Keys in the solve view, pressed after the prefix (the description and results panes take
+# them on their own too). Write a character (t, T, ?) or a key name, optionally with
+# modifiers: ctrl-x, alt-x, shift-x, f1-f12, enter, tab, space, backspace, up, down, left,
+# right, home, end, pageup, pagedown, insert, delete.
+[keys]
+# Prefix for leetvim's keys while the editor has focus, like tmux's; twice sends it to vim.
+prefix = "ctrl-g"
+
+# Run the testcases on LeetCode.
+run = "t"
+
+# Submit the solution.
+submit = "s"
+
+# Show or hide the results panel.
+results = "r"
+
+# Open the testcases tab.
+testcases = "c"
+
+# Zoom the editor to the whole screen.
+zoom = "z"
+
+# Back to the problem list; the editor keeps running.
+back = "q"
+
+# Show every key.
+help = "?"
+
+[ui]
+# Color theme. One of: default, tokyo-night, gruvbox, catppuccin, nord, light.
+theme = "default"
+
+# Paint the theme's background instead of keeping the terminal's.
+theme_background = false
+
+# Round the corners of boxes.
+rounded_corners = true
+
+# 24-bit color; auto uses it when $COLORTERM says the terminal has it. One of: auto, true,
+# false.
+truecolor = "auto"
+
+# Click to focus and select, scroll with the wheel.
+mouse = true
+
+# Width of the description pane, as a fraction of the screen (0.15 to 0.85).
+split = 0.42
+
+[list]
+# Show premium-only problems.
+show_paid = true
+
+# Sort order at startup; o cycles it, O reverses it. One of: id, difficulty, acceptance,
+# title, status.
+sort = "id"
+
+# Start with the stats box shown (1 toggles it).
+show_stats = true
+
+# Start with the preview shown (2 toggles it).
+show_preview = true
+
+[account]
+# Whose stats to show when you aren't signed in.
+username = ""
+
+# Re-sync the problem list at startup when it's older than this many hours.
+refresh_hours = 24

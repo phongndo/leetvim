@@ -83,9 +83,10 @@ Context make_context(const core::LoadedConfig& loaded, fs::path config_path) {
     for (const auto& w : loaded.warnings) std::println(stderr, "leetvim: config: {}", w);
     return {.config = loaded.config,
             .config_path = std::move(config_path),
-            .client = leetcode::Client(leetcode::load_credentials(), loaded.config.base_url),
+            .client = leetcode::Client(leetcode::load_credentials()),
             .cache = leetcode::Cache(paths::cache_dir()),
-            .workspace = core::Workspace(paths::expand_user(loaded.config.workspace))};
+            .workspace = core::Workspace(paths::expand_user(loaded.config.solution.workspace),
+                                         loaded.config.solution.filename)};
 }
 
 std::vector<leetcode::ProblemSummary> problems(const Context& ctx, bool quiet = false) {
@@ -286,11 +287,12 @@ int cmd_judge(const Context& ctx, const fs::path& file, bool submit) {
     auto id = start();
     if (!id && id.error().kind == leetcode::Error::Kind::Auth) {
         // An expired session imported from a browser is renewed from it, then retried once.
-        if (const auto account = core::refresh_account(client.credentials(), ctx.config.base_url)) {
+        if (const auto account =
+                core::refresh_account(client.credentials(), ctx.client.base_url())) {
             (void)leetcode::save_credentials(account->creds);
             std::println(stderr, "{}",
                          a.dim("refreshed your LeetCode session from " + account->from));
-            client = leetcode::Client(account->creds, ctx.config.base_url);
+            client = leetcode::Client(account->creds);
             id = start();
         }
     }
@@ -390,7 +392,7 @@ int login_with_cookie(const Context& ctx, std::string cookie) {
         std::println(stderr, "leetvim: the cookie must contain LEETCODE_SESSION and csrftoken");
         return 1;
     }
-    const auto account = core::verify_account(*creds, ctx.config.base_url, "a pasted cookie");
+    const auto account = core::verify_account(*creds, ctx.client.base_url(), "a pasted cookie");
     if (!account) {
         std::println(stderr, "leetvim: {}", account.error().message);
         return 1;
@@ -406,8 +408,8 @@ int cmd_login(const Context& ctx, const std::string& cookie, bool paste,
     const Ansi a;
     std::println(stderr, "Looking for your LeetCode session in your browsers…");
     const auto found = core::discover_accounts(
-        ctx.config.base_url,
-        {.domain = core::cookie_domain(ctx.config.base_url),
+        ctx.client.base_url(),
+        {.domain = core::cookie_domain(ctx.client.base_url()),
          .only = browser,
          .on_status = [&](std::string_view s) { std::println(stderr, "  {}", a.dim(s)); }});
 
@@ -419,7 +421,7 @@ int cmd_login(const Context& ctx, const std::string& cookie, bool paste,
         std::println(stderr,
                      "No signed-in LeetCode session found. Sign in at {} in your browser and run "
                      "`leetvim login` again, or `leetvim login --paste` to paste a cookie.",
-                     ctx.config.base_url);
+                     ctx.client.base_url());
         return 1;
     }
     std::size_t pick = 0;
@@ -448,7 +450,7 @@ int cmd_stats(const Context& ctx, std::string username) {
         if (ctx.client.has_credentials()) {
             if (auto st = ctx.client.user_status(); st && st->signed_in) username = st->username;
         }
-        if (username.empty()) username = ctx.config.username;
+        if (username.empty()) username = ctx.config.account.username;
     }
     if (username.empty()) {
         std::println(stderr, "leetvim: give a username, set `username` in the config, or log in");
@@ -500,7 +502,7 @@ int cmd_config(const Context& ctx, bool init, bool edit) {
         return 1;
     }
     if (edit) {
-        auto argv = core::resolve_editor(ctx.config.editor);
+        auto argv = core::resolve_editor(ctx.config.editor.command);
         if (argv.empty()) return 1;
         argv.push_back(ctx.config_path.string());
         std::vector<char*> ptrs;

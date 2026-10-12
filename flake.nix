@@ -26,7 +26,10 @@
     in
     {
       packages = forAllSystems (pkgs: rec {
-        leetvim = pkgs.callPackage ./nix/package.nix { inherit (llvmFor pkgs) stdenv; };
+        leetvim = pkgs.callPackage ./nix/package.nix {
+          inherit (llvmFor pkgs) stdenv;
+          tomlplusplus = pkgs.callPackage ./nix/tomlplusplus.nix { };
+        };
         default = leetvim;
         # `nix run .#fuzz -- TARGET [SECONDS]`
         fuzz = pkgs.callPackage ./nix/fuzz.nix { inherit leetvim; };

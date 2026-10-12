@@ -21,7 +21,7 @@ ui::BoxSpec spec(const App& app, Rect r, tui::Color color, std::string_view name
     return {.rect = r,
             .color = color,
             .focused = true,
-            .rounded = app.config().rounded_corners,
+            .rounded = app.config().ui.rounded_corners,
             .titles = {ui::title(app.theme(), name, number)},
             .right_titles = {},
             .hints = {}};

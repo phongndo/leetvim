@@ -30,6 +30,8 @@ public:
     bool enter(Options options);
     void leave();
     [[nodiscard]] bool active() const { return active_; }
+    /// Turns mouse reporting on or off.
+    void set_mouse(bool on);
 
     /// Restores the terminal so another program can use it; resume() takes it back.
     void suspend() const;

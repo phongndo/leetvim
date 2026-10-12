@@ -46,16 +46,17 @@ or put `leetvim` on your `PATH`:
 nix profile install github:phongndo/leetvim
 ```
 
-leetvim runs `nvim`, `vim` or `vi` from your `PATH`; set `editor` in the config to use
-something else.
+leetvim runs `nvim`, `vim` or `vi` from your `PATH`; set `command` under `[editor]` in the
+[config](#configuration) to use something else.
 
 <details>
 <summary>Building without Nix</summary>
 
 The Nix build is the tested one. Elsewhere you need a C++23 compiler and standard library,
 CMake 3.28+, Ninja, pkg-config, and the development packages for libcurl, nlohmann_json 3.11+,
-CLI11, SQLite 3, OpenSSL (libcrypto) and libvterm; doctest too unless you pass
-`-DLEETVIM_BUILD_TESTS=OFF`.
+CLI11, SQLite 3, OpenSSL (libcrypto) and libvterm, plus the toml++ headers from a commit newer
+than 3.4.0, whose parser has bugs on malformed files (`nix/tomlplusplus.nix` has the one
+leetvim is tested with); doctest too unless you pass `-DLEETVIM_BUILD_TESTS=OFF`.
 
 ```sh
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
@@ -73,9 +74,10 @@ leetvim daily
 ```
 
 `login` links your LeetCode account from your browser and `daily` opens today's question;
-`leetvim` on its own opens the dashboard. In the solve view the editor has focus, so leetvim's own keys follow a prefix, `Ctrl-g` by
-default (like tmux): `C-g t` runs the testcases, `C-g s` submits, `C-g q` goes back to the
-list. Press `?` anywhere for every key.
+`leetvim` on its own opens the dashboard. In the solve view the editor has focus, so leetvim's
+own keys follow a prefix, `Ctrl-g` by default (like tmux): `C-g t` runs the testcases, `C-g s`
+submits, `C-g q` goes back to the list. Press `?` anywhere for every key, and `,` for the
+settings, where the prefix and the rest can be changed.
 
 ## Your account
 
@@ -117,10 +119,10 @@ second copy:
 | Submissions, runtime and memory percentiles | LeetCode | the results panel's submissions tab |
 | Stats, streak, calendar, contest rating, skills | LeetCode | launch, accepted submissions, `R` |
 | Daily question and whether you've done it | LeetCode | launch, accepted submissions |
-| Your solutions | `~/leetcode/<id>.<slug>.<ext>` (the `workspace` setting) | you edit them; leetvim never overwrites one |
+| Your solutions | `~/leetcode/<id>.<slug>.<ext>` (`workspace` and `filename` in `[solution]`) | you edit them; leetvim never overwrites one |
 | Custom testcases | `<workspace>/.leetvim/testcases/<slug>.txt` | the testcases tab |
 | Session | `$XDG_DATA_HOME/leetvim/credentials` (mode 0600) | login and automatic renewal |
-| Settings | `$XDG_CONFIG_HOME/leetvim/config.toml` | `leetvim config --edit`, the theme and language pickers |
+| Settings | `~/.config/leetvim/config.toml` | the settings screen, `:set`, the theme and language pickers, `leetvim config --edit` |
 
 Problems you solve on the website show up the next time leetvim starts. The workspace is a
 plain directory of solution files, so it works well as a git repository.
@@ -142,9 +144,10 @@ plain directory of solution files, so it works well as a git repository.
 | `s` | stats dashboard |
 | `y` / `gx` | copy the link / open in the browser |
 | `L` / `T` | default language / theme |
+| `,` | settings |
 | `R` | re-sync problems and stats |
 
-**Solve view**, with the editor focused:
+**Solve view**, with the editor focused (these keys can be changed under `[keys]`):
 
 | Key | Action |
 | --- | --- |
@@ -163,8 +166,8 @@ split and `L` switches the solution language in the same vim. In the results pan
 testcases and `x` resets them to the examples.
 
 **Commands** (`:`): `:daily`, `:random`, `:open <id|slug|title>` (or just `:42`),
-`:lang <slug>`, `:theme <name>`, `:set <key>=<value>`, `:login`, `:logout`, `:sync`, `:stats`,
-`:run`, `:submit`, `:q`.
+`:lang <slug>`, `:theme <name>`, `:set <option>=<value>`, `:settings`, `:login`, `:logout`,
+`:sync`, `:stats`, `:run`, `:submit`, `:q`.
 
 ## Command line
 
@@ -187,7 +190,9 @@ leetvim -c <file> ...            use another config file
 
 ## Solutions and testcases
 
-Solutions live in the workspace (`~/leetcode` by default) as `<id>.<slug>.<ext>`:
+Solutions live in the workspace (`~/leetcode` by default) as `<id>.<slug>.<ext>`, or whatever
+the `filename` setting says (`{lang}/{id}.{slug}.{ext}` puts each language in its own
+directory):
 
 ```python
 # @leetvim id=1 slug=two-sum lang=python3
@@ -203,16 +208,47 @@ class Solution:
 
 Only the code between the markers is sent to LeetCode (leetcode.nvim's `@leet start` /
 `@leet end` markers work too), so includes and helpers for your LSP can live outside them. The
-`inject_before` / `inject_after` config tables add such text to new files. Custom testcases are
-stored one input line per parameter.
+`[solution.inject_before]` / `[solution.inject_after]` config tables add such text to new
+files. Custom testcases are stored one input line per parameter.
 
 ## Configuration
 
-`leetvim config --init` writes a commented `$XDG_CONFIG_HOME/leetvim/config.toml` listing every
-option: `lang`, `editor`, `workspace`, `prefix`, `save_before_run`, `theme`,
-`theme_background`, `rounded_corners`, `truecolor`, `mouse`, `split`, `show_paid`, `username`,
-`refresh_hours`, `[inject_before]` and `[inject_after]`. Picking a theme or default language
-in the TUI updates the file in place, keeping your comments.
+Settings live in `~/.config/leetvim/config.toml` on macOS and Linux (under `$XDG_CONFIG_HOME`
+if you set it). Every way of changing them writes that file in place, keeping your comments:
+
+- **The settings screen**: `,` or `:settings`. `Enter` changes the selected option (moving
+  through a choice previews it; for a key, press the new key) and `r` resets it.
+- **`:set <option>=<value>`**, e.g. `:set prefix=ctrl-a` or `:set ui.split=0.5`; `:set theme`
+  shows the current value.
+- **By hand**: `leetvim config --edit` opens the file, creating it with every option at its
+  default and a comment on each, and `leetvim config` prints its path.
+
+```toml
+[solution]
+lang = "python3"
+filename = "{lang}/{id}.{slug}.{ext}"
+
+[keys]
+prefix = "ctrl-a"
+run = "f5"
+
+[ui]
+theme = "tokyo-night"
+```
+
+| Section | Options |
+| --- | --- |
+| `[solution]` | `lang`, `workspace`, `filename`, and the `[solution.inject_before]` / `[solution.inject_after]` tables |
+| `[editor]` | `command`, `save_before_run` |
+| `[keys]` | `prefix`, `run`, `submit`, `results`, `testcases`, `zoom`, `back`, `help` |
+| `[ui]` | `theme`, `theme_background`, `rounded_corners`, `truecolor`, `mouse`, `split` |
+| `[list]` | `show_paid`, `sort`, `show_stats`, `show_preview` |
+| `[account]` | `username`, `refresh_hours` |
+
+A key is a character (`t`, `T`, `?`) or a name with optional modifiers: `ctrl-a`, `alt-x`,
+`shift-tab`, `f5`, `space`, `enter`. leetvim reports mistakes in the file with their line
+numbers when it starts, and a bad value keeps its default. A file that isn't valid TOML is
+ignored until it's fixed, and leetvim won't edit it either.
 
 The problem list and question details are cached and refreshed every `refresh_hours` (24 by
 default), or on `R` / `leetvim sync`. Set `LEETVIM_LOG=/path/to/file` to log HTTP requests and

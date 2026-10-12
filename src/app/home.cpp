@@ -10,6 +10,7 @@
 #include <cmath>
 #include <ctime>
 #include <format>
+#include <iterator>
 #include <map>
 #include <random>
 #include <utility>
@@ -171,6 +172,24 @@ std::string Filter::describe() const {
 
 // ---------------------------------------------------------------- list state
 
+HomeView::HomeView(App& app) : app_(app) {
+    for (const auto* name : {"sort", "show_stats", "show_preview"}) apply_option(name);
+}
+
+void HomeView::apply_option(std::string_view name) {
+    const auto& list = app_.config().list;
+    if (name == "sort") {
+        const auto* it = std::ranges::find(sort_names, list.sort);
+        sort_ = it != sort_names.end() ? static_cast<SortKey>(std::distance(sort_names.begin(), it))
+                                       : SortKey::Id;
+    } else if (name == "show_stats") {
+        show_stats_ = list.show_stats;
+    } else if (name == "show_preview") {
+        show_preview_ = list.show_preview;
+    }
+    refilter();
+}
+
 void HomeView::rebuild() {
     const auto& data = app_.data();
     const std::uint64_t version = data.problems_version;
@@ -179,7 +198,7 @@ void HomeView::rebuild() {
     applied_search_ = search_.text();
 
     const auto& problems = data.problems;
-    const bool show_paid = app_.config().show_paid;
+    const bool show_paid = app_.config().list.show_paid;
     const std::string query(str::trim(applied_search_));
     std::vector<std::pair<int, std::size_t>> scored;
     scored.reserve(problems.size());
@@ -578,7 +597,7 @@ void HomeView::draw_stats(const tui::Painter& p, Rect r) {
                             {.rect = r,
                              .color = t.stats_box,
                              .focused = true,
-                             .rounded = app_.config().rounded_corners,
+                             .rounded = app_.config().ui.rounded_corners,
                              .titles = {ui::title(t, "stats", 1)},
                              .right_titles = std::move(right),
                              .hints = {}});
@@ -595,7 +614,7 @@ void HomeView::draw_stats(const tui::Painter& p, Rect r) {
                                  {.rect = side,
                                   .color = t.div_line,
                                   .focused = true,
-                                  .rounded = app_.config().rounded_corners,
+                                  .rounded = app_.config().ui.rounded_corners,
                                   .titles = {ui::title(t, "solved")},
                                   .right_titles = {},
                                   .hints = {}});
@@ -739,7 +758,7 @@ void HomeView::draw_list(const tui::Painter& p, Rect r) {
                             {.rect = r,
                              .color = t.list_box,
                              .focused = !focus_preview_,
-                             .rounded = app_.config().rounded_corners,
+                             .rounded = app_.config().ui.rounded_corners,
                              .titles = std::move(titles),
                              .right_titles = std::move(right),
                              .hints = {ui::hint(t, "/", "search"), ui::hint(t, "f", "filter"),
@@ -843,7 +862,7 @@ void HomeView::draw_preview(const tui::Painter& p, Rect r) {
                             {.rect = r,
                              .color = t.preview_box,
                              .focused = focus_preview_,
-                             .rounded = app_.config().rounded_corners,
+                             .rounded = app_.config().ui.rounded_corners,
                              .titles = {ui::title(t, "preview", 2, true)},
                              .right_titles = std::move(right),
                              .hints = {ui::hint(t, "J/K", "scroll"), ui::hint(t, "⏎", "solve"),

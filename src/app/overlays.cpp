@@ -28,9 +28,10 @@ std::size_t prev_boundary(const std::string& s, std::size_t pos) {
     return last;
 }
 
-/// Shared frame for centered overlays: clears the area and draws a titled box.
+} // namespace
+
 Rect overlay_frame(const App& app, const tui::Painter& p, Rect r, std::string_view title,
-                   std::vector<tui::Segments> hints = {}) {
+                   std::vector<tui::Segments> hints) {
     const auto& t = app.theme();
     p.clear(r, app.base_bg());
     return ui::box(p, t,
@@ -42,8 +43,6 @@ Rect overlay_frame(const App& app, const tui::Painter& p, Rect r, std::string_vi
                     .right_titles = {},
                     .hints = std::move(hints)});
 }
-
-} // namespace
 
 Rect centered(Rect area, int w, int h) {
     w = std::min(w, area.w);
@@ -402,7 +401,9 @@ struct HelpSection {
     std::vector<std::pair<std::string, std::string_view>> keys;
 };
 
-std::vector<HelpSection> help_sections(const std::string& prefix) {
+std::vector<HelpSection> help_sections(const Bindings& keys) {
+    const std::string prefix = keys.prefix.to_string();
+    const auto after = [&](const tui::KeySpec& key) { return prefix + " " + key.to_string(); };
     return {
         {"Problems",
          {{"j k ↓ ↑", "move"},
@@ -422,12 +423,12 @@ std::vector<HelpSection> help_sections(const std::string& prefix) {
           {"y gx", "copy link / open in browser"}}},
         {"Solving",
          {{prefix + " h j k l", "focus description / results / editor"},
-          {prefix + " t", "run the testcases on LeetCode"},
-          {prefix + " s", "submit"},
-          {prefix + " r", "toggle the results panel"},
-          {prefix + " c", "show testcases"},
-          {prefix + " z", "zoom the editor"},
-          {prefix + " q", "back to the problem list"},
+          {after(keys.run), "run the testcases on LeetCode"},
+          {after(keys.submit), "submit"},
+          {after(keys.results), "toggle the results panel"},
+          {after(keys.testcases), "show testcases"},
+          {after(keys.zoom), "zoom the editor"},
+          {after(keys.back), "back to the problem list"},
           {prefix + " " + prefix, "send " + prefix + " to the editor"},
           {"(description) j k C-d C-u gg G", "scroll"},
           {"(description) H", "show hints"},
@@ -440,6 +441,7 @@ std::vector<HelpSection> help_sections(const std::string& prefix) {
          {{":", "command line (:help commands below)"},
           {"?", "this help"},
           {"L T", "language / theme picker"},
+          {",", "settings"},
           {"q", "back / quit"},
           {"C-c", "quit"},
           {"C-z", "suspend"}}},
@@ -447,7 +449,8 @@ std::vector<HelpSection> help_sections(const std::string& prefix) {
          {{":daily  :random  :stats", ""},
           {":open <id|slug|title>", "open a problem"},
           {":lang <slug>  :theme <name>", "switch language / theme"},
-          {":set <key>=<value>", "change an option for this session"},
+          {":set <option>=<value>", "change and save an option"},
+          {":set  :settings", "all the settings"},
           {":login", "link your account from your browser"},
           {":login paste  :logout", "paste a cookie / forget the session"},
           {":sync", "re-download the problem list"},
@@ -459,7 +462,7 @@ std::vector<HelpSection> help_sections(const std::string& prefix) {
 
 void HelpOverlay::draw(const tui::Painter& p, Rect area) {
     const auto& t = app_.theme();
-    const auto sections = help_sections(app_.prefix().to_string());
+    const auto sections = help_sections(app_.keys());
     int total = 0;
     for (const auto& s : sections) total += static_cast<int>(s.keys.size()) + 2;
     const Rect r = centered(area, std::min(area.w - 2, 84), std::min(area.h - 2, total + 2));

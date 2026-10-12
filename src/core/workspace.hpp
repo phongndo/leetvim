@@ -34,13 +34,23 @@ std::optional<SolutionMeta> parse_header(std::string_view content);
 /// Infers identity from a name like "1.two-sum.cpp".
 std::optional<SolutionMeta> parse_filename(const std::filesystem::path& path);
 
+constexpr std::string_view default_filename_pattern = "{id}.{slug}.{ext}";
+/// Checks a solution path pattern: relative, naming the problem ({id} or {slug}) and the
+/// language ({lang} or {ext}), with no other placeholders. Returns an error, or "".
+std::string check_filename_pattern(std::string_view pattern);
+/// The pattern filled in: "{id}.{slug}.{ext}" -> "1.two-sum.cpp".
+std::string solution_filename(std::string_view pattern, const leetcode::Question& q,
+                              const Language& lang);
+
 /// Groups raw testcase lines into cases of `lines_per_case` lines (0: one case).
 std::vector<std::string> group_testcases(std::string_view input, std::size_t lines_per_case);
 
 /// Solution files and custom testcases on disk.
 class Workspace {
 public:
-    explicit Workspace(std::filesystem::path root) : root_(std::move(root)) {}
+    explicit Workspace(std::filesystem::path root,
+                       std::string filename_pattern = std::string(default_filename_pattern))
+        : root_(std::move(root)), pattern_(std::move(filename_pattern)) {}
 
     [[nodiscard]] const std::filesystem::path& root() const { return root_; }
     [[nodiscard]] std::filesystem::path solution_path(const leetcode::Question& q,
@@ -58,11 +68,9 @@ public:
     [[nodiscard]] std::expected<std::filesystem::path, std::string>
     ensure_testcases(const leetcode::Question& q) const;
 
-    /// Existing solution files for a problem, any language.
-    [[nodiscard]] std::vector<std::filesystem::path> solutions_for(std::string_view slug) const;
-
 private:
     std::filesystem::path root_;
+    std::string pattern_;
 };
 
 } // namespace lv::core

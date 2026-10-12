@@ -64,7 +64,7 @@ std::string find_executable(std::string_view name) {
 std::vector<std::string> resolve_editor(std::string_view configured) {
     if (!str::trim(configured).empty()) return split_command(configured);
     // leetvim is about solving in vim, so a vi-family editor wins over $EDITOR; set
-    // `editor` in the config to use something else.
+    // editor.command in the config to use something else.
     for (const char* name : {"nvim", "vim", "vi"}) {
         if (auto exe = find_executable(name); !exe.empty()) return {exe};
     }

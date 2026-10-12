@@ -155,3 +155,19 @@ TEST_CASE("key specs") {
     CHECK_FALSE(KeySpec::parse("ctrl-").has_value());
     CHECK_FALSE(KeySpec::parse("nonsense").has_value());
 }
+
+TEST_CASE("key specs read back") {
+    for (const auto* text : {"ctrl-g", "t", "T", "?", "f5", "space", "alt-x", "shift-tab",
+                             "pagedown", "ctrl--", "ctrl-\\", "é", "shift-1"}) {
+        CAPTURE(text);
+        const auto spec = KeySpec::parse(text);
+        REQUIRE(spec.has_value());
+        CHECK(spec->to_spec() == text);
+        CHECK(KeySpec::parse(spec->to_spec()) == spec);
+    }
+    // What a captured key press turns into.
+    const KeyEvent ctrl_a{.key = Key::Char, .ch = 'a', .mods = ModCtrl, .raw = "\x01"};
+    CHECK(KeySpec::of(ctrl_a).to_spec() == "ctrl-a");
+    CHECK(KeySpec::of(KeyEvent{.key = Key::F12, .ch = 0, .mods = ModNone, .raw = {}}).to_spec()
+          == "f12");
+}

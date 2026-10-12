@@ -73,6 +73,20 @@ protected:
     bool closed_ = false;
 };
 
+/// The [keys] settings, parsed.
+struct Bindings {
+    tui::KeySpec prefix;
+    tui::KeySpec run;
+    tui::KeySpec submit;
+    tui::KeySpec results;
+    tui::KeySpec testcases;
+    tui::KeySpec zoom;
+    tui::KeySpec back;
+    tui::KeySpec help;
+
+    static Bindings from(const core::Config::Keys& keys);
+};
+
 /// Run/submit lifecycle of a session.
 enum class JobState : std::uint8_t { Idle, Saving, Running, Done, Failed };
 
@@ -161,17 +175,18 @@ public:
 
     // --- state for views ---
     [[nodiscard]] const core::Config& config() const { return config_; }
+    [[nodiscard]] const std::filesystem::path& config_path() const { return config_path_; }
     [[nodiscard]] const tui::Theme& theme() const { return *theme_; }
     /// Screen background: the theme's when theme_background is on, else the terminal's.
     [[nodiscard]] tui::Color base_bg() const {
-        return config_.theme_background ? theme_->main_bg : tui::Color::none();
+        return config_.ui.theme_background ? theme_->main_bg : tui::Color::none();
     }
     [[nodiscard]] Data& data() { return data_; }
     [[nodiscard]] const leetcode::Client& client() const { return client_; }
     [[nodiscard]] const core::Workspace& workspace() const { return workspace_; }
     [[nodiscard]] Dispatcher& dispatcher() { return *dispatcher_; }
     [[nodiscard]] int tick() const { return tick_; }
-    [[nodiscard]] const tui::KeySpec& prefix() const { return prefix_; }
+    [[nodiscard]] const Bindings& keys() const { return keys_; }
     [[nodiscard]] bool signed_in() const { return data_.user && data_.user->signed_in; }
     [[nodiscard]] std::string username() const;
     [[nodiscard]] Session* session(const std::string& slug);
@@ -206,7 +221,9 @@ public:
     void logout();
     void set_theme(std::string_view name, bool persist);
     void set_language(std::string_view slug, bool persist);
-    void set_option(std::string_view key, std::string_view value);
+    /// Validates and applies an option ("ui.theme" or a unique bare name), saving it to the
+    /// config file unless `persist` is false. Problems are shown as toasts.
+    void set_option(std::string_view key, std::string_view value, bool persist = true);
     void run_command(std::string_view line);
 
     // Solve actions on a session.
@@ -249,13 +266,15 @@ private:
     void begin_job(Session& s);
     void finish_job(Session& s, leetcode::RunResult r);
     void finish_quit();
-    void persist(std::string_view key, const std::string& value_toml);
+    void apply_option(const core::Option& option);
+    void persist(const core::Option& option);
+    [[nodiscard]] bool truecolor() const;
 
     core::Config config_;
     std::filesystem::path config_path_;
     std::vector<std::string> warnings_;
     const tui::Theme* theme_ = nullptr;
-    tui::KeySpec prefix_;
+    Bindings keys_;
     leetcode::Client client_;
     leetcode::Cache cache_;
     core::Workspace workspace_;

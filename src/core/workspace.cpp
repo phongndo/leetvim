@@ -110,6 +110,44 @@ std::optional<SolutionMeta> parse_filename(const fs::path& path) {
     return meta;
 }
 
+std::string check_filename_pattern(std::string_view pattern) {
+    bool problem = false;
+    bool language = false;
+    for (std::size_t open = pattern.find('{'); open != std::string_view::npos;
+         open = pattern.find('{', open + 1)) {
+        const auto close = pattern.find('}', open);
+        if (close == std::string_view::npos) return "unclosed {";
+        const auto name = pattern.substr(open + 1, close - open - 1);
+        if (name == "id" || name == "slug") {
+            problem = true;
+        } else if (name == "lang" || name == "ext") {
+            language = true;
+        } else {
+            return std::format("unknown placeholder {{{}}}; use {{id}} {{slug}} {{lang}} {{ext}}",
+                               name);
+        }
+    }
+    if (!problem) return "needs {id} or {slug} to tell problems apart";
+    if (!language) return "needs {ext} or {lang} to tell languages apart";
+    if (pattern.starts_with('/') || pattern.starts_with('~')) {
+        return "must be relative to the workspace";
+    }
+    for (const auto part : str::split(pattern, '/')) {
+        if (part.empty() || part == "." || part == "..") return "has an empty, . or .. part";
+    }
+    return {};
+}
+
+std::string solution_filename(std::string_view pattern, const leetcode::Question& q,
+                              const Language& lang) {
+    std::string out(pattern);
+    out = str::replace_all(out, "{id}", q.frontend_id);
+    out = str::replace_all(out, "{slug}", q.slug);
+    out = str::replace_all(out, "{lang}", lang.slug);
+    out = str::replace_all(out, "{ext}", lang.ext);
+    return out;
+}
+
 std::vector<std::string> group_testcases(std::string_view input, std::size_t lines_per_case) {
     std::vector<std::string> cases;
     auto lines = str::lines(input);
@@ -131,7 +169,7 @@ std::vector<std::string> group_testcases(std::string_view input, std::size_t lin
 }
 
 fs::path Workspace::solution_path(const leetcode::Question& q, const Language& lang) const {
-    return root_ / std::format("{}.{}.{}", q.frontend_id, q.slug, lang.ext);
+    return root_ / solution_filename(pattern_, q, lang);
 }
 
 fs::path Workspace::testcases_path(std::string_view slug) const {
@@ -173,19 +211,6 @@ Workspace::ensure_testcases(const leetcode::Question& q) const {
         return std::unexpected(std::format("cannot write {}", path.string()));
     }
     return path;
-}
-
-std::vector<fs::path> Workspace::solutions_for(std::string_view slug) const {
-    std::vector<fs::path> out;
-    std::error_code ec;
-    for (const auto& entry : fs::directory_iterator(root_, ec)) {
-        if (!entry.is_regular_file(ec)) continue;
-        if (const auto meta = parse_filename(entry.path()); meta && meta->slug == slug) {
-            out.push_back(entry.path());
-        }
-    }
-    std::ranges::sort(out);
-    return out;
 }
 
 } // namespace lv::core

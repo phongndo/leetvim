@@ -2,6 +2,7 @@
 
 #include "app/home.hpp"
 #include "app/overlays.hpp"
+#include "app/settings.hpp"
 #include "app/solve.hpp"
 #include "app/stats.hpp"
 #include "app/ui.hpp"
@@ -104,27 +105,33 @@ std::string join_lines(const std::vector<std::string>& cases) {
 
 // ---------------------------------------------------------------- lifecycle
 
+Bindings Bindings::from(const core::Config::Keys& keys) {
+    // The config only holds valid specs; the defaults are a fallback for a Config built in code.
+    const core::Config::Keys defaults;
+    const auto spec = [](const std::string& text, const std::string& fallback) {
+        return tui::KeySpec::parse(text).value_or(
+            tui::KeySpec::parse(fallback).value_or(tui::KeySpec{}));
+    };
+    return {.prefix = spec(keys.prefix, defaults.prefix),
+            .run = spec(keys.run, defaults.run),
+            .submit = spec(keys.submit, defaults.submit),
+            .results = spec(keys.results, defaults.results),
+            .testcases = spec(keys.testcases, defaults.testcases),
+            .zoom = spec(keys.zoom, defaults.zoom),
+            .back = spec(keys.back, defaults.back),
+            .help = spec(keys.help, defaults.help)};
+}
+
 App::App(core::Config config, fs::path config_path, std::vector<std::string> warnings)
     : config_(std::move(config)), config_path_(std::move(config_path)),
-      warnings_(std::move(warnings)), theme_(&tui::theme_named(config_.theme)),
-      client_(leetcode::load_credentials(), config_.base_url), cache_(paths::cache_dir()),
-      workspace_(paths::expand_user(config_.workspace)),
+      warnings_(std::move(warnings)), theme_(&tui::theme_named(config_.ui.theme)),
+      keys_(Bindings::from(config_.keys)), client_(leetcode::load_credentials()),
+      cache_(paths::cache_dir()),
+      workspace_(paths::expand_user(config_.solution.workspace), config_.solution.filename),
+      home_(std::make_unique<HomeView>(*this)), stats_view_(std::make_unique<StatsView>(*this)),
+      solve_view_(std::make_unique<SolveView>(*this)), current_(home_.get()),
       dispatcher_(std::make_unique<Dispatcher>(4)) {
-    if (tui::theme_named(config_.theme).name != config_.theme) {
-        warnings_.push_back(std::format("unknown theme '{}'", config_.theme));
-    }
-    if (auto spec = tui::KeySpec::parse(config_.prefix)) {
-        prefix_ = *spec;
-    } else {
-        prefix_ = tui::KeySpec{.key = Key::Char, .ch = U'g', .mods = ModCtrl};
-        warnings_.push_back(std::format("invalid prefix '{}', using ctrl-g", config_.prefix));
-    }
-    renderer_.set_truecolor(config_.truecolor == "auto" ? tui::Terminal::truecolor_supported()
-                                                        : config_.truecolor == "true");
-    home_ = std::make_unique<HomeView>(*this);
-    stats_view_ = std::make_unique<StatsView>(*this);
-    solve_view_ = std::make_unique<SolveView>(*this);
-    current_ = home_.get();
+    renderer_.set_truecolor(truecolor());
 }
 
 App::~App() {
@@ -135,7 +142,7 @@ App::~App() {
 }
 
 int App::run(const Options& options) {
-    if (!terminal_.enter({.mouse = config_.mouse})) {
+    if (!terminal_.enter({.mouse = config_.ui.mouse})) {
         (void)std::fputs("leetvim: the TUI needs an interactive terminal\n", stderr);
         return 1;
     }
@@ -344,6 +351,8 @@ void App::handle_key(const KeyEvent& ev) {
         run_command("lang");
     } else if (ev.is('T')) {
         run_command("theme");
+    } else if (ev.is(',')) {
+        push_overlay(std::make_unique<SettingsOverlay>(*this));
     } else if (ev.is('z', ModCtrl)) {
         terminal_.stop_process();
         renderer_.invalidate();
@@ -388,7 +397,7 @@ void App::render() {
         const int w = std::min(area.w - 4, unicode::display_width(it->text) + 4);
         const tui::Rect r{area.right() - w - 2, y - 2, w, 3};
         p.clear(r, base_bg());
-        tui::draw_box(p, r, ui::fg(color), config_.rounded_corners);
+        tui::draw_box(p, r, ui::fg(color), config_.ui.rounded_corners);
         p.text(r.x + 2, r.y + 1, it->text, ui::fg(t.title), r.w - 4);
         y -= 3;
     }
@@ -401,7 +410,7 @@ void App::render() {
 
 std::string App::username() const {
     if (data_.user && data_.user->signed_in) return data_.user->username;
-    return config_.username;
+    return config_.account.username;
 }
 
 Session* App::session(const std::string& slug) {
@@ -472,7 +481,8 @@ void App::mark_status(const std::string& slug, Status status) {
 void App::sync_problems(bool force) {
     if (data_.syncing) return;
     const auto age = std::chrono::system_clock::now() - data_.synced_at;
-    if (!force && !data_.problems.empty() && age < std::chrono::hours(config_.refresh_hours))
+    if (!force && !data_.problems.empty()
+        && age < std::chrono::hours(config_.account.refresh_hours))
         return;
     data_.syncing = true;
     data_.sync_done = 0;
@@ -612,7 +622,7 @@ void App::refresh_user() {
         fetch_stats();
         return;
     }
-    dispatcher_->run([this, client = client_, base = config_.base_url](const std::stop_token&) {
+    dispatcher_->run([this, client = client_, base = client_.base_url()](const std::stop_token&) {
         auto status = client.user_status();
         // An expired session imported from a browser is renewed from that browser.
         std::optional<core::Account> refreshed;
@@ -717,7 +727,7 @@ void App::open_problem(const std::string& slug) {
     if (!slot) {
         slot = std::make_unique<Session>();
         slot->slug = slug;
-        slot->lang = core::find_language(config_.lang);
+        slot->lang = core::find_language(config_.solution.lang);
         if (slot->lang == nullptr) slot->lang = core::find_language("cpp");
     }
     Session& s = *slot;
@@ -798,20 +808,20 @@ void App::respawn_editor(Session& s) {
 bool App::spawn_editor(Session& s, std::string& error) {
     const auto& q = *s.question;
     const auto lang_slug = std::string(s.lang->slug);
-    const auto before = config_.inject_before.find(lang_slug);
-    const auto after = config_.inject_after.find(lang_slug);
-    auto file =
-        workspace_.ensure_solution(q, *s.lang, client_.problem_url(q.slug),
-                                   before != config_.inject_before.end() ? before->second : "",
-                                   after != config_.inject_after.end() ? after->second : "");
+    const auto before = config_.solution.inject_before.find(lang_slug);
+    const auto after = config_.solution.inject_after.find(lang_slug);
+    auto file = workspace_.ensure_solution(
+        q, *s.lang, client_.problem_url(q.slug),
+        before != config_.solution.inject_before.end() ? before->second : "",
+        after != config_.solution.inject_after.end() ? after->second : "");
     if (!file) {
         error = file.error();
         return false;
     }
     s.file = *file;
-    s.editor_argv = core::resolve_editor(config_.editor);
+    s.editor_argv = core::resolve_editor(config_.editor.command);
     if (s.editor_argv.empty()) {
-        error = "no editor found: install nvim/vim or set `editor` in the config";
+        error = "no editor found: install nvim/vim or set editor.command in the config";
         return false;
     }
     s.sync_file = fs::temp_directory_path() / std::format("leetvim-{}-{}.sync", getpid(), s.slug);
@@ -901,27 +911,21 @@ void App::finish_quit() {
 
 // ---------------------------------------------------------------- settings
 
-void App::persist(std::string_view key, const std::string& value_toml) {
-    std::error_code ec;
-    if (!fs::exists(config_path_, ec)) {
-        [[maybe_unused]] const bool ok =
-            paths::write_file(config_path_, core::default_config_text());
-    }
-    if (!core::update_config_file(config_path_, key, value_toml)) {
-        toast("could not write " + config_path_.string(), Level::Error);
+bool App::truecolor() const {
+    return config_.ui.truecolor == "auto" ? tui::Terminal::truecolor_supported()
+                                          : config_.ui.truecolor == "true";
+}
+
+void App::persist(const core::Option& option) {
+    if (auto err =
+            core::update_config_file(config_path_, option, core::toml_value(config_, option));
+        !err.empty()) {
+        toast(err, Level::Error);
     }
 }
 
 void App::set_theme(std::string_view name, bool persist_it) {
-    const auto& theme = tui::theme_named(name);
-    if (theme.name != name) {
-        toast(std::format("unknown theme '{}'", name), Level::Error);
-        return;
-    }
-    theme_ = &theme;
-    config_.theme = name;
-    if (persist_it) persist("theme", core::toml_quote(name));
-    dirty_ = true;
+    set_option("ui.theme", name, persist_it);
 }
 
 void App::set_language(std::string_view slug, bool persist_it) {
@@ -930,32 +934,51 @@ void App::set_language(std::string_view slug, bool persist_it) {
         toast(std::format("unknown language '{}'", slug), Level::Error);
         return;
     }
-    config_.lang = lang->slug;
-    if (persist_it) persist("lang", core::toml_quote(lang->slug));
+    set_option("solution.lang", lang->slug, persist_it);
     toast(std::format("default language: {}", lang->name), Level::Success);
 }
 
-void App::set_option(std::string_view key, std::string_view value) {
-    if (auto err = core::set_config_value(config_, key, value); !err.empty()) {
+void App::set_option(std::string_view key, std::string_view value, bool persist_it) {
+    const auto* option = core::find_option(str::trim(key));
+    if (option == nullptr) {
+        toast(std::format("unknown option '{}'", str::trim(key)), Level::Error);
+        return;
+    }
+    if (auto err = core::set_option(config_, *option, str::trim(value)); !err.empty()) {
         toast(err, Level::Error);
         return;
     }
-    if (key == "theme") set_theme(config_.theme, false);
-    if (key == "prefix") {
-        if (auto spec = tui::KeySpec::parse(config_.prefix)) prefix_ = *spec;
+    apply_option(*option);
+    if (persist_it) persist(*option);
+}
+
+void App::apply_option(const core::Option& option) {
+    const std::string key = option.key();
+    if (key == "ui.theme") {
+        theme_ = &tui::theme_named(config_.ui.theme);
+    } else if (key == "ui.truecolor") {
+        renderer_.set_truecolor(truecolor());
+    } else if (key == "ui.mouse") {
+        terminal_.set_mouse(config_.ui.mouse);
+    } else if (key == "solution.workspace" || key == "solution.filename") {
+        workspace_ = core::Workspace(paths::expand_user(config_.solution.workspace),
+                                     config_.solution.filename);
+    } else if (key == "account.username") {
+        if (!signed_in()) fetch_stats();
+    } else if (option.section == "keys") {
+        keys_ = Bindings::from(config_.keys);
+        for (auto& conflict : core::key_conflicts(config_))
+            toast(std::move(conflict), Level::Warning);
+    } else if (option.section == "list") {
+        home_->apply_option(option.name);
     }
-    if (key == "truecolor") {
-        renderer_.set_truecolor(config_.truecolor == "auto" ? tui::Terminal::truecolor_supported()
-                                                            : config_.truecolor == "true");
-    }
-    if (key == "workspace") workspace_ = core::Workspace(paths::expand_user(config_.workspace));
     renderer_.invalidate();
     dirty_ = true;
 }
 
 void App::link_account() {
     toast("looking for your LeetCode session in your browsers…");
-    dispatcher_->run([this, base = config_.base_url](const std::stop_token&) {
+    dispatcher_->run([this, base = client_.base_url()](const std::stop_token&) {
         auto found = core::discover_accounts(
             base, {.domain = core::cookie_domain(base),
                    .only = {},
@@ -1010,7 +1033,7 @@ void App::apply_account(const core::Account& account, bool refreshed) {
     if (!leetcode::save_credentials(account.creds)) {
         toast("signed in, but could not save the session", Level::Warning);
     }
-    client_ = leetcode::Client(account.creds, config_.base_url);
+    client_ = leetcode::Client(account.creds);
     data_.user = account.status;
     toast(refreshed ? std::format("refreshed your LeetCode session from {}", account.from)
                     : std::format("linked {} from {}", account.status.username, account.from),
@@ -1027,7 +1050,7 @@ void App::login(const std::string& cookie) {
         return;
     }
     toast("checking your session…");
-    dispatcher_->run([this, creds = *creds, base = config_.base_url](const std::stop_token&) {
+    dispatcher_->run([this, creds = *creds, base = client_.base_url()](const std::stop_token&) {
         auto account = core::verify_account(creds, base, "a pasted cookie");
         dispatcher_->post([this, account = std::move(account)] {
             if (!account) {
@@ -1064,7 +1087,7 @@ void App::welcome() {
 
 void App::logout() {
     leetcode::clear_credentials();
-    client_ = leetcode::Client({}, config_.base_url);
+    client_ = leetcode::Client();
     data_.user.reset();
     data_.streak.reset();
     toast("signed out");
@@ -1127,7 +1150,7 @@ void App::run_command(std::string_view line) {
                                      .on_done = {},
                                      .on_highlight = {},
                                      .on_cancel = {}},
-            false, std::set<std::string>{}, config_.lang));
+            false, std::set<std::string>{}, config_.solution.lang));
     } else if (cmd == "theme" || cmd == "colorscheme" || cmd == "colo") {
         if (!arg.empty()) {
             set_theme(arg, true);
@@ -1140,7 +1163,7 @@ void App::run_command(std::string_view line) {
                              .value = std::string(th.name),
                              .color = th.hi_fg});
         }
-        const std::string original = config_.theme;
+        const std::string original = config_.ui.theme;
         push_overlay(std::make_unique<PickerOverlay>(
             *this, "theme", std::move(items),
             PickerOverlay::Callbacks{
@@ -1148,7 +1171,7 @@ void App::run_command(std::string_view line) {
                 .on_done = {},
                 .on_highlight = [this](const std::string& v) { set_theme(v, false); },
                 .on_cancel = [this, original = original] { set_theme(original, false); }},
-            false, std::set<std::string>{}, config_.theme));
+            false, std::set<std::string>{}, config_.ui.theme));
     } else if (cmd == "sync") {
         sync_problems(true);
     } else if (cmd == "login") {
@@ -1175,14 +1198,20 @@ void App::run_command(std::string_view line) {
         show_stats();
     } else if (cmd == "home" || cmd == "list") {
         go_home();
-    } else if (cmd == "set") {
+    } else if (cmd == "set" || cmd == "se") {
         const auto eq = arg.find('=');
         const auto sep = eq != std::string::npos ? eq : arg.find(' ');
-        if (sep == std::string::npos) {
-            toast("usage: :set key=value", Level::Warning);
-            return;
+        if (arg.empty()) {
+            push_overlay(std::make_unique<SettingsOverlay>(*this));
+        } else if (sep != std::string::npos) {
+            set_option(arg.substr(0, sep), arg.substr(sep + 1));
+        } else if (const auto* option = core::find_option(arg)) {
+            toast(std::format("{} = {}", option->key(), core::toml_value(config_, *option)));
+        } else {
+            toast(std::format("unknown option '{}'", arg), Level::Error);
         }
-        set_option(arg.substr(0, sep), arg.substr(sep + 1));
+    } else if (cmd == "settings" || cmd == "options") {
+        push_overlay(std::make_unique<SettingsOverlay>(*this, arg));
     } else if (cmd == "filter" && arg == "clear") {
         home->filter() = Filter{};
         home->refilter();
@@ -1220,7 +1249,7 @@ void App::start_job(Session& s, bool submit) {
         s.error = "not signed in: run :login to run and submit code";
         return;
     }
-    if (config_.save_before_run && s.editor && s.editor->running()
+    if (config_.editor.save_before_run && s.editor && s.editor->running()
         && core::is_vim_like(s.editor_argv)) {
         // Ask vim to write every buffer, then touch the sync file so we know it's done.
         std::error_code ec;
@@ -1272,7 +1301,7 @@ void App::begin_job(Session& s) {
     s.selected_case = 0;
 
     dispatcher_->run([this, slug = s.slug, id = s.job_id, stop = s.job_stop.get_token(),
-                      client = client_, base = config_.base_url, q = s.question,
+                      client = client_, base = client_.base_url(), q = s.question,
                       lang = std::string(s.lang->slug), code = code,
                       input = join_lines(s.cases_run),
                       submit = s.job_is_submit](const std::stop_token&) mutable {
@@ -1374,7 +1403,7 @@ void App::edit_testcases(Session& s) {
         toast(path.error(), Level::Error);
         return;
     }
-    auto argv = core::resolve_editor(config_.editor);
+    auto argv = core::resolve_editor(config_.editor.command);
     if (argv.empty()) {
         toast("no editor found", Level::Error);
         return;
@@ -1435,12 +1464,12 @@ void App::switch_language(Session& s, std::string_view slug) {
     s.lang = lang;
     if (s.editor && s.editor->running() && core::is_vim_like(s.editor_argv)) {
         // Same vim, new buffer: keeps the user's session (registers, undo, splits).
-        const auto before = config_.inject_before.find(std::string(lang->slug));
-        const auto after = config_.inject_after.find(std::string(lang->slug));
-        auto file =
-            workspace_.ensure_solution(*s.question, *lang, client_.problem_url(s.slug),
-                                       before != config_.inject_before.end() ? before->second : "",
-                                       after != config_.inject_after.end() ? after->second : "");
+        const auto before = config_.solution.inject_before.find(std::string(lang->slug));
+        const auto after = config_.solution.inject_after.find(std::string(lang->slug));
+        auto file = workspace_.ensure_solution(
+            *s.question, *lang, client_.problem_url(s.slug),
+            before != config_.solution.inject_before.end() ? before->second : "",
+            after != config_.solution.inject_after.end() ? after->second : "");
         if (!file) {
             toast(file.error(), Level::Error);
             return;

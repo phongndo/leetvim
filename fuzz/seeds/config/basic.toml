@@ -1,14 +1,23 @@
 # leetvim
+[solution]
 lang = "cpp"
-editor = 'nvim -u NONE'
 workspace = "~/leet code"
-prefix = ctrl-g # comment
-split = 0.42
-theme = tokyo-night
-mouse = true
+filename = "{lang}/{id}.{slug}.{ext}"
 
-[inject_before]
+[solution.inject_before]
 cpp = """
 #include <vector>
 using namespace std;
 """
+
+[editor]
+command = 'nvim -u NONE'
+
+[keys]
+prefix = "ctrl-a" # tmux habit
+run = "f5"
+
+[ui]
+split = 0.42
+theme = "tokyo-night"
+mouse = true

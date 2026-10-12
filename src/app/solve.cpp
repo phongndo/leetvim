@@ -92,8 +92,8 @@ SolveView::Layout SolveView::layout(Rect area, const Session& s) const {
         out.editor = area;
         return out;
     }
-    const int left_w =
-        std::clamp(static_cast<int>(area.w * app_.config().split), 30, std::max(30, area.w - 40));
+    const int left_w = std::clamp(static_cast<int>(area.w * app_.config().ui.split), 30,
+                                  std::max(30, area.w - 40));
     const Rect left{area.x, area.y, left_w, area.h};
     out.editor = {area.x + left_w, area.y, area.w - left_w, area.h};
     if (s.panel_open) {
@@ -133,7 +133,7 @@ bool SolveView::on_key(const KeyEvent& ev) {
         app_.redraw();
         return true;
     }
-    if (app_.prefix().matches(ev)) {
+    if (app_.keys().prefix.matches(ev)) {
         prefix_pending_ = true;
         app_.redraw();
         return true;
@@ -158,7 +158,8 @@ bool SolveView::on_key(const KeyEvent& ev) {
 }
 
 void SolveView::handle_prefix(const KeyEvent& ev, Session& s) {
-    if (app_.prefix().matches(ev)) {
+    const auto& keys = app_.keys();
+    if (keys.prefix.matches(ev)) {
         // Prefix twice sends it through, like tmux.
         if (focus_ == Focus::TestEditor && s.test_editor) {
             s.test_editor->send_key(ev);
@@ -175,32 +176,32 @@ void SolveView::handle_prefix(const KeyEvent& ev, Session& s) {
     } else if (ev.is('j') || ev.is(Key::Down)) {
         set_focus(s.test_editor ? Focus::TestEditor : Focus::Panel);
     } else if (!handle_common(ev, s)) {
-        app_.toast(std::format("{} {}: not a leetvim key ({} ? for help)",
-                               app_.prefix().to_string(), tui::describe(ev),
-                               app_.prefix().to_string()),
+        app_.toast(std::format("{} {}: not a leetvim key ({} {} for help)", keys.prefix.to_string(),
+                               tui::describe(ev), keys.prefix.to_string(), keys.help.to_string()),
                    Level::Warning);
     }
 }
 
 bool SolveView::handle_common(const KeyEvent& ev, Session& s) {
-    if (ev.is('t')) {
+    const auto& keys = app_.keys();
+    if (keys.run.matches(ev)) {
         app_.start_job(s, false);
-    } else if (ev.is('s')) {
+    } else if (keys.submit.matches(ev)) {
         app_.start_job(s, true);
-    } else if (ev.is('r')) {
+    } else if (keys.results.matches(ev)) {
         s.panel_open = !s.panel_open;
         if (!s.panel_open && (focus_ == Focus::Panel || focus_ == Focus::TestEditor)) {
             set_focus(Focus::Editor);
         }
-    } else if (ev.is('c')) {
+    } else if (keys.testcases.matches(ev)) {
         s.panel_tab = 1;
         set_focus(Focus::Panel);
-    } else if (ev.is('z')) {
+    } else if (keys.zoom.matches(ev)) {
         s.zoomed = !s.zoomed;
         if (s.zoomed) set_focus(Focus::Editor);
-    } else if (ev.is('q')) {
+    } else if (keys.back.matches(ev)) {
         app_.go_home();
-    } else if (ev.is('?')) {
+    } else if (keys.help.matches(ev)) {
         app_.push_overlay(std::make_unique<HelpOverlay>(app_));
     } else if (ev.is(':')) {
         app_.push_overlay(std::make_unique<CommandOverlay>(app_));
@@ -280,9 +281,11 @@ bool SolveView::handle_description(const KeyEvent& ev, Session& s) {
     else if (ev.is('l') || ev.is('i') || ev.is(Key::Tab) || ev.is(Key::Enter)) {
         set_focus(Focus::Editor);
     } else if (ev.is('<')) {
-        app_.set_option("split", std::format("{:.2f}", std::max(0.15, app_.config().split - 0.05)));
+        app_.set_option("split",
+                        std::format("{:.2f}", std::max(0.15, app_.config().ui.split - 0.05)));
     } else if (ev.is('>')) {
-        app_.set_option("split", std::format("{:.2f}", std::min(0.85, app_.config().split + 0.05)));
+        app_.set_option("split",
+                        std::format("{:.2f}", std::min(0.85, app_.config().ui.split + 0.05)));
     } else if (ev.is('R')) {
         app_.data().questions.erase(s.slug);
         app_.data().question_errors.erase(s.slug);
@@ -450,7 +453,7 @@ void SolveView::draw_description(const tui::Painter& p, Rect r, Session& s) {
                             {.rect = r,
                              .color = t.preview_box,
                              .focused = focus_ == Focus::Description,
-                             .rounded = app_.config().rounded_corners,
+                             .rounded = app_.config().ui.rounded_corners,
                              .titles = {ui::title(t, "description")},
                              .right_titles = std::move(right),
                              .hints = {ui::hint(t, "H", s.show_hints ? "hide hints" : "hints"),
@@ -498,7 +501,8 @@ void SolveView::draw_description(const tui::Painter& p, Rect r, Session& s) {
 
 void SolveView::draw_editor(const tui::Painter& p, Rect r, Session& s) {
     const auto& t = app_.theme();
-    const std::string px = app_.prefix().to_string();
+    const auto& keys = app_.keys();
+    const std::string px = keys.prefix.to_string();
     std::vector<Segments> titles{ui::title(t, "solution")};
     if (!s.file.empty()) titles.push_back(ui::label(s.file.filename().string(), t.main_fg));
     std::vector<Segments> right;
@@ -510,23 +514,26 @@ void SolveView::draw_editor(const tui::Painter& p, Rect r, Session& s) {
 
     std::vector<Segments> hints;
     if (prefix_pending_) {
-        hints.push_back(ui::label(px + " …  t run · s submit · h/j/l focus · z zoom · q back",
+        hints.push_back(ui::label(std::format("{} …  {} run · {} submit · h/j/l focus · {} zoom · "
+                                              "{} back",
+                                              px, keys.run.to_string(), keys.submit.to_string(),
+                                              keys.zoom.to_string(), keys.back.to_string()),
                                   t.hi_fg, tui::AttrBold));
     } else {
         // The prefix once, then btop-style words: "C-g + test submit zoom hjkl focus …".
         hints = {{{px, ui::fg(t.hi_fg, tui::AttrBold)}, {" +", ui::fg(t.graph_text)}},
-                 ui::hint(t, "t", "test"),
-                 ui::hint(t, "s", "submit"),
-                 ui::hint(t, "z", "zoom"),
+                 ui::hint(t, keys.run.to_string(), "test"),
+                 ui::hint(t, keys.submit.to_string(), "submit"),
+                 ui::hint(t, keys.zoom.to_string(), "zoom"),
                  ui::hint(t, "hjkl", "focus"),
-                 ui::hint(t, "q", "back"),
-                 ui::hint(t, "?", "help")};
+                 ui::hint(t, keys.back.to_string(), "back"),
+                 ui::hint(t, keys.help.to_string(), "help")};
     }
     const Rect in = ui::box(p, t,
                             {.rect = r,
                              .color = t.editor_box,
                              .focused = focus_ == Focus::Editor,
-                             .rounded = app_.config().rounded_corners,
+                             .rounded = app_.config().ui.rounded_corners,
                              .titles = std::move(titles),
                              .right_titles = std::move(right),
                              .hints = std::move(hints)});
@@ -534,7 +541,7 @@ void SolveView::draw_editor(const tui::Painter& p, Rect r, Session& s) {
     if (in.empty()) return;
     if (s.editor && s.editor->running()) {
         s.editor->resize(in.h, in.w);
-        const tui::Color bg = app_.config().theme_background ? t.main_bg : tui::Color::none();
+        const tui::Color bg = app_.config().ui.theme_background ? t.main_bg : tui::Color::none();
         s.editor->draw(p, in, tui::Color::none(), bg);
         return;
     }
@@ -583,7 +590,7 @@ void SolveView::draw_panel(const tui::Painter& p, Rect r, Session& s) {
                             {.rect = r,
                              .color = t.result_box,
                              .focused = focus_ == Focus::Panel || focus_ == Focus::TestEditor,
-                             .rounded = app_.config().rounded_corners,
+                             .rounded = app_.config().ui.rounded_corners,
                              .titles = std::move(tabs),
                              .right_titles = std::move(right),
                              .hints = std::move(hints)});
@@ -613,13 +620,16 @@ void SolveView::draw_result(const tui::Painter& p, Rect r, Session& s) {
     case_count_ = 0;
 
     if (s.job == JobState::Idle) {
-        const std::string px = app_.prefix().to_string();
-        out.text(std::format("{} t  runs your code on the testcases (examples, or your own via "
+        const auto& keys = app_.keys();
+        const std::string px = keys.prefix.to_string();
+        out.text(std::format("{} {}  runs your code on the testcases (examples, or your own via "
                              "the testcases tab).",
-                             px),
+                             px, keys.run.to_string()),
                  value);
         out.blank();
-        out.text(std::format("{} s  submits it to LeetCode's full test suite.", px), value);
+        out.text(std::format("{} {}  submits it to LeetCode's full test suite.", px,
+                             keys.submit.to_string()),
+                 value);
     } else if (s.job == JobState::Saving || s.job == JobState::Running) {
         out.add({{std::string(tui::spinner(app_.tick())) + " ", ui::fg(t.warning)},
                  {s.job == JobState::Saving

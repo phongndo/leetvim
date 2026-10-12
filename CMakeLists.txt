@@ -30,6 +30,15 @@ find_package(CLI11 CONFIG REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(OpenSSL REQUIRED COMPONENTS Crypto)
 pkg_check_modules(VTERM REQUIRED IMPORTED_TARGET vterm)
+# toml++ is used header-only (see src/core/config.cpp), so it's built with our flags and
+# sanitizers; a packaged shared library wouldn't be.
+find_path(TOMLPLUSPLUS_INCLUDE_DIR toml++/toml.hpp REQUIRED)
+add_library(leetvim_toml INTERFACE)
+target_include_directories(
+    leetvim_toml
+    SYSTEM
+    INTERFACE ${TOMLPLUSPLUS_INCLUDE_DIR}
+)
 
 add_library(leetvim_options INTERFACE)
 target_compile_options(
@@ -102,7 +111,7 @@ leetvim_module(
     OpenSSL::Crypto # Chromium cookie decryption
 )
 leetvim_module(tui leetvim_util PkgConfig::VTERM)
-leetvim_module(core leetvim_util leetvim_leetcode)
+leetvim_module(core leetvim_util leetvim_leetcode leetvim_tui leetvim_toml)
 leetvim_module(
     app
     leetvim_core

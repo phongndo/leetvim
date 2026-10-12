@@ -110,8 +110,13 @@ struct KeySpec {
     std::uint8_t mods = ModNone;
 
     static std::optional<KeySpec> parse(std::string_view text);
+    /// The key of an event, e.g. one pressed to rebind something.
+    static KeySpec of(const KeyEvent& ev) { return {.key = ev.key, .ch = ev.ch, .mods = ev.mods}; }
     [[nodiscard]] bool matches(const KeyEvent& ev) const;
     [[nodiscard]] std::string to_string() const; // "C-g", "F5", ...
+    /// Text that parse() reads back: "ctrl-g", "f5", "space", "T".
+    [[nodiscard]] std::string to_spec() const;
+    bool operator==(const KeySpec&) const = default;
 };
 
 /// Short human label for a key event: "C-d", "Enter", "g".

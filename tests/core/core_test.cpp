@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include <filesystem>
+#include <format>
 
 using namespace lv;
 using namespace lv::core;
@@ -64,54 +65,217 @@ TEST_CASE("language lookup") {
 TEST_CASE("config parsing") {
     const auto loaded = parse_config(R"(
 # comment
+[solution]
 lang = "python3"   # trailing comment
-theme = 'gruvbox'
-mouse = false
-split = 0.5
-refresh_hours = 6
-bogus = 1
-split2
+workspace = '~/code/leet'
+filename = "{lang}/{id}.{slug}.{ext}"
 
-[inject_before]
+[solution.inject_before]
 cpp = """
 #include <bits/stdc++.h>
 using namespace std;
 """
 python3 = "from typing import *"
-)");
-    const auto& c = loaded.config;
-    CHECK(c.lang == "python3");
-    CHECK(c.theme == "gruvbox");
-    CHECK_FALSE(c.mouse);
-    CHECK(c.split == doctest::Approx(0.5));
-    CHECK(c.refresh_hours == 6);
-    CHECK(c.inject_before.at("cpp") == "#include <bits/stdc++.h>\nusing namespace std;\n");
-    CHECK(c.inject_before.at("python3") == "from typing import *");
-    REQUIRE(loaded.warnings.size() == 2);
-    CHECK(loaded.warnings[0].find("bogus") != std::string::npos);
 
-    CHECK(parse_config(default_config_text()).warnings.empty());
-    Config cfg;
-    CHECK(set_config_value(cfg, "split", "2").find("split") != std::string::npos);
-    CHECK(set_config_value(cfg, "lang", "rust").empty());
-    CHECK(cfg.lang == "rust");
+[keys]
+prefix = "ctrl-a"
+run = "f5"
+
+[ui]
+theme = "gruvbox"
+mouse = false
+split = 0.5
+truecolor = true
+
+[list]
+sort = "difficulty"
+show_stats = false
+
+[account]
+refresh_hours = 6
+)");
+    CHECK(loaded.warnings.empty());
+    const auto& c = loaded.config;
+    CHECK(c.solution.lang == "python3");
+    CHECK(c.solution.workspace == "~/code/leet");
+    CHECK(c.solution.filename == "{lang}/{id}.{slug}.{ext}");
+    CHECK(c.solution.inject_before.at("cpp") == "#include <bits/stdc++.h>\nusing namespace std;\n");
+    CHECK(c.solution.inject_before.at("python3") == "from typing import *");
+    CHECK(c.keys.prefix == "ctrl-a");
+    CHECK(c.keys.run == "f5");
+    CHECK(c.keys.submit == "s");
+    CHECK(c.ui.theme == "gruvbox");
+    CHECK_FALSE(c.ui.mouse);
+    CHECK(c.ui.split == doctest::Approx(0.5));
+    CHECK(c.ui.truecolor == "true");
+    CHECK(c.list.sort == "difficulty");
+    CHECK_FALSE(c.list.show_stats);
+    CHECK(c.account.refresh_hours == 6);
+}
+
+TEST_CASE("config problems are reported with their lines") {
+    const auto loaded = parse_config(R"(theme = "nord"
+[ui]
+split = 2
+mouse = "yes"
+bogus = 1
+theme = "nope"
+[keys]
+run = "nonsense"
+[solution.inject_after]
+klingon = "x"
+[colors]
+)");
+    const auto& w = loaded.warnings;
+    REQUIRE(w.size() == 8);
+    CHECK(w[0] == "line 1: 'theme' belongs in the [ui] section");
+    CHECK(w[1].starts_with("line 3: ui.split: expected a number from 0.15 to 0.85"));
+    CHECK(w[2] == "line 4: ui.mouse: expected true or false");
+    CHECK(w[3] == "line 5: unknown option ui.bogus");
+    CHECK(w[4].starts_with("line 6: ui.theme: expected one of default, "));
+    CHECK(w[5].starts_with("line 8: keys.run: expected a key"));
+    CHECK(w[6] == "line 10: solution.inject_after: unknown language 'klingon'");
+    CHECK(w[7] == "line 11: unknown section [colors]");
+    // Bad values keep their defaults.
+    CHECK(loaded.config.ui.split == doctest::Approx(0.42));
+    CHECK(loaded.config.ui.theme == "default");
+
+    const auto broken = parse_config("[ui]\ntheme = \"nord\"\nmouse = \n");
+    REQUIRE(broken.warnings.size() == 1);
+    CHECK(broken.warnings[0].starts_with("line 3: "));
+    CHECK(broken.warnings[0].ends_with("(using the default settings)"));
+    CHECK(broken.config.ui.theme == "default");
+}
+
+TEST_CASE("the default config lists every option at its default") {
+    const auto text = default_config_text();
+    const auto loaded = parse_config(text);
+    CHECK(loaded.warnings.empty());
+    const Config defaults;
+    for (const auto& o : options()) {
+        CAPTURE(o.key());
+        CHECK(o.get(loaded.config) == o.get(defaults));
+        CHECK(text.find(std::format("\n{} = ", o.name)) != std::string::npos);
+        Config scratch;
+        CHECK(set_config_value(scratch, o.key(), o.get(defaults)).empty());
+        // Writing a default into the default file changes nothing.
+        CHECK(set_option_in_text(text, o, toml_value(defaults, o)).value_or("") == text);
+    }
+    CHECK(key_conflicts(defaults).empty());
+}
+
+TEST_CASE("options by name and value") {
+    REQUIRE(find_option("ui.theme") != nullptr);
+    CHECK(find_option("theme") == find_option("ui.theme"));
+    CHECK(find_option("keys.prefix")->kind == OptionKind::Key);
+    CHECK(find_option("ui.nope") == nullptr);
+    CHECK(find_option("nope") == nullptr);
+
+    Config c;
+    CHECK(set_config_value(c, " mouse ", " off ").empty());
+    CHECK_FALSE(c.ui.mouse);
+    CHECK(set_config_value(c, "split", "0.3").empty());
+    CHECK(c.ui.split == doctest::Approx(0.3));
+    CHECK(toml_value(c, *find_option("split")) == "0.3");
+    CHECK(set_config_value(c, "split", "nan").starts_with("ui.split: expected"));
+    CHECK(set_config_value(c, "refresh_hours", "-1").starts_with("account.refresh_hours"));
+    CHECK(set_config_value(c, "refresh_hours", "12h").starts_with("account.refresh_hours"));
+    CHECK(set_config_value(c, "lang", "rust").empty());
+    CHECK(c.solution.lang == "rust");
+    CHECK(set_config_value(c, "lang", "py").starts_with("solution.lang: expected one of"));
+    CHECK(set_config_value(c, "keys.run", "ctrl-").starts_with("keys.run: expected a key"));
+    CHECK(set_config_value(c, "workspace", "").starts_with("solution.workspace"));
+    CHECK(set_config_value(c, "filename", "{slug}").find("{ext}") != std::string::npos);
+    CHECK(set_config_value(c, "bogus", "1") == "unknown option 'bogus'");
+    CHECK(toml_value(c, *find_option("lang")) == "\"rust\"");
+}
+
+TEST_CASE("key conflicts") {
+    Config c;
+    c.keys.run = "s";
+    c.keys.zoom = "j";
+    const auto conflicts = key_conflicts(c);
+    REQUIRE(conflicts.size() == 2);
+    CHECK(conflicts[0] == "keys.submit: s is also bound to keys.run");
+    CHECK(conflicts[1] == "keys.zoom: j is reserved for moving the focus");
+    // Swapping two keys in the file is fine: conflicts are judged on the result.
+    CHECK(parse_config("[keys]\nrun = \"s\"\nsubmit = \"t\"\n").warnings.empty());
 }
 
 TEST_CASE("config file updates keep comments") {
+    const auto* theme = find_option("ui.theme");
+    const auto* mouse = find_option("ui.mouse");
+    const auto* run = find_option("keys.run");
+    const std::string text = R"(# hello
+[solution]
+lang = "cpp" # mine
+
+[solution.inject_before]
+cpp = """
+[ui]
+theme = "not this"
+"""
+
+[ui]
+  theme = "nord"  # indented
+)";
+    auto updated = set_option_in_text(text, *theme, "\"gruvbox\"");
+    REQUIRE(updated.has_value());
+    CHECK(*updated == R"(# hello
+[solution]
+lang = "cpp" # mine
+
+[solution.inject_before]
+cpp = """
+[ui]
+theme = "not this"
+"""
+
+[ui]
+  theme = "gruvbox"
+)");
+    // A key missing from its section goes after the section's last value...
+    updated = set_option_in_text(text, *mouse, "false");
+    REQUIRE(updated.has_value());
+    CHECK(updated->ends_with("  theme = \"nord\"  # indented\nmouse = false\n"));
+    // ...and a missing section is added at the end.
+    updated = set_option_in_text(text, *run, "\"f5\"");
+    REQUIRE(updated.has_value());
+    CHECK(updated->ends_with("# indented\n\n[keys]\nrun = \"f5\"\n"));
+    const auto loaded = parse_config(*updated);
+    CHECK(loaded.config.keys.run == "f5");
+    CHECK(loaded.config.ui.theme == "nord");
+    CHECK(loaded.config.solution.inject_before.at("cpp") == "[ui]\ntheme = \"not this\"\n");
+
+    // Dotted keys are found too.
+    updated = set_option_in_text("ui.theme = \"nord\"\n", *theme, "\"light\"");
+    REQUIRE(updated.has_value());
+    CHECK(*updated == "ui.theme = \"light\"\n");
+
+    // A broken file isn't touched, and edits that wouldn't read back are refused.
+    CHECK_FALSE(set_option_in_text("[ui\n", *theme, "\"nord\"").has_value());
+    CHECK_FALSE(set_option_in_text("ui.mouse = true\n", *theme, "\"nord\"").has_value());
+}
+
+TEST_CASE("config files are created on first change") {
     const TempDir dir;
-    const auto path = dir.path / "config.toml";
-    REQUIRE(paths::write_file(path, "# hello\nlang = \"cpp\"\n\n[inject_before]\ncpp = \"x\"\n"));
-    REQUIRE(update_config_file(path, "lang", toml_quote("rust")));
-    REQUIRE(update_config_file(path, "theme", toml_quote("nord")));
+    const auto path = dir.path / "leetvim" / "config.toml";
+    CHECK(update_config_file(path, *find_option("ui.theme"), toml_quote("nord")).empty());
     std::string text;
     REQUIRE(paths::read_file(path, text));
-    CHECK(text.find("# hello") != std::string::npos);
-    CHECK(text.find("lang = \"rust\"") != std::string::npos);
-    CHECK(text.find("theme = \"nord\"") < text.find("[inject_before]"));
-    const auto loaded = parse_config(text);
-    CHECK(loaded.config.lang == "rust");
-    CHECK(loaded.config.theme == "nord");
-    CHECK(loaded.config.inject_before.at("cpp") == "x");
+    CHECK(text.starts_with("# leetvim settings"));
+    const auto loaded = load_config(path);
+    CHECK(loaded.warnings.empty());
+    CHECK(loaded.config.ui.theme == "nord");
+}
+
+TEST_CASE("toml strings") {
+    for (const std::string_view s : {"plain", "quote \" and \\ backslash", "tab\tnew\nline",
+                                     "cr\r bell\a del\x7f", "ünïcödé ✓"}) {
+        const auto loaded = parse_config("[account]\nusername = " + toml_quote(s) + "\n");
+        CHECK(loaded.warnings.empty());
+        CHECK(loaded.config.account.username == s);
+    }
 }
 
 TEST_CASE("solution files round trip") {
@@ -129,6 +293,24 @@ TEST_CASE("solution files round trip") {
     CHECK(extract_code("no markers") == "no markers");
     CHECK(extract_code("# @leet start\nx = 1\n# @leet end\n") == "x = 1\n");
     CHECK(extract_code("// @lc code=start\nonly start") == "only start");
+}
+
+TEST_CASE("filename patterns") {
+    CHECK(check_filename_pattern(default_filename_pattern).empty());
+    CHECK(check_filename_pattern("{lang}/{slug}.{ext}").empty());
+    CHECK_FALSE(check_filename_pattern("{slug}").empty());
+    CHECK_FALSE(check_filename_pattern("solution.{ext}").empty());
+    CHECK_FALSE(check_filename_pattern("{id}.{title}.{ext}").empty());
+    CHECK_FALSE(check_filename_pattern("{id.{ext}").empty());
+    CHECK_FALSE(check_filename_pattern("/abs/{id}.{ext}").empty());
+    CHECK_FALSE(check_filename_pattern("../{id}.{ext}").empty());
+    CHECK_FALSE(check_filename_pattern("a//{id}.{ext}").empty());
+
+    const auto q = two_sum();
+    const auto* py = find_language("python3");
+    CHECK(solution_filename("{lang}/{id}-{slug}.{ext}", q, *py) == "python3/1-two-sum.py");
+    const Workspace ws("/w", "{lang}/{id}.{slug}.{ext}");
+    CHECK(ws.solution_path(q, *py) == "/w/python3/1.two-sum.py");
 }
 
 TEST_CASE("filenames and testcases") {
@@ -165,7 +347,6 @@ TEST_CASE("workspace creates files once") {
     REQUIRE(tc.has_value());
     REQUIRE(paths::write_file(*tc, "[1,2]\n3\n[4,5]\n9\n[6,7]\n13\n"));
     CHECK(ws.testcases(q).size() == 3);
-    CHECK(ws.solutions_for("two-sum").size() == 1);
 }
 
 TEST_CASE("editor commands") {

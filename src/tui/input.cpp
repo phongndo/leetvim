@@ -3,6 +3,7 @@
 #include "util/strings.hpp"
 #include "util/unicode.hpp"
 
+#include <algorithm>
 #include <array>
 #include <charconv>
 #include <utility>
@@ -374,6 +375,16 @@ bool KeySpec::matches(const KeyEvent& ev) const {
 }
 
 std::string KeySpec::to_string() const { return with_mods(mods, key_label(key, ch)); }
+
+std::string KeySpec::to_spec() const {
+    std::string out;
+    if ((mods & ModCtrl) != 0) out += "ctrl-";
+    if ((mods & ModAlt) != 0) out += "alt-";
+    if ((mods & ModShift) != 0) out += "shift-";
+    if (key == Key::Char) return out + (ch == U' ' ? "space" : unicode::to_utf8(ch));
+    const auto* name = std::ranges::find(key_names, key, &KeyName::key);
+    return name != key_names.end() ? out + std::string(name->name) : out;
+}
 
 std::string describe(const KeyEvent& ev) { return with_mods(ev.mods, key_label(ev.key, ev.ch)); }
 

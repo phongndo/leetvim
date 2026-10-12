@@ -138,6 +138,9 @@ private:
     int max_scroll_ = 0;
 };
 
+/// Clears `r` and draws the titled box of a centered overlay; returns the inside.
+tui::Rect overlay_frame(const App& app, const tui::Painter& p, tui::Rect r, std::string_view title,
+                        std::vector<tui::Segments> hints = {});
 /// Centers a w x h box inside `area`.
 tui::Rect centered(tui::Rect area, int w, int h);
 
