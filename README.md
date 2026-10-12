@@ -34,23 +34,34 @@ testcases and submit without leaving the editor. Nothing is installed into your 
 
 ## Install
 
-Homebrew on macOS or Linux:
+leetvim runs on Apple Silicon macOS 14 or newer and on x86_64 and ARM64 Linux.
+
+### Homebrew
 
 ```sh
 brew install phongndo/tap/leetvim
 ```
 
-Or use the install script, [mise](https://mise.jdx.dev) or [Nix](https://nixos.org):
+### Install script
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/phongndo/leetvim/main/scripts/install.sh | sh
+```
+
+### mise
+
+```sh
 mise use -g github:phongndo/leetvim
+```
+
+### Nix
+
+```sh
 nix profile add github:phongndo/leetvim
 ```
 
-Releases run on Apple Silicon macOS 14 or newer and on x86_64 and ARM64 Linux. Update with the
-method that installed leetvim; the install script's copy updates with `leetvim update`.
-[Installation](docs/installation.md) covers pinning a version, removal and building from source.
+Update with `leetvim update`, however you installed it. [Installation](docs/installation.md)
+covers pinning a version, removal and building from source.
 
 leetvim runs `nvim`, `vim` or `vi` from your `PATH`; set `command` under `[editor]` in the
 [config](#configuration) to use something else.
@@ -172,7 +183,7 @@ leetvim stats [username]         print profile statistics
 leetvim login [-b browser] [-p] [--cookie header]
 leetvim logout | sync
 leetvim config [--init | --edit]
-leetvim update [version]         update a copy the install script installed
+leetvim update [version]         update leetvim the way it was installed
 leetvim -c <file> ...            use another config file
 ```
 

@@ -4,15 +4,15 @@ Releases are built for macOS 14 or newer on Apple Silicon, and for x86_64 and AR
 Linux executable is static, so it runs on any distribution, NixOS and Alpine included. leetvim
 solves problems in your own `nvim` or `vim` (or `vi`), which you install separately.
 
-| Method | Install | Update |
-| --- | --- | --- |
-| [Homebrew](#homebrew) | `brew install phongndo/tap/leetvim` | `brew upgrade leetvim` |
-| [Install script](#install-script) | `curl -fsSL …/install.sh \| sh` | `leetvim update` |
-| [mise](#mise) | `mise use -g github:phongndo/leetvim` | `mise upgrade github:phongndo/leetvim` |
-| [Nix](#nix) | `nix profile add github:phongndo/leetvim` | `nix profile upgrade leetvim` |
+| Method | Install |
+| --- | --- |
+| [Homebrew](#homebrew) | `brew install phongndo/tap/leetvim` |
+| [Install script](#install-script) | `curl -fsSL …/install.sh \| sh` |
+| [mise](#mise) | `mise use -g github:phongndo/leetvim` |
+| [Nix](#nix) | `nix profile add github:phongndo/leetvim` |
 
-Each method manages its own copy, so update leetvim with the one that installed it. Your
-settings, session and solutions live elsewhere (see
+Each method manages its own copy, and [`leetvim update`](#updating) updates it with that
+method. Your settings, session and solutions live elsewhere (see
 [What leetvim keeps track of](../README.md#what-leetvim-keeps-track-of)) and stay when you
 reinstall or switch methods.
 
@@ -39,18 +39,8 @@ directory to your `PATH`:
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Update to the latest release, or to a particular one:
-
-```sh
-leetvim update
-leetvim update 0.1.0
-```
-
-`leetvim update` reruns the install script that came with your release, in the same
-directories, and does nothing if that release is already installed. A failed download or
-checksum leaves the installed leetvim as it was. `leetvim update` refuses to touch a leetvim
-that Homebrew, mise or Nix installed, and the script won't replace a `leetvim` command that it
-didn't put there.
+A failed download or checksum leaves the installed leetvim as it was, and the script won't
+replace a `leetvim` command that it didn't put there.
 
 Environment variables choose a release or other directories:
 
@@ -66,7 +56,7 @@ curl -fsSL https://raw.githubusercontent.com/phongndo/leetvim/main/scripts/insta
   LEETVIM_VERSION=0.1.0 sh
 ```
 
-`leetvim update` remembers the directories. Both must be absolute paths.
+Both directories must be absolute paths; `leetvim update` remembers them.
 
 ## mise
 
@@ -107,6 +97,31 @@ Or add the flake to a NixOS, nix-darwin or Home Manager configuration:
 ```
 
 and update it with `nix flake update leetvim` and a rebuild.
+
+## Updating
+
+```sh
+leetvim update
+```
+
+`leetvim update` updates leetvim with the method that installed it:
+
+| Method | What `leetvim update` runs |
+| --- | --- |
+| Homebrew | `brew upgrade leetvim` |
+| Install script | the install script that came with your release, in the same directories; nothing happens if the latest release is already installed |
+| mise | `mise upgrade github:phongndo/leetvim`, which respects the version your mise config asks for |
+| Nix | `nix profile upgrade` for the profile entry holding this leetvim |
+
+With the install script you can also choose a release, including an older one:
+
+```sh
+leetvim update 0.1.0
+```
+
+With the other methods, pin a version with the tool itself; `leetvim update` says how. A leetvim
+from a NixOS, nix-darwin or Home Manager configuration updates with `nix flake update leetvim`
+and a rebuild, and one built from source with a rebuild.
 
 ## From source
 
