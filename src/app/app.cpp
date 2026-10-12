@@ -498,6 +498,8 @@ void App::sync_problems(bool force) {
             data_.synced_at = std::chrono::system_clock::now();
             const auto count = result->size();
             set_problems(std::move(*result));
+            // A status snapshot that arrived during the sync was applied to the old list.
+            if (signed_in()) refresh_statuses();
             if (force) toast(std::format("synced {} problems", count), Level::Success);
         });
     });
