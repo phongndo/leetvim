@@ -1,6 +1,6 @@
 name: Release
 
-# Publishes a stable release when its tag is pushed (see "Releasing" in the README). The tag
+# Publishes a stable release when its tag is pushed (see "Releases" in the README). The tag
 # must be CMakeLists.txt's version on a main commit whose CI and Distribution runs pass; the
 # release carries the archives that Distribution built and tested for that commit.
 
