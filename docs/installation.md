@@ -67,6 +67,8 @@ mise use -g github:phongndo/leetvim
 ```
 
 Pin a version with `github:phongndo/leetvim@0.1.0`, globally or in a project's `mise.toml`.
+mise takes a release as the latest once it's a day old, so for a day after a release it installs
+the one before; name the new version to get it sooner.
 
 ## Nix
 
