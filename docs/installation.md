@@ -147,5 +147,5 @@ cmake --build build
 - Nix: `nix profile remove leetvim`, or remove the flake input and package
 
 To remove your data too, delete `~/.config/leetvim`, `~/.cache/leetvim`, `~/.local/state/leetvim`
-and `~/.local/share/leetvim` (or their `$XDG_*` equivalents); your solutions stay in the
-workspace.
+and `~/.local/share/leetvim` (or their `$XDG_*` equivalents); your solutions and testcases stay
+in the workspace, `~/.leetvim` unless you changed it.

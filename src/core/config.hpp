@@ -16,7 +16,7 @@ namespace lv::core {
 struct Config {
     struct Solution {
         std::string lang = "cpp";
-        std::string workspace = "~/leetcode";
+        std::string workspace = "~/.leetvim";
         std::string filename = "{id}.{slug}.{ext}";
         /// Text placed before/after the solution markers, per language slug
         /// ([solution.inject_before] / [solution.inject_after]). Not submitted.

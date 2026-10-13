@@ -173,7 +173,7 @@ fs::path Workspace::solution_path(const leetcode::Question& q, const Language& l
 }
 
 fs::path Workspace::testcases_path(std::string_view slug) const {
-    return root_ / ".leetvim" / "testcases" / std::format("{}.txt", slug);
+    return root_ / "testcases" / std::format("{}.txt", slug);
 }
 
 std::expected<fs::path, std::string>

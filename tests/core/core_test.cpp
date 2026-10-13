@@ -345,6 +345,7 @@ TEST_CASE("workspace creates files once") {
     CHECK(ws.testcases(q).size() == 2);
     const auto tc = ws.ensure_testcases(q);
     REQUIRE(tc.has_value());
+    CHECK(*tc == dir.path / "testcases" / "two-sum.txt");
     REQUIRE(paths::write_file(*tc, "[1,2]\n3\n[4,5]\n9\n[6,7]\n13\n"));
     CHECK(ws.testcases(q).size() == 3);
 }

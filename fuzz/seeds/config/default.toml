@@ -6,7 +6,7 @@
 lang = "cpp"
 
 # Directory for solution files and custom testcases.
-workspace = "~/leetcode"
+workspace = "~/.leetvim"
 
 # Solution file inside the workspace; {id} {slug} {lang} {ext} are filled in, and / makes
 # subdirectories.

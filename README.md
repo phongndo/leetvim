@@ -119,13 +119,14 @@ second copy:
 | Submissions, runtime and memory percentiles | LeetCode | the results panel's submissions tab |
 | Stats, streak, calendar, contest rating, skills | LeetCode | launch, accepted submissions, `R` |
 | Daily question and whether you've done it | LeetCode | launch, accepted submissions |
-| Your solutions | `~/leetcode/<id>.<slug>.<ext>` (`workspace` and `filename` in `[solution]`) | you edit them; leetvim never overwrites one |
-| Custom testcases | `<workspace>/.leetvim/testcases/<slug>.txt` | the testcases tab |
+| Your solutions | `~/.leetvim/<id>.<slug>.<ext>` (`workspace` and `filename` in `[solution]`) | you edit them; leetvim never overwrites one |
+| Custom testcases | `<workspace>/testcases/<slug>.txt` | the testcases tab |
 | Session | `$XDG_DATA_HOME/leetvim/credentials` (mode 0600) | login and automatic renewal |
 | Settings | `~/.config/leetvim/config.toml` | the settings screen, `:set`, the theme and language pickers, `leetvim config --edit` |
 
 Problems you solve on the website show up the next time leetvim starts. The workspace is a
-plain directory of solution files, so it works well as a git repository.
+plain directory of solution files, so it works well as a git repository: point `workspace` at
+another directory in the settings (`,`) or with `:set workspace=~/code/leetcode`.
 
 ## Keys
 
@@ -191,7 +192,7 @@ leetvim -c <file> ...            use another config file
 
 ## Solutions and testcases
 
-Solutions live in the workspace (`~/leetcode` by default) as `<id>.<slug>.<ext>`, or whatever
+Solutions live in the workspace (`~/.leetvim` by default) as `<id>.<slug>.<ext>`, or whatever
 the `filename` setting says (`{lang}/{id}.{slug}.{ext}` puts each language in its own
 directory):
 
