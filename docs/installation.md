@@ -22,7 +22,7 @@ reinstall or switch methods.
 brew install phongndo/tap/leetvim
 ```
 
-The tap picks up a new release within six hours of its publication.
+The tap picks up a new release within an hour of its publication.
 
 ## Install script
 
