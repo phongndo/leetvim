@@ -209,9 +209,13 @@ class Solution:
 ```
 
 Only the code between the markers is sent to LeetCode (leetcode.nvim's `@leet start` /
-`@leet end` markers work too), so includes and helpers for your LSP can live outside them. The
-`[solution.inject_before]` / `[solution.inject_after]` config tables add such text to new
-files. Custom testcases are stored one input line per parameter.
+`@leet end` markers work too), so includes and helpers for your LSP can live outside them. New
+files start with what LeetCode provides implicitly, so your LSP reports your mistakes rather
+than missing headers: for C, C++, C#, Java, Python3, Go, Rust and Racket the usual headers and
+imports (`using namespace std;`, `from typing import *`, ...) or declarations, and in every
+language the types the starter code only shows in a comment, like `ListNode` and `TreeNode`.
+The `[solution.inject_before]` / `[solution.inject_after]` config tables set the first part per
+language; `cpp = ""` leaves it out. Custom testcases are stored one input line per parameter.
 
 ## Configuration
 

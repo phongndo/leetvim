@@ -314,7 +314,8 @@ struct Problem {
 
 /// Reads a [solution.inject_*] table: language slug -> text.
 void read_injections(const toml::node& node, std::string_view table_name,
-                     std::map<std::string, std::string>& out, std::vector<Problem>& problems) {
+                     std::map<std::string, std::string, std::less<>>& out,
+                     std::vector<Problem>& problems) {
     const auto* table = node.as_table();
     if (table == nullptr) {
         problems.push_back(
@@ -364,6 +365,17 @@ std::string unquote(std::string_view s) {
 }
 
 } // namespace
+
+std::string_view Config::Solution::before(std::string_view slug) const {
+    if (const auto it = inject_before.find(slug); it != inject_before.end()) return it->second;
+    const auto* language = find_language(slug);
+    return language != nullptr ? language->prelude : std::string_view();
+}
+
+std::string_view Config::Solution::after(std::string_view slug) const {
+    const auto it = inject_after.find(slug);
+    return it != inject_after.end() ? std::string_view(it->second) : std::string_view();
+}
 
 // ---------------------------------------------------------------- options
 
@@ -696,13 +708,17 @@ std::string default_config_text() {
         if (section.name == "solution") {
             out += "\n"
                    + comment("Text added before the code in new solution files, per "
-                             "language, e.g. for your LSP; [solution.inject_after] adds it "
-                             "after. It isn't submitted.");
+                             "language; [solution.inject_after] adds it after. It isn't "
+                             "submitted. By default C, C++, C#, Java, Python3, Go, Rust and "
+                             "Racket get the headers, imports or declarations LeetCode "
+                             "provides, so your LSP sees the same; an entry replaces that, "
+                             "and \"\" leaves it out.");
             out += "# [solution.inject_before]\n"
                    "# cpp = \"\"\"\n"
                    "# #include <bits/stdc++.h>\n"
                    "# using namespace std;\n"
-                   "# \"\"\"\n";
+                   "# \"\"\"\n"
+                   "# python3 = \"\"\n";
         }
     }
     return out;

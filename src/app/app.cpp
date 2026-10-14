@@ -807,13 +807,9 @@ void App::respawn_editor(Session& s) {
 
 bool App::spawn_editor(Session& s, std::string& error) {
     const auto& q = *s.question;
-    const auto lang_slug = std::string(s.lang->slug);
-    const auto before = config_.solution.inject_before.find(lang_slug);
-    const auto after = config_.solution.inject_after.find(lang_slug);
-    auto file = workspace_.ensure_solution(
-        q, *s.lang, client_.problem_url(q.slug),
-        before != config_.solution.inject_before.end() ? before->second : "",
-        after != config_.solution.inject_after.end() ? after->second : "");
+    auto file = workspace_.ensure_solution(q, *s.lang, client_.problem_url(q.slug),
+                                           config_.solution.before(s.lang->slug),
+                                           config_.solution.after(s.lang->slug));
     if (!file) {
         error = file.error();
         return false;
@@ -1464,12 +1460,9 @@ void App::switch_language(Session& s, std::string_view slug) {
     s.lang = lang;
     if (s.editor && s.editor->running() && core::is_vim_like(s.editor_argv)) {
         // Same vim, new buffer: keeps the user's session (registers, undo, splits).
-        const auto before = config_.solution.inject_before.find(std::string(lang->slug));
-        const auto after = config_.solution.inject_after.find(std::string(lang->slug));
-        auto file = workspace_.ensure_solution(
-            *s.question, *lang, client_.problem_url(s.slug),
-            before != config_.solution.inject_before.end() ? before->second : "",
-            after != config_.solution.inject_after.end() ? after->second : "");
+        auto file = workspace_.ensure_solution(*s.question, *lang, client_.problem_url(s.slug),
+                                               config_.solution.before(lang->slug),
+                                               config_.solution.after(lang->slug));
         if (!file) {
             toast(file.error(), Level::Error);
             return;
