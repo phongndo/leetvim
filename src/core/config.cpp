@@ -127,6 +127,13 @@ constexpr auto option_table = std::to_array<Option>({
          .help = "Solution file inside the workspace; {id} {slug} {lang} {ext} are filled in, "
                  "and / makes subdirectories.",
          .check = check_filename_pattern}),
+    field<&C::solution, &C::Solution::lsp_files>(
+        {.section = "solution",
+         .name = "lsp_files",
+         .kind = Bool,
+         .help = "Keep config files in the workspace (.clangd, pyrightconfig.json, ruff.toml, "
+                 "...) that give clangd, pyright and ruff the headers and imports LeetCode "
+                 "provides, so C, C++ and Python3 solutions needn't hold them."}),
 
     field<&C::editor, &C::Editor::command>(
         {.section = "editor",
@@ -709,16 +716,17 @@ std::string default_config_text() {
             out += "\n"
                    + comment("Text added before the code in new solution files, per "
                              "language; [solution.inject_after] adds it after. It isn't "
-                             "submitted. By default C, C++, C#, Java, Python3, Go, Rust and "
-                             "Racket get the headers, imports or declarations LeetCode "
-                             "provides, so your LSP sees the same; an entry replaces that, "
-                             "and \"\" leaves it out.");
+                             "submitted. By default Java, C#, Go, Rust and Racket get the "
+                             "imports or declarations LeetCode provides that the file must "
+                             "hold for your LSP to see them; an entry replaces that, and \"\" "
+                             "leaves it out. C, C++ and Python3 get theirs from the "
+                             "workspace (lsp_files); an entry puts them in the file instead.");
             out += "# [solution.inject_before]\n"
                    "# cpp = \"\"\"\n"
                    "# #include <bits/stdc++.h>\n"
                    "# using namespace std;\n"
                    "# \"\"\"\n"
-                   "# python3 = \"\"\n";
+                   "# java = \"\"\n";
         }
     }
     return out;

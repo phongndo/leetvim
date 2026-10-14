@@ -19,6 +19,7 @@ struct Config {
         std::string lang = "cpp";
         std::string workspace = "~/.leetvim";
         std::string filename = "{id}.{slug}.{ext}";
+        bool lsp_files = true; // see ensure_support
         /// Text placed before/after the solution markers, per language slug
         /// ([solution.inject_before] / [solution.inject_after]). Not submitted.
         std::map<std::string, std::string, std::less<>> inject_before;
