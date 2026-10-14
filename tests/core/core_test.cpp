@@ -113,6 +113,27 @@ refresh_hours = 6
     CHECK(c.account.refresh_hours == 6);
 }
 
+TEST_CASE("solution injections fall back to the language's prelude") {
+    const auto loaded = parse_config(R"(
+[solution.inject_before]
+cpp = "#include <bits/stdc++.h>"
+python3 = ""
+)");
+    CHECK(loaded.warnings.empty());
+    const auto& s = loaded.config.solution;
+    CHECK(s.before("cpp") == "#include <bits/stdc++.h>");
+    CHECK(s.before("python3").empty());
+    CHECK(s.before("java") == find_language("java")->prelude);
+    CHECK(s.before("rust") == "struct Solution;\n");
+    CHECK(s.before("mysql").empty());
+    CHECK(s.after("cpp").empty());
+
+    for (const auto& lang : languages()) {
+        CHECK((lang.prelude.empty() || lang.prelude.ends_with('\n')));
+        CHECK_FALSE(lang.prelude.contains("@lc code="));
+    }
+}
+
 TEST_CASE("config problems are reported with their lines") {
     const auto loaded = parse_config(R"(theme = "nord"
 [ui]
@@ -293,6 +314,110 @@ TEST_CASE("solution files round trip") {
     CHECK(extract_code("no markers") == "no markers");
     CHECK(extract_code("# @leet start\nx = 1\n# @leet end\n") == "x = 1\n");
     CHECK(extract_code("// @lc code=start\nonly start") == "only start");
+}
+
+TEST_CASE("provided definitions are uncommented from the snippet") {
+    const auto& cpp = *find_language("cpp");
+    // Two /** */ blocks, as in "Linked List in Binary Tree".
+    CHECK(provided_definitions(R"(/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ * };
+ */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ * };
+ */
+class Solution {
+public:
+    bool isSubPath(ListNode* head, TreeNode* root) {}
+};)",
+                               cpp)
+          == R"(// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+};
+
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+};
+)");
+    // A bare /* */ block with a // heading, as in "Clone Graph".
+    CHECK(provided_definitions(
+              "/*\n// Definition for a Node.\nclass Node {\npublic:\n    int val;\n};\n*/\n\n"
+              "class Solution {};",
+              cpp)
+          == "// Definition for a Node.\nclass Node {\npublic:\n    int val;\n};\n");
+    // API declarations aren't definitions LeetCode gives the code of.
+    CHECK(provided_definitions("// The API isBadVersion is defined for you.\n"
+                               "// bool isBadVersion(int version);\n\nclass Solution {};",
+                               cpp)
+              .empty());
+    CHECK(provided_definitions("class Solution {};", cpp).empty());
+
+    CHECK(provided_definitions(
+              "/**\n * Definition for singly-linked list.\n * public class ListNode {\n"
+              " *     int val;\n * }\n */\nclass Solution {}",
+              *find_language("java"))
+          == "// Definition for singly-linked list.\nclass ListNode {\n    int val;\n}\n");
+    CHECK(provided_definitions("/**\n * Example:\n * var li = ListNode(5)\n"
+                               " * Definition for singly-linked list.\n"
+                               " * class ListNode(var `val`: Int) {\n * }\n */\nclass Solution {}",
+                               *find_language("kotlin"))
+          == "// Definition for singly-linked list.\nclass ListNode(var `val`: Int) {\n}\n");
+    CHECK(provided_definitions("// Definition for singly-linked list.\n// pub struct ListNode {\n"
+                               "//   pub val: i32,\n// }\n// \n// impl ListNode {}\n"
+                               "impl Solution {}",
+                               *find_language("rust"))
+          == "// Definition for singly-linked list.\npub struct ListNode {\n  pub val: i32,\n}\n\n"
+             "impl ListNode {}\n");
+
+    const auto& py = *find_language("python3");
+    CHECK(
+        provided_definitions("# Definition for singly-linked list.\n# class ListNode:\n"
+                             "#     def __init__(self, val=0):\n#         self.val = val\n"
+                             "# Definition for a binary tree node.\n# class TreeNode:\n"
+                             "#     pass\nclass Solution:\n    pass",
+                             py)
+        == "# Definition for singly-linked list.\nclass ListNode:\n    def __init__(self, val=0):\n"
+           "        self.val = val\n\n# Definition for a binary tree node.\nclass TreeNode:\n"
+           "    pass\n");
+    CHECK(provided_definitions(
+              "\"\"\"\n# Definition for a Node.\nclass Node:\n    pass\n\"\"\"\n\n"
+              "class Solution:\n    def f(self):\n        \"\"\"\n        :rtype: Node\n"
+              "        \"\"\"",
+              py)
+          == "# Definition for a Node.\nclass Node:\n    pass\n");
+    CHECK(provided_definitions(
+              "\"\"\"\n# Definition for a Node.\nclass Node:\n"
+              "    def __init__(self, x: int, next: 'Node' = None):\n        pass\n\"\"\"",
+              py)
+          == "# Definition for a Node.\nclass Node:\n    def __init__(self, x: int, next: 'Node' = "
+             "None):"
+             "  # pyright: ignore[reportArgumentType]\n        pass\n");
+    CHECK(provided_definitions(
+              "%% Definition for singly-linked list.\n%%\n%% -record(list_node, {}).\n",
+              *find_language("erlang"))
+          == "% Definition for singly-linked list.\n-record(list_node, {}).\n");
+}
+
+TEST_CASE("new solution files hold the definitions and their opening line") {
+    auto q = two_sum();
+    q.snippets = {{.lang = "PHP",
+                   .lang_slug = "php",
+                   .code = "/**\n * Definition for a singly-linked list.\n * class ListNode {}\n "
+                           "*/\nclass Solution {}"}};
+    const std::string file = render_solution(q, *find_language("php"), "url");
+    CHECK(file.starts_with("<?php\n// @leetvim id=1 slug=two-sum lang=php\n"));
+    CHECK(file.contains(
+        "\n\n// Definition for a singly-linked list.\nclass ListNode {}\n\n// @lc code=start\n"));
+    CHECK(extract_code(file).starts_with("/**\n * Definition"));
 }
 
 TEST_CASE("filename patterns") {

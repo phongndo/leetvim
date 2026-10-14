@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <expected>
 #include <filesystem>
+#include <functional>
 #include <map>
 #include <span>
 #include <string>
@@ -20,8 +21,13 @@ struct Config {
         std::string filename = "{id}.{slug}.{ext}";
         /// Text placed before/after the solution markers, per language slug
         /// ([solution.inject_before] / [solution.inject_after]). Not submitted.
-        std::map<std::string, std::string> inject_before;
-        std::map<std::string, std::string> inject_after;
+        std::map<std::string, std::string, std::less<>> inject_before;
+        std::map<std::string, std::string, std::less<>> inject_after;
+
+        /// The text for a new file in language `slug`: its inject_before entry, or else the
+        /// language's prelude; an entry of "" turns the prelude off.
+        [[nodiscard]] std::string_view before(std::string_view slug) const;
+        [[nodiscard]] std::string_view after(std::string_view slug) const;
     };
     struct Editor {
         std::string command; // empty: nvim, vim or vi from PATH, then $VISUAL/$EDITOR

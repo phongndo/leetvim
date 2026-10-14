@@ -10,6 +10,10 @@ struct Language {
     std::string_view name;    // "C++"
     std::string_view ext;     // file extension without the dot
     std::string_view comment; // line comment prefix
+    std::string_view opening; // a file's required first line ("<?php"), before the header
+    /// What LeetCode's judge provides implicitly that the starter code relies on (headers,
+    /// imports, declarations), for new solution files so an LSP sees the same.
+    std::string_view prelude;
 };
 
 std::span<const Language> languages();

@@ -19,11 +19,17 @@ struct SolutionMeta {
     std::string lang;
 };
 
-/// Builds a new solution file: a header comment, optional injected text, and the
-/// starter snippet between `@lc code=start` / `@lc code=end` markers.
+/// Builds a new solution file: a header comment, optional injected text, the types the
+/// snippet relies on (provided_definitions) and the starter snippet between
+/// `@lc code=start` / `@lc code=end` markers.
 std::string render_solution(const leetcode::Question& q, const Language& lang, std::string_view url,
                             std::string_view inject_before = {},
                             std::string_view inject_after = {});
+
+/// The types LeetCode defines for a problem (ListNode, TreeNode, Node, ...), which its
+/// snippet shows only in comments after a "Definition for ..." line: that code uncommented,
+/// so an LSP knows the types. "" if the snippet has none.
+std::string provided_definitions(std::string_view snippet, const Language& lang);
 
 /// Code that gets submitted: the text between the markers (also accepts leetcode.nvim's
 /// `@leet start`/`@leet end`), or the whole file when there are no markers.
