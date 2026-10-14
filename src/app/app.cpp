@@ -805,11 +805,20 @@ void App::respawn_editor(Session& s) {
     dirty_ = true;
 }
 
+std::expected<fs::path, std::string> App::ensure_solution(const leetcode::Question& q,
+                                                          const core::Language& lang) {
+    if (config_.solution.lsp_files) {
+        if (const auto problem = workspace_.ensure_support(lang); !problem.empty()) {
+            toast(problem, Level::Warning);
+        }
+    }
+    return workspace_.ensure_solution(q, lang, client_.problem_url(q.slug),
+                                      config_.solution.before(lang.slug),
+                                      config_.solution.after(lang.slug));
+}
+
 bool App::spawn_editor(Session& s, std::string& error) {
-    const auto& q = *s.question;
-    auto file = workspace_.ensure_solution(q, *s.lang, client_.problem_url(q.slug),
-                                           config_.solution.before(s.lang->slug),
-                                           config_.solution.after(s.lang->slug));
+    auto file = ensure_solution(*s.question, *s.lang);
     if (!file) {
         error = file.error();
         return false;
@@ -1460,9 +1469,7 @@ void App::switch_language(Session& s, std::string_view slug) {
     s.lang = lang;
     if (s.editor && s.editor->running() && core::is_vim_like(s.editor_argv)) {
         // Same vim, new buffer: keeps the user's session (registers, undo, splits).
-        auto file = workspace_.ensure_solution(*s.question, *lang, client_.problem_url(s.slug),
-                                               config_.solution.before(lang->slug),
-                                               config_.solution.after(lang->slug));
+        auto file = ensure_solution(*s.question, *lang);
         if (!file) {
             toast(file.error(), Level::Error);
             return;

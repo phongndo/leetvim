@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <expected>
 #include <filesystem>
 #include <map>
 #include <memory>
@@ -263,6 +264,10 @@ private:
     void welcome();
     void retire_idle_editors();
     bool spawn_editor(Session& s, std::string& error);
+    /// The solution file for `q` in `lang`, created if new, with the workspace's support
+    /// files for `lang` (warning when they can't be written).
+    std::expected<std::filesystem::path, std::string> ensure_solution(const leetcode::Question& q,
+                                                                      const core::Language& lang);
     void begin_job(Session& s);
     void finish_job(Session& s, leetcode::RunResult r);
     void finish_quit();

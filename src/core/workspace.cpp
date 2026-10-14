@@ -35,6 +35,12 @@ std::size_t marker_line_start(std::string_view content, std::string_view marker,
     return bol == std::string_view::npos ? 0 : bol + 1;
 }
 
+/// Whether `path` exists and holds `section` (anything, when empty).
+bool holds(const fs::path& path, std::string_view section) {
+    std::string text;
+    return paths::read_file(path, text) && text.contains(section);
+}
+
 std::string with_trailing_newline(std::string_view s) {
     std::string out(s);
     if (!out.empty() && !out.ends_with('\n')) out += '\n';
@@ -285,6 +291,33 @@ Workspace::ensure_solution(const leetcode::Question& q, const Language& lang, st
         return std::unexpected(std::format("cannot write {}", path.string()));
     }
     return path;
+}
+
+std::string Workspace::ensure_support(const Language& lang) {
+    if (supported_.contains(lang.slug)) return {};
+    const fs::path dir = pattern_.starts_with("{lang}/") ? root_ / lang.slug : root_;
+    std::vector<std::string> failed;
+    for (const auto& file : lang.support) {
+        if (std::ranges::any_of(
+                file.unless, [&](const Precedence& p) { return holds(dir / p.path, p.section); })) {
+            continue;
+        }
+        const auto path = dir / file.path;
+        const auto content = file.content();
+        std::error_code ec;
+        std::string current;
+        if (fs::is_regular_file(path, ec) && paths::read_file(path, current)) {
+            const bool ours = current.substr(0, current.find('\n')).contains(generated_marker);
+            if (!ours || current == content) continue;
+        }
+        if (!paths::write_file(path, content)) failed.push_back(path.string());
+    }
+    if (failed.empty()) {
+        supported_.emplace(lang.slug);
+        return {};
+    }
+    return std::format("cannot write {}, so your LSP may not know what LeetCode provides",
+                       str::join(failed, ", "));
 }
 
 std::vector<std::string> Workspace::testcases(const leetcode::Question& q) const {

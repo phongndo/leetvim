@@ -209,13 +209,27 @@ class Solution:
 ```
 
 Only the code between the markers is sent to LeetCode (leetcode.nvim's `@leet start` /
-`@leet end` markers work too), so includes and helpers for your LSP can live outside them. New
-files start with what LeetCode provides implicitly, so your LSP reports your mistakes rather
-than missing headers: for C, C++, C#, Java, Python3, Go, Rust and Racket the usual headers and
-imports (`using namespace std;`, `from typing import *`, ...) or declarations, and in every
-language the types the starter code only shows in a comment, like `ListNode` and `TreeNode`.
-The `[solution.inject_before]` / `[solution.inject_after]` config tables set the first part per
-language; `cpp = ""` leaves it out. Custom testcases are stored one input line per parameter.
+`@leet end` markers work too), so includes and helpers for your LSP can live outside them.
+
+Your LSP sees what LeetCode provides implicitly, so it reports your mistakes rather than
+missing headers. For C and C++ (with clangd) and Python3 (with pyright or ruff), leetvim keeps
+config files in the workspace that give it the headers and `using namespace std;` or the
+imports, so solution files hold only the problem: `.clangd` with `include/leetcode.hpp` and
+`include/leetcode.h`, and `__builtins__.pyi`, `pyrightconfig.json` and `ruff.toml`. They go in
+the language's directory when the `filename` pattern starts with `{lang}/`; in a flat
+workspace, Python 2 and Pandas solutions see Python3's imports too. leetvim rewrites these
+files while their first line says it generated them (delete that line to keep your version),
+leaves a file you wrote alone, and doesn't write `pyrightconfig.json` or `ruff.toml` while your
+own `pyproject.toml` or `.ruff.toml` configures that tool. `lsp_files = false` in `[solution]` stops all this.
+
+What has to be in the file itself goes above the markers: Java's and C#'s imports, Go's
+`package`, Rust's `struct Solution;`, PHP's `<?php` and Racket's `#lang`, and the types the
+starter code only shows in a comment, like `ListNode` and `TreeNode`. The
+`[solution.inject_before]` / `[solution.inject_after]` config tables replace that text per
+language (`java = ""` leaves it out), and can put the headers back into C and C++ files for an
+LSP other than clangd.
+
+Custom testcases are stored one input line per parameter.
 
 ## Configuration
 
