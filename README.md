@@ -212,15 +212,22 @@ Only the code between the markers is sent to LeetCode (leetcode.nvim's `@leet st
 `@leet end` markers work too), so includes and helpers for your LSP can live outside them.
 
 Your LSP sees what LeetCode provides implicitly, so it reports your mistakes rather than
-missing headers. For C and C++ (with clangd) and Python3 (with pyright or ruff), leetvim keeps
-config files in the workspace that give it the headers and `using namespace std;` or the
-imports, so solution files hold only the problem: `.clangd` with `include/leetcode.hpp` and
-`include/leetcode.h`, and `__builtins__.pyi`, `pyrightconfig.json` and `ruff.toml`. They go in
-the language's directory when the `filename` pattern starts with `{lang}/`; in a flat
-workspace, Python 2 and Pandas solutions see Python3's imports too. leetvim rewrites these
-files while their first line says it generated them (delete that line to keep your version),
-leaves a file you wrote alone, and doesn't write `pyrightconfig.json` or `ruff.toml` while your
-own `pyproject.toml` or `.ruff.toml` configures that tool. `lsp_files = false` in `[solution]` stops all this.
+missing headers.
+
+For C and C++ (with clangd) and Python3 (with pyright or ruff), leetvim keeps config files in
+the workspace that give it the headers and `using namespace std;` or the imports, so solution
+files hold only the problem: `.clangd` with `include/leetcode.hpp` and `include/leetcode.h`,
+and `__builtins__.pyi`, `pyrightconfig.json` and `ruff.toml`. Some servers check a file only in
+a project, which leetvim's files make the workspace: `build.xml` for Java's, like jdtls (it
+builds nothing), and `rust-project.json` for rust-analyzer, listing each solution and the
+standard library of the Rust toolchain on your `PATH` (or `$RUST_SRC_PATH`). They go in the
+language's directory when the `filename` pattern starts with `{lang}/`; in a flat workspace,
+Python 2 and Pandas solutions see Python3's imports too. leetvim rewrites these files while
+their first line says it generated them (delete that line, or that key in JSON, to keep your
+version), leaves a file you wrote alone, and doesn't write `pyrightconfig.json`, `ruff.toml`,
+`build.xml` or `rust-project.json` while your own `pyproject.toml`, `.ruff.toml`, Maven or
+Gradle build or `Cargo.toml` configures that tool. `lsp_files = false` in `[solution]` stops
+all this.
 
 What has to be in the file itself goes above the markers: Java's and C#'s imports, Go's
 `package`, Rust's `struct Solution;`, PHP's `<?php` and Racket's `#lang`, and the types the

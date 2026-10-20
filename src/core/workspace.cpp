@@ -293,8 +293,7 @@ Workspace::ensure_solution(const leetcode::Question& q, const Language& lang, st
     return path;
 }
 
-std::string Workspace::ensure_support(const Language& lang) {
-    if (supported_.contains(lang.slug)) return {};
+std::string Workspace::ensure_support(const Language& lang) const {
     const fs::path dir = pattern_.starts_with("{lang}/") ? root_ / lang.slug : root_;
     std::vector<std::string> failed;
     for (const auto& file : lang.support) {
@@ -303,7 +302,7 @@ std::string Workspace::ensure_support(const Language& lang) {
             continue;
         }
         const auto path = dir / file.path;
-        const auto content = file.content();
+        const auto content = file.content(dir);
         std::error_code ec;
         std::string current;
         if (fs::is_regular_file(path, ec) && paths::read_file(path, current)) {
@@ -312,10 +311,7 @@ std::string Workspace::ensure_support(const Language& lang) {
         }
         if (!paths::write_file(path, content)) failed.push_back(path.string());
     }
-    if (failed.empty()) {
-        supported_.emplace(lang.slug);
-        return {};
-    }
+    if (failed.empty()) return {};
     return std::format("cannot write {}, so your LSP may not know what LeetCode provides",
                        str::join(failed, ", "));
 }
