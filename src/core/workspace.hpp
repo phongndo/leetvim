@@ -26,11 +26,6 @@ std::string render_solution(const leetcode::Question& q, const Language& lang, s
                             std::string_view inject_before = {},
                             std::string_view inject_after = {});
 
-/// The types LeetCode defines for a problem (ListNode, TreeNode, Node, ...), which its
-/// snippet shows only in comments after a "Definition for ..." line: that code uncommented,
-/// so an LSP knows the types. "" if the snippet has none.
-std::string provided_definitions(std::string_view snippet, const Language& lang);
-
 /// Code that gets submitted: the text between the markers (also accepts leetcode.nvim's
 /// `@leet start`/`@leet end`), or the whole file when there are no markers.
 std::string extract_code(std::string_view content);
