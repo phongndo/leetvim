@@ -4,6 +4,7 @@
 #include "core/languages.hpp"
 #include "core/workspace.hpp"
 #include "util/paths.hpp"
+#include "util/strings.hpp"
 
 #include <doctest/doctest.h>
 
@@ -325,8 +326,9 @@ TEST_CASE("new solution files hold the definitions and their opening line") {
                            "*/\nclass Solution {}"}};
     const std::string file = render_solution(q, *find_language("php"), "url");
     CHECK(file.starts_with("<?php\n// @leetvim id=1 slug=two-sum lang=php\n"));
-    CHECK(file.contains(
-        "\n\n// Definition for a singly-linked list.\nclass ListNode {}\n\n// @lc code=start\n"));
+    CHECK(file.contains("\n\n// Definition for a singly-linked list.\nclass ListNode {}\n"
+                        "// @leetvim end: delete this line to keep your changes above\n\n"
+                        "// @lc code=start\n"));
     CHECK(extract_code(file).starts_with("/**\n * Definition"));
 }
 
@@ -421,6 +423,64 @@ TEST_CASE("support files go in the language's directory and report failures") {
     std::filesystem::remove(dir.path / "cpp" / ".clangd");
     CHECK(ws.ensure_support(*find_language("cpp")).empty());
     CHECK(std::filesystem::is_regular_file(dir.path / "cpp" / ".clangd"));
+}
+
+TEST_CASE("leetvim keeps a solution's head up to date until told not to") {
+    const TempDir dir;
+    const Workspace ws(dir.path);
+    auto q = two_sum();
+    const auto* cpp = find_language("cpp");
+    const auto path = ws.ensure_solution(q, *cpp, "url");
+    REQUIRE(path.has_value());
+    std::string text;
+    REQUIRE(paths::read_file(*path, text));
+    CHECK(text.starts_with(render_head(q, *cpp, "url")));
+    // The user's code, and what they put between the head and the code, stay.
+    text = str::replace_all(text, "class Solution {\n};", "class Solution { int mine; };");
+    text = str::replace_all(text, "\n// @lc code=start",
+                            "\n#include \"debug.h\"\n\n// @lc code=start");
+    REQUIRE(paths::write_file(*path, text));
+    q.snippets[0].code = "// Definition for singly-linked list.\n// struct ListNode {};\n\n"
+                         "class Solution {\n};";
+    REQUIRE(ws.ensure_solution(q, *cpp, "url").has_value());
+    std::string fresh;
+    REQUIRE(paths::read_file(*path, fresh));
+    CHECK(fresh.contains("// url\n\n// Definition for singly-linked list.\nstruct ListNode {};\n"
+                         "// @leetvim end"));
+    CHECK(fresh.contains("// @leetvim end: delete this line to keep your changes above\n\n"
+                         "#include \"debug.h\"\n"));
+    CHECK(extract_code(fresh) == "class Solution { int mine; };\n");
+
+    // Without its end line, the head is the user's.
+    const auto mine = str::replace_all(
+        fresh, "// @leetvim end: delete this line to keep your changes above\n", "");
+    REQUIRE(paths::write_file(*path, mine));
+    q.title = "Renamed";
+    REQUIRE(ws.ensure_solution(q, *cpp, "url").has_value());
+    REQUIRE(paths::read_file(*path, fresh));
+    CHECK(fresh == mine);
+
+    // A paid-only problem without Premium has no snippets to say what the head holds.
+    REQUIRE(paths::write_file(*path, text));
+    q.snippets.clear();
+    REQUIRE(ws.ensure_solution(q, *cpp, "url").has_value());
+    REQUIRE(paths::read_file(*path, fresh));
+    CHECK(fresh == text);
+}
+
+TEST_CASE("a solution's head is found between its header and its end line") {
+    const auto q = two_sum();
+    const auto* php = find_language("php");
+    const auto head = render_head(q, *php, "url");
+    const auto file = render_solution(q, *php, "url");
+    CHECK(replace_head(file, head) == file);
+    // The opening line stays, and so does a mention of the end marker in the code.
+    const auto code = str::replace_all(file, "class Solution", "// @leetvim end\nclass Solution");
+    CHECK(replace_head(code, "// new head\n")
+          == "<?php\n// new head\n" + code.substr(code.find("\n// @lc code=start")));
+    CHECK_FALSE(replace_head("// @lc code=start\n// @leetvim end\n", "x").has_value());
+    CHECK_FALSE(replace_head("// @leetvim end: deleted header\n", "x").has_value());
+    CHECK_FALSE(replace_head("no header", "x").has_value());
 }
 
 TEST_CASE("support files make the workspace a project for Java and Rust servers") {

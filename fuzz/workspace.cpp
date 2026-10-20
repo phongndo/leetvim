@@ -34,13 +34,22 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size
     const auto file = core::render_solution(
         q, lang, "https://leetcode.com/problems/trapping-rain-water/", before, after);
 
-    // Text that itself contains a marker legitimately changes what's between the markers.
+    // Text that itself contains a marker legitimately changes what's between the markers, or
+    // where the head is.
     for (const auto& part : {title, before, after, code}) {
-        if (part.contains("@lc code=") || part.contains("@leet ")) return 0;
+        if (part.contains("@lc code=") || part.contains("@leet ") || part.contains("@leetvim")) {
+            return 0;
+        }
     }
     std::string expected = code;
     if (!expected.empty() && !expected.ends_with('\n')) expected += '\n';
     require(core::extract_code(file) == expected, "extract_code() returns the snippet");
+
+    const auto head =
+        core::render_head(q, lang, "https://leetcode.com/problems/trapping-rain-water/", before);
+    require(core::replace_head(file, head) == file, "replace_head() finds the rendered head");
+    require(core::extract_code(core::replace_head(file, "").value_or("")) == expected,
+            "replace_head() keeps the code");
 
     const auto meta = core::parse_header(file);
     require(meta && meta->frontend_id == q.frontend_id && meta->slug == q.slug

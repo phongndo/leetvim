@@ -14,6 +14,9 @@ namespace fs = std::filesystem;
 
 namespace {
 
+constexpr std::string_view head_end = "@leetvim end";
+constexpr std::string_view head_end_line =
+    "@leetvim end: delete this line to keep your changes above";
 constexpr std::string_view start_marker = "@lc code=start";
 constexpr std::string_view end_marker = "@lc code=end";
 constexpr std::string_view alt_start_marker = "@leet start";
@@ -49,26 +52,50 @@ std::string with_trailing_newline(std::string_view s) {
 
 } // namespace
 
-std::string render_solution(const leetcode::Question& q, const Language& lang, std::string_view url,
-                            std::string_view inject_before, std::string_view inject_after) {
+std::string render_head(const leetcode::Question& q, const Language& lang, std::string_view url,
+                        std::string_view inject_before) {
     const std::string_view c = lang.comment;
-    std::string out = lang.opening.empty() ? "" : with_trailing_newline(lang.opening);
-    out += std::format("{} @leetvim id={} slug={} lang={}\n", c, q.frontend_id, q.slug, lang.slug);
+    std::string out =
+        std::format("{} @leetvim id={} slug={} lang={}\n", c, q.frontend_id, q.slug, lang.slug);
     out += std::format("{} {}. {} ({})\n", c, q.frontend_id, q.title,
                        leetcode::to_string(q.difficulty));
     out += std::format("{} {}\n", c, url);
     if (!inject_before.empty()) out += "\n" + with_trailing_newline(inject_before);
-    const auto* snippet = q.snippet(lang.slug);
-    if (snippet != nullptr) {
+    if (const auto* snippet = q.snippet(lang.slug); snippet != nullptr) {
         if (const auto types = provided_definitions(snippet->code, lang); !types.empty()) {
             out += "\n" + types;
         }
     }
+    return out + std::format("{} {}\n", c, head_end_line);
+}
+
+std::string render_solution(const leetcode::Question& q, const Language& lang, std::string_view url,
+                            std::string_view inject_before, std::string_view inject_after) {
+    const std::string_view c = lang.comment;
+    std::string out = lang.opening.empty() ? "" : with_trailing_newline(lang.opening);
+    out += render_head(q, lang, url, inject_before);
+    const auto* snippet = q.snippet(lang.slug);
     out += std::format("\n{} {}\n", c, start_marker);
     out += with_trailing_newline(snippet != nullptr ? snippet->code : "");
     out += std::format("{} {}\n", c, end_marker);
     if (!inject_after.empty()) out += "\n" + with_trailing_newline(inject_after);
     return out;
+}
+
+std::optional<std::string> replace_head(std::string_view content, std::string_view head) {
+    const auto header = content.find("@leetvim ");
+    if (header == std::string_view::npos) return std::nullopt;
+    const auto newline = content.rfind('\n', header);
+    const auto begin = newline == std::string_view::npos ? 0 : newline + 1;
+    const auto end_line = content.find(head_end, header);
+    const auto code = content.find(start_marker);
+    if (end_line == std::string_view::npos || end_line == header
+        || (code != std::string_view::npos && end_line > code)) {
+        return std::nullopt;
+    }
+    const auto eol = content.find('\n', end_line);
+    const auto end = eol == std::string_view::npos ? content.size() : eol + 1;
+    return std::format("{}{}{}", content.substr(0, begin), head, content.substr(end));
 }
 
 std::string extract_code(std::string_view content) {
@@ -193,7 +220,18 @@ Workspace::ensure_solution(const leetcode::Question& q, const Language& lang, st
                            std::string_view inject_before, std::string_view inject_after) const {
     fs::path path = solution_path(q, lang);
     std::error_code ec;
-    if (fs::exists(path, ec)) return path;
+    if (fs::exists(path, ec)) {
+        // Brings leetvim's lines up to date, unless the question can't say what they are
+        // (a paid-only problem without Premium has no snippets).
+        std::string current;
+        if (q.snippet(lang.slug) != nullptr && paths::read_file(path, current)) {
+            const auto fresh = replace_head(current, render_head(q, lang, url, inject_before));
+            if (fresh && *fresh != current) {
+                (void)paths::write_file(path, *fresh, fs::status(path, ec).permissions());
+            }
+        }
+        return path;
+    }
     if (q.snippet(lang.slug) == nullptr && !q.snippets.empty()) {
         return std::unexpected(std::format("{} is not available for this problem", lang.name));
     }
