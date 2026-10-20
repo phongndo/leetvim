@@ -133,7 +133,9 @@ constexpr auto option_table = std::to_array<Option>({
          .kind = Bool,
          .help = "Keep config files in the workspace (.clangd, pyrightconfig.json, ruff.toml, "
                  "...) that give clangd, pyright and ruff the headers and imports LeetCode "
-                 "provides, so C, C++ and Python3 solutions needn't hold them."}),
+                 "provides, so C, C++ and Python3 solutions needn't hold them, and that make "
+                 "it a project for Java's servers and rust-analyzer (build.xml, "
+                 "rust-project.json)."}),
 
     field<&C::editor, &C::Editor::command>(
         {.section = "editor",

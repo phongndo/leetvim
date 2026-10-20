@@ -6,7 +6,6 @@
 #include <expected>
 #include <filesystem>
 #include <optional>
-#include <set>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -69,12 +68,12 @@ public:
     ensure_solution(const leetcode::Question& q, const Language& lang, std::string_view url,
                     std::string_view inject_before = {}, std::string_view inject_after = {}) const;
 
-    /// Brings `lang`'s support files up to date, once per language for this Workspace once it
-    /// succeeds. They go in the language's directory: the workspace, unless the filename
-    /// pattern starts with {lang}/ (keeping Python3's away from Python 2 and Pandas files). A
-    /// file is written where it's missing or still leetvim's, and not while a config file of
-    /// the user's takes precedence. Returns what couldn't be written, or "".
-    std::string ensure_support(const Language& lang);
+    /// Brings `lang`'s support files up to date. They go in the language's directory: the
+    /// workspace, unless the filename pattern starts with {lang}/ (keeping Python3's away from
+    /// Python 2 and Pandas files). A file is written where it's missing or still leetvim's and
+    /// out of date (Rust's lists the solutions), and not while a config file of the user's
+    /// takes precedence. Returns what couldn't be written, or "".
+    [[nodiscard]] std::string ensure_support(const Language& lang) const;
 
     /// Custom testcases if saved, otherwise the question's examples; one entry per case.
     [[nodiscard]] std::vector<std::string> testcases(const leetcode::Question& q) const;
@@ -85,7 +84,6 @@ public:
 private:
     std::filesystem::path root_;
     std::string pattern_;
-    std::set<std::string, std::less<>> supported_; // languages ensure_support has done
 };
 
 } // namespace lv::core

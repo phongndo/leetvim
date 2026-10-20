@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <span>
 #include <string>
 #include <string_view>
@@ -17,7 +18,7 @@ struct Precedence {
 /// like clangd's .clangd. Its first line carries generated_marker.
 struct SupportFile {
     std::string_view path; // relative to the language's directory in the workspace
-    std::string (*content)();
+    std::string (*content)(const std::filesystem::path& dir); // given that directory
     std::span<const Precedence> unless; // not written while one of these exists
 };
 
@@ -34,7 +35,8 @@ struct Language {
     /// to see it, like Java's imports or Go's package clause.
     std::string_view prelude;
     /// What LeetCode provides that the workspace can give the LSP instead, like the
-    /// standard headers and `using namespace std;` for clangd.
+    /// standard headers and `using namespace std;` for clangd, or what makes the workspace a
+    /// project the language's servers analyze.
     std::span<const SupportFile> support;
 };
 

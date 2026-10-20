@@ -807,14 +807,16 @@ void App::respawn_editor(Session& s) {
 
 std::expected<fs::path, std::string> App::ensure_solution(const leetcode::Question& q,
                                                           const core::Language& lang) {
-    if (config_.solution.lsp_files) {
+    auto file = workspace_.ensure_solution(q, lang, client_.problem_url(q.slug),
+                                           config_.solution.before(lang.slug),
+                                           config_.solution.after(lang.slug));
+    // After the solution, which Rust's project file lists.
+    if (file && config_.solution.lsp_files) {
         if (const auto problem = workspace_.ensure_support(lang); !problem.empty()) {
             toast(problem, Level::Warning);
         }
     }
-    return workspace_.ensure_solution(q, lang, client_.problem_url(q.slug),
-                                      config_.solution.before(lang.slug),
-                                      config_.solution.after(lang.slug));
+    return file;
 }
 
 bool App::spawn_editor(Session& s, std::string& error) {
