@@ -279,10 +279,13 @@ TEST_CASE("an API comes from the class the solution extends") {
 TEST_CASE("real problems' heads match their golden files") {
     // tests/fixtures/snippets holds LeetCode's data for problems whose starter code describes
     // APIs or types; tests/fixtures/heads, the head of each language's solution file for each.
-    // LEETVIM_UPDATE_GOLDEN=1 rewrites the golden files.
+    // LEETVIM_UPDATE_GOLDEN=1 rewrites the golden files. LEETVIM_HEADS_DIR=<dir> also writes
+    // each head as a file there, beside the language's support files, which
+    // nix/check-heads.sh compiles with each language's own tools.
     namespace fs = std::filesystem;
     const fs::path fixtures(LEETVIM_FIXTURES);
     const bool update = std::getenv("LEETVIM_UPDATE_GOLDEN") != nullptr;
+    const char* heads_dir = std::getenv("LEETVIM_HEADS_DIR");
     std::vector<fs::path> files;
     for (const auto& entry : fs::directory_iterator(fixtures / "snippets")) {
         files.push_back(entry.path());
@@ -302,6 +305,13 @@ TEST_CASE("real problems' heads match their golden files") {
                 render_head(*q, *lang, std::format("https://leetcode.com/problems/{}/", q->slug),
                             lang->prelude);
             heads += std::format("=== {}\n{}", lang->slug, head);
+            if (heads_dir != nullptr) {
+                const Workspace ws(heads_dir, "{lang}/{id}.{slug}.{ext}");
+                const auto opening =
+                    lang->opening.empty() ? "" : std::format("{}\n", lang->opening);
+                REQUIRE(paths::write_file(ws.solution_path(*q, *lang), opening + head));
+                CHECK(ws.ensure_support(*lang).empty());
+            }
         }
         const auto golden = fixtures / "heads" / file.filename().replace_extension(".txt");
         std::string expected;

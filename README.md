@@ -311,7 +311,7 @@ and `nix fmt` formats everything (clang-format, nixfmt, gersemi).
 `tests/fixtures/snippets/` holds LeetCode's starter code for problems that describe APIs or
 types, and `tests/fixtures/heads/` the top of each language's solution file for them, which
 `test_core` compares. After a change to what leetvim declares, `LEETVIM_UPDATE_GOLDEN=1
-./build/test_core` rewrites those for review in the diff.
+./build/test_core` rewrites those for review in the diff, and the `heads` check compiles them.
 
 ### Checks
 
@@ -326,7 +326,8 @@ types, and `tests/fixtures/heads/` the top of each language's solution file for 
 | `gcc` | non-portable code, by building with GCC and libstdc++ (Linux) |
 | `clang-tidy` | bug-prone patterns and static-analyzer findings in `src/`, `tests/` and `fuzz/` |
 | `fuzz` | crashes on the fuzz seeds and past findings, plus a fixed-seed burst of mutations |
-| `format`, `actionlint`, `shellcheck` | unformatted files, mistakes in the CI workflows and the install script |
+| `heads` | declarations and types from LeetCode's starter code that the language's own compiler or checker rejects (Linux; `nix/check-heads.sh`) |
+| `format`, `actionlint`, `shellcheck` | unformatted files, mistakes in the CI workflows and the scripts |
 
 ### Fuzzing
 
