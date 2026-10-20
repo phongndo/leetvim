@@ -66,6 +66,18 @@ private:
 
 Credentials fake_creds() { return {.session = "s", .csrf = "c"}; }
 
+/// Why a live call failed, for the nightly log: LeetCode's unofficial API changes without
+/// notice, and a bare "has_value() is false" doesn't say whether it was blocked, rate
+/// limited, unreachable or reshaped.
+template <typename T>
+std::string failure(const Result<T>& result) {
+    if (result) {
+        return "succeeded";
+    }
+    const Error& e = result.error();
+    return std::format("{} (kind {}, HTTP {})", e.message, static_cast<int>(e.kind), e.http_status);
+}
+
 } // namespace
 
 TEST_CASE("client basics") {
@@ -165,7 +177,7 @@ TEST_CASE("live: public endpoints" * doctest::skip(!live_tests())) {
         last_done = done;
         last_total = total;
     });
-    REQUIRE(problems.has_value());
+    REQUIRE_MESSAGE(problems.has_value(), failure(problems));
     MESSAGE(std::format("problems(): {} problems in {} ms ({} progress callbacks, last {}/{})",
                         problems->size(), ms_since(start), progress_calls, last_done, last_total));
     CHECK(problems->size() > 3500);
@@ -177,7 +189,7 @@ TEST_CASE("live: public endpoints" * doctest::skip(!live_tests())) {
 
     start = Clock::now();
     const auto q = client.question("two-sum");
-    REQUIRE(q.has_value());
+    REQUIRE_MESSAGE(q.has_value(), failure(q));
     MESSAGE(
         std::format("question(two-sum): {} snippets, {} ms", q->snippets.size(), ms_since(start)));
     CHECK(q->question_id == "1");
@@ -187,14 +199,14 @@ TEST_CASE("live: public endpoints" * doctest::skip(!live_tests())) {
 
     start = Clock::now();
     const auto daily = client.daily();
-    REQUIRE(daily.has_value());
+    REQUIRE_MESSAGE(daily.has_value(), failure(daily));
     MESSAGE(
         std::format("daily(): {} {} ({} ms)", daily->date, daily->problem.slug, ms_since(start)));
     CHECK_FALSE(daily->problem.slug.empty());
 
     start = Clock::now();
     const auto stats = client.user_stats("lee215");
-    REQUIRE(stats.has_value());
+    REQUIRE_MESSAGE(stats.has_value(), failure(stats));
     MESSAGE(std::format("user_stats(lee215): solved {} (E{} M{} H{}), {} calendar days, {} ms",
                         stats->solved.all, stats->solved.easy, stats->solved.medium,
                         stats->solved.hard, stats->calendar.size(), ms_since(start)));
@@ -202,7 +214,7 @@ TEST_CASE("live: public endpoints" * doctest::skip(!live_tests())) {
     CHECK(stats->questions.all > 3500);
 
     const auto status = client.user_status();
-    REQUIRE(status.has_value());
+    REQUIRE_MESSAGE(status.has_value(), failure(status));
     CHECK_FALSE(status->signed_in);
 
     const auto missing = client.question("no-such-problem-leetvim");
