@@ -1,0 +1,241 @@
+=== cpp
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=cpp
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=java
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+import java.util.*;
+
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _left, Node _right, Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=python3
+# 116. Populating Next Right Pointers in Each Node (Medium)
+# https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+# Definition for a Node.
+class Node:
+    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):  # pyright: ignore[reportArgumentType]
+        self.val = val
+        self.left = left
+        self.right = right
+        self.next = next
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=python
+# 116. Populating Next Right Pointers in Each Node (Medium)
+# https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+# Definition for a Node.
+class Node(object):
+    def __init__(self, val=0, left=None, right=None, next=None):
+        self.val = val
+        self.left = left
+        self.right = right
+        self.next = next
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=javascript
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for a _Node.
+function _Node(val, left, right, next) {
+   this.val = val === undefined ? null : val;
+   this.left = left === undefined ? null : left;
+   this.right = right === undefined ? null : right;
+   this.next = next === undefined ? null : next;
+};
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=typescript
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for _Node.
+class _Node {
+    val: number
+    left: _Node | null
+    right: _Node | null
+    next: _Node | null
+    constructor(val?: number, left?: _Node, right?: _Node, next?: _Node) {
+        this.val = (val===undefined ? 0 : val)
+        this.left = (left===undefined ? null : left)
+        this.right = (right===undefined ? null : right)
+        this.next = (next===undefined ? null : next)
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=csharp
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// Definition for a Node.
+public class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _left, Node _right, Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=c
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for a Node.
+struct Node {
+    int val;
+    struct Node *left;
+    struct Node *right;
+    struct Node *next;
+};
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=golang
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+//go:build ignore
+
+package main
+
+// Definition for a Node.
+type Node struct {
+    Val int
+    Left *Node
+    Right *Node
+    Next *Node
+}
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=kotlin
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for a Node.
+class Node(var `val`: Int) {
+    var left: Node? = null
+    var right: Node? = null
+    var next: Node? = null
+}
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=swift
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for a Node.
+public class Node {
+    public var val: Int
+    public var left: Node?
+    public var right: Node?
+	   public var next: Node?
+    public init(_ val: Int) {
+        self.val = val
+        self.left = nil
+        self.right = nil
+        self.next = nil
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=ruby
+# 116. Populating Next Right Pointers in Each Node (Medium)
+# https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+# Definition for Node.
+class Node
+    attr_accessor :val, :left, :right, :next
+    def initialize(val)
+        @val = val
+        @left, @right, @next = nil, nil, nil
+    end
+end
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=php
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for a Node.
+class Node {
+    function __construct($val = 0) {
+        $this->val = $val;
+        $this->left = null;
+        $this->right = null;
+        $this->next = null;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=116 slug=populating-next-right-pointers-in-each-node lang=scala
+// 116. Populating Next Right Pointers in Each Node (Medium)
+// https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+// Definition for a Node.
+class Node(var _value: Int) {
+  var value: Int = _value
+  var left: Node = null
+  var right: Node = null
+  var next: Node = null
+}
+// @leetvim end: delete this line to keep your changes above

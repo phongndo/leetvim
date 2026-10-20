@@ -1,0 +1,125 @@
+=== cpp
+// @leetvim id=278 slug=first-bad-version lang=cpp
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+// The API isBadVersion is defined for you.
+bool isBadVersion(int version);
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=278 slug=first-bad-version lang=java
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+import java.util.*;
+
+// The isBadVersion API is defined in the parent class VersionControl.
+class VersionControl {
+    boolean isBadVersion(int version) { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=278 slug=first-bad-version lang=python3
+# 278. First Bad Version (Easy)
+# https://leetcode.com/problems/first-bad-version/
+
+# The isBadVersion API is already defined for you.
+def isBadVersion(version: int) -> bool:
+    raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=278 slug=first-bad-version lang=python
+# 278. First Bad Version (Easy)
+# https://leetcode.com/problems/first-bad-version/
+
+# The isBadVersion API is already defined for you.
+def isBadVersion(version) -> Any:
+    raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=278 slug=first-bad-version lang=javascript
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=278 slug=first-bad-version lang=typescript
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+// The knows API is defined in the parent class Relation.
+declare function isBadVersion(version: number): boolean;
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=278 slug=first-bad-version lang=csharp
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=278 slug=first-bad-version lang=c
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+// The API isBadVersion is defined for you.
+bool isBadVersion(int version);
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=278 slug=first-bad-version lang=golang
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+//go:build ignore
+
+package main
+
+// Forward declaration of isBadVersion API.
+func isBadVersion(version int) bool { panic("") }
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=278 slug=first-bad-version lang=kotlin
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=278 slug=first-bad-version lang=swift
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=278 slug=first-bad-version lang=rust
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+struct Solution;
+
+// The API isBadVersion is defined for you.
+#[allow(non_snake_case)]
+impl Solution {
+    fn isBadVersion(&self, version:i32)-> bool { unimplemented!() }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=278 slug=first-bad-version lang=ruby
+# 278. First Bad Version (Easy)
+# https://leetcode.com/problems/first-bad-version/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=278 slug=first-bad-version lang=php
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+
+// The isBadVersion API is defined in the parent class VersionControl.
+class VersionControl {
+    public function isBadVersion($version) {}
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=278 slug=first-bad-version lang=scala
+// 278. First Bad Version (Easy)
+// https://leetcode.com/problems/first-bad-version/
+// @leetvim end: delete this line to keep your changes above

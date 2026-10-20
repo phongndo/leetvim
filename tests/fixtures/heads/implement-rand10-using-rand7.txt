@@ -1,0 +1,117 @@
+=== cpp
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=cpp
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+// The rand7() API is already defined for you.
+int rand7();
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=java
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+import java.util.*;
+
+// The rand7() API is already defined in the parent class SolBase.
+class SolBase {
+    public int rand7() { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=470 slug=implement-rand10-using-rand7 lang=python3
+# 470. Implement Rand10() Using Rand7() (Medium)
+# https://leetcode.com/problems/implement-rand10-using-rand7/
+
+# The rand7() API is already defined for you.
+def rand7() -> Any:
+    raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=470 slug=implement-rand10-using-rand7 lang=python
+# 470. Implement Rand10() Using Rand7() (Medium)
+# https://leetcode.com/problems/implement-rand10-using-rand7/
+
+# The rand7() API is already defined for you.
+def rand7() -> Any:
+    raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=javascript
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=typescript
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+// The rand7() API is already defined for you.
+declare function rand7(): number;
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=csharp
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=c
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+// The rand7() API is already defined for you.
+int rand7();
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=golang
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+//go:build ignore
+
+package main
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=kotlin
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=swift
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=rust
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+struct Solution;
+
+// The rand7() API is already defined for you.
+fn rand7() -> i32 { unimplemented!() }
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=470 slug=implement-rand10-using-rand7 lang=ruby
+# 470. Implement Rand10() Using Rand7() (Medium)
+# https://leetcode.com/problems/implement-rand10-using-rand7/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=php
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+
+// The rand7() API is already defined for you.
+function rand7() {}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=470 slug=implement-rand10-using-rand7 lang=scala
+// 470. Implement Rand10() Using Rand7() (Medium)
+// https://leetcode.com/problems/implement-rand10-using-rand7/
+// @leetvim end: delete this line to keep your changes above

@@ -1,0 +1,110 @@
+=== cpp
+// @leetvim id=1 slug=two-sum lang=cpp
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=1 slug=two-sum lang=java
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+
+import java.util.*;
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=1 slug=two-sum lang=python3
+# 1. Two Sum (Easy)
+# https://leetcode.com/problems/two-sum/
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=1 slug=two-sum lang=python
+# 1. Two Sum (Easy)
+# https://leetcode.com/problems/two-sum/
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=1 slug=two-sum lang=javascript
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=1 slug=two-sum lang=typescript
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=1 slug=two-sum lang=csharp
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=1 slug=two-sum lang=c
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=1 slug=two-sum lang=golang
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+
+//go:build ignore
+
+package main
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=1 slug=two-sum lang=kotlin
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=1 slug=two-sum lang=swift
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=1 slug=two-sum lang=rust
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+
+struct Solution;
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=1 slug=two-sum lang=ruby
+# 1. Two Sum (Easy)
+# https://leetcode.com/problems/two-sum/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=1 slug=two-sum lang=php
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== dart
+// @leetvim id=1 slug=two-sum lang=dart
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=1 slug=two-sum lang=scala
+// 1. Two Sum (Easy)
+// https://leetcode.com/problems/two-sum/
+// @leetvim end: delete this line to keep your changes above
+=== elixir
+# @leetvim id=1 slug=two-sum lang=elixir
+# 1. Two Sum (Easy)
+# https://leetcode.com/problems/two-sum/
+# @leetvim end: delete this line to keep your changes above
+=== erlang
+% @leetvim id=1 slug=two-sum lang=erlang
+% 1. Two Sum (Easy)
+% https://leetcode.com/problems/two-sum/
+% @leetvim end: delete this line to keep your changes above
+=== racket
+; @leetvim id=1 slug=two-sum lang=racket
+; 1. Two Sum (Easy)
+; https://leetcode.com/problems/two-sum/
+
+#lang racket
+; @leetvim end: delete this line to keep your changes above

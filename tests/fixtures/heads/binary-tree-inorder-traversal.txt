@@ -1,0 +1,284 @@
+=== cpp
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=cpp
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=java
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+import java.util.*;
+
+// Definition for a binary tree node.
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode() {}
+    TreeNode(int val) { this.val = val; }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=94 slug=binary-tree-inorder-traversal lang=python3
+# 94. Binary Tree Inorder Traversal (Easy)
+# https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=94 slug=binary-tree-inorder-traversal lang=python
+# 94. Binary Tree Inorder Traversal (Easy)
+# https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+# Definition for a binary tree node.
+class TreeNode(object):
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=javascript
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+function TreeNode(val, left, right) {
+    this.val = (val===undefined ? 0 : val)
+    this.left = (left===undefined ? null : left)
+    this.right = (right===undefined ? null : right)
+}
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=typescript
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+class TreeNode {
+    val: number
+    left: TreeNode | null
+    right: TreeNode | null
+    constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+        this.val = (val===undefined ? 0 : val)
+        this.left = (left===undefined ? null : left)
+        this.right = (right===undefined ? null : right)
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=csharp
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// Definition for a binary tree node.
+public class TreeNode {
+    public int val;
+    public TreeNode left;
+    public TreeNode right;
+    public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=c
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=golang
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+//go:build ignore
+
+package main
+
+// Definition for a binary tree node.
+type TreeNode struct {
+    Val int
+    Left *TreeNode
+    Right *TreeNode
+}
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=kotlin
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+class TreeNode(var `val`: Int) {
+    var left: TreeNode? = null
+    var right: TreeNode? = null
+}
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=swift
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+public class TreeNode {
+    public var val: Int
+    public var left: TreeNode?
+    public var right: TreeNode?
+    public init() { self.val = 0; self.left = nil; self.right = nil; }
+    public init(_ val: Int) { self.val = val; self.left = nil; self.right = nil; }
+    public init(_ val: Int, _ left: TreeNode?, _ right: TreeNode?) {
+        self.val = val
+        self.left = left
+        self.right = right
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=rust
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+struct Solution;
+
+// Definition for a binary tree node.
+#[derive(Debug, PartialEq, Eq)]
+pub struct TreeNode {
+  pub val: i32,
+  pub left: Option<Rc<RefCell<TreeNode>>>,
+  pub right: Option<Rc<RefCell<TreeNode>>>,
+}
+
+impl TreeNode {
+  #[inline]
+  pub fn new(val: i32) -> Self {
+    TreeNode {
+      val,
+      left: None,
+      right: None
+    }
+  }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=94 slug=binary-tree-inorder-traversal lang=ruby
+# 94. Binary Tree Inorder Traversal (Easy)
+# https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+# Definition for a binary tree node.
+class TreeNode
+    attr_accessor :val, :left, :right
+    def initialize(val = 0, left = nil, right = nil)
+        @val = val
+        @left = left
+        @right = right
+    end
+end
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=php
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+class TreeNode {
+    public $val = null;
+    public $left = null;
+    public $right = null;
+    function __construct($val = 0, $left = null, $right = null) {
+        $this->val = $val;
+        $this->left = $left;
+        $this->right = $right;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== dart
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=dart
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+class TreeNode {
+  int val;
+  TreeNode? left;
+  TreeNode? right;
+  TreeNode([this.val = 0, this.left, this.right]);
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=94 slug=binary-tree-inorder-traversal lang=scala
+// 94. Binary Tree Inorder Traversal (Easy)
+// https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+// Definition for a binary tree node.
+class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null) {
+  var value: Int = _value
+  var left: TreeNode = _left
+  var right: TreeNode = _right
+}
+// @leetvim end: delete this line to keep your changes above
+=== elixir
+# @leetvim id=94 slug=binary-tree-inorder-traversal lang=elixir
+# 94. Binary Tree Inorder Traversal (Easy)
+# https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+# Definition for a binary tree node.
+defmodule TreeNode do
+  @type t :: %__MODULE__{
+          val: integer,
+          left: TreeNode.t() | nil,
+          right: TreeNode.t() | nil
+        }
+  defstruct val: 0, left: nil, right: nil
+end
+# @leetvim end: delete this line to keep your changes above
+=== erlang
+% @leetvim id=94 slug=binary-tree-inorder-traversal lang=erlang
+% 94. Binary Tree Inorder Traversal (Easy)
+% https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+% Definition for a binary tree node.
+-record(tree_node, {val = 0 :: integer(),
+                    left = null  :: 'null' | #tree_node{},
+                    right = null :: 'null' | #tree_node{}}).
+% @leetvim end: delete this line to keep your changes above
+=== racket
+; @leetvim id=94 slug=binary-tree-inorder-traversal lang=racket
+; 94. Binary Tree Inorder Traversal (Easy)
+; https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+#lang racket
+; @leetvim end: delete this line to keep your changes above

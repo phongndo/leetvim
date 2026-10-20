@@ -19,17 +19,23 @@ struct SolutionMeta {
     std::string lang;
 };
 
-/// Builds a new solution file: a header comment, optional injected text, the types the
-/// snippet relies on (provided_definitions) and the starter snippet between
-/// `@lc code=start` / `@lc code=end` markers.
+/// The lines at the top of a solution file that leetvim keeps up to date: the `@leetvim`
+/// header, the text injected before the code, what the snippet relies on
+/// (provided_definitions), and the `@leetvim end` line closing them.
+std::string render_head(const leetcode::Question& q, const Language& lang, std::string_view url,
+                        std::string_view inject_before = {});
+
+/// Builds a new solution file: the language's opening line, the head (render_head), and the
+/// starter snippet between `@lc code=start` / `@lc code=end` markers, followed by
+/// `inject_after`.
 std::string render_solution(const leetcode::Question& q, const Language& lang, std::string_view url,
                             std::string_view inject_before = {},
                             std::string_view inject_after = {});
 
-/// The types LeetCode defines for a problem (ListNode, TreeNode, Node, ...), which its
-/// snippet shows only in comments after a "Definition for ..." line: that code uncommented,
-/// so an LSP knows the types. "" if the snippet has none.
-std::string provided_definitions(std::string_view snippet, const Language& lang);
+/// `content` with its head, from the `@leetvim` header through the `@leetvim end` line before
+/// the code, replaced by `head`; nullopt when it has no such line: a file from before leetvim
+/// kept its head up to date, or one whose user deleted the line to keep their changes.
+std::optional<std::string> replace_head(std::string_view content, std::string_view head);
 
 /// Code that gets submitted: the text between the markers (also accepts leetcode.nvim's
 /// `@leet start`/`@leet end`), or the whole file when there are no markers.
@@ -63,7 +69,8 @@ public:
                                                       const Language& lang) const;
     [[nodiscard]] std::filesystem::path testcases_path(std::string_view slug) const;
 
-    /// Creates the solution file if it does not exist yet.
+    /// Creates the solution file if it does not exist yet, or brings its head up to date
+    /// (replace_head) if the question has the language's snippet.
     [[nodiscard]] std::expected<std::filesystem::path, std::string>
     ensure_solution(const leetcode::Question& q, const Language& lang, std::string_view url,
                     std::string_view inject_before = {}, std::string_view inject_after = {}) const;

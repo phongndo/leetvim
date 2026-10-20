@@ -1,5 +1,6 @@
 #include "core/languages.hpp"
 
+#include "core/definitions.hpp"
 #include "util/process.hpp"
 #include "util/strings.hpp"
 
@@ -312,22 +313,22 @@ constexpr auto rust_support = std::to_array<SupportFile>({
 
 // Order matters for language_for_extension: the first match for an extension wins.
 constexpr std::array table = std::to_array<Language>({
-    {"cpp", "C++", "cpp", "//", "", "", cpp_support},
-    {"java", "Java", "java", "//", "", java_prelude, java_support},
-    {"python3", "Python3", "py", "#", "", "", python_support},
-    {"python", "Python", "py", "#", "", "", {}},
-    {"c", "C", "c", "//", "", "", cpp_support},
+    {"cpp", "C++", "cpp", "//", "", "", cpp_support, api::cpp},
+    {"java", "Java", "java", "//", "", java_prelude, java_support, api::java},
+    {"python3", "Python3", "py", "#", "", "", python_support, api::python},
+    {"python", "Python", "py", "#", "", "", {}, api::python},
+    {"c", "C", "c", "//", "", "", cpp_support, api::c},
     {"csharp", "C#", "cs", "//", "", csharp_prelude, {}},
     {"javascript", "JavaScript", "js", "//", "", "", {}},
-    {"typescript", "TypeScript", "ts", "//", "", "", {}},
-    {"php", "PHP", "php", "//", "<?php", "", {}},
+    {"typescript", "TypeScript", "ts", "//", "", "", {}, api::typescript},
+    {"php", "PHP", "php", "//", "<?php", "", {}, api::php},
     {"swift", "Swift", "swift", "//", "", "", {}},
     {"kotlin", "Kotlin", "kt", "//", "", "", {}},
     {"dart", "Dart", "dart", "//", "", "", {}},
-    {"golang", "Go", "go", "//", "", golang_prelude, {}},
+    {"golang", "Go", "go", "//", "", golang_prelude, {}, api::golang},
     {"ruby", "Ruby", "rb", "#", "", "", {}},
     {"scala", "Scala", "scala", "//", "", "", {}},
-    {"rust", "Rust", "rs", "//", "", "struct Solution;\n", rust_support},
+    {"rust", "Rust", "rs", "//", "", "struct Solution;\n", rust_support, api::rust},
     {"racket", "Racket", "rkt", ";", "", "#lang racket\n", {}},
     {"erlang", "Erlang", "erl", "%", "", "", {}},
     {"elixir", "Elixir", "ex", "#", "", "", {}},

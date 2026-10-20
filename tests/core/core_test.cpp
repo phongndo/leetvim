@@ -4,6 +4,7 @@
 #include "core/languages.hpp"
 #include "core/workspace.hpp"
 #include "util/paths.hpp"
+#include "util/strings.hpp"
 
 #include <doctest/doctest.h>
 
@@ -317,97 +318,6 @@ TEST_CASE("solution files round trip") {
     CHECK(extract_code("// @lc code=start\nonly start") == "only start");
 }
 
-TEST_CASE("provided definitions are uncommented from the snippet") {
-    const auto& cpp = *find_language("cpp");
-    // Two /** */ blocks, as in "Linked List in Binary Tree".
-    CHECK(provided_definitions(R"(/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- * };
- */
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- * };
- */
-class Solution {
-public:
-    bool isSubPath(ListNode* head, TreeNode* root) {}
-};)",
-                               cpp)
-          == R"(// Definition for singly-linked list.
-struct ListNode {
-    int val;
-    ListNode *next;
-};
-
-// Definition for a binary tree node.
-struct TreeNode {
-    int val;
-};
-)");
-    // A bare /* */ block with a // heading, as in "Clone Graph".
-    CHECK(provided_definitions(
-              "/*\n// Definition for a Node.\nclass Node {\npublic:\n    int val;\n};\n*/\n\n"
-              "class Solution {};",
-              cpp)
-          == "// Definition for a Node.\nclass Node {\npublic:\n    int val;\n};\n");
-    // API declarations aren't definitions LeetCode gives the code of.
-    CHECK(provided_definitions("// The API isBadVersion is defined for you.\n"
-                               "// bool isBadVersion(int version);\n\nclass Solution {};",
-                               cpp)
-              .empty());
-    CHECK(provided_definitions("class Solution {};", cpp).empty());
-
-    CHECK(provided_definitions(
-              "/**\n * Definition for singly-linked list.\n * public class ListNode {\n"
-              " *     int val;\n * }\n */\nclass Solution {}",
-              *find_language("java"))
-          == "// Definition for singly-linked list.\nclass ListNode {\n    int val;\n}\n");
-    CHECK(provided_definitions("/**\n * Example:\n * var li = ListNode(5)\n"
-                               " * Definition for singly-linked list.\n"
-                               " * class ListNode(var `val`: Int) {\n * }\n */\nclass Solution {}",
-                               *find_language("kotlin"))
-          == "// Definition for singly-linked list.\nclass ListNode(var `val`: Int) {\n}\n");
-    CHECK(provided_definitions("// Definition for singly-linked list.\n// pub struct ListNode {\n"
-                               "//   pub val: i32,\n// }\n// \n// impl ListNode {}\n"
-                               "impl Solution {}",
-                               *find_language("rust"))
-          == "// Definition for singly-linked list.\npub struct ListNode {\n  pub val: i32,\n}\n\n"
-             "impl ListNode {}\n");
-
-    const auto& py = *find_language("python3");
-    CHECK(
-        provided_definitions("# Definition for singly-linked list.\n# class ListNode:\n"
-                             "#     def __init__(self, val=0):\n#         self.val = val\n"
-                             "# Definition for a binary tree node.\n# class TreeNode:\n"
-                             "#     pass\nclass Solution:\n    pass",
-                             py)
-        == "# Definition for singly-linked list.\nclass ListNode:\n    def __init__(self, val=0):\n"
-           "        self.val = val\n\n# Definition for a binary tree node.\nclass TreeNode:\n"
-           "    pass\n");
-    CHECK(provided_definitions(
-              "\"\"\"\n# Definition for a Node.\nclass Node:\n    pass\n\"\"\"\n\n"
-              "class Solution:\n    def f(self):\n        \"\"\"\n        :rtype: Node\n"
-              "        \"\"\"",
-              py)
-          == "# Definition for a Node.\nclass Node:\n    pass\n");
-    CHECK(provided_definitions(
-              "\"\"\"\n# Definition for a Node.\nclass Node:\n"
-              "    def __init__(self, x: int, next: 'Node' = None):\n        pass\n\"\"\"",
-              py)
-          == "# Definition for a Node.\nclass Node:\n    def __init__(self, x: int, next: 'Node' = "
-             "None):"
-             "  # pyright: ignore[reportArgumentType]\n        pass\n");
-    CHECK(provided_definitions(
-              "%% Definition for singly-linked list.\n%%\n%% -record(list_node, {}).\n",
-              *find_language("erlang"))
-          == "% Definition for singly-linked list.\n-record(list_node, {}).\n");
-}
-
 TEST_CASE("new solution files hold the definitions and their opening line") {
     auto q = two_sum();
     q.snippets = {{.lang = "PHP",
@@ -416,8 +326,9 @@ TEST_CASE("new solution files hold the definitions and their opening line") {
                            "*/\nclass Solution {}"}};
     const std::string file = render_solution(q, *find_language("php"), "url");
     CHECK(file.starts_with("<?php\n// @leetvim id=1 slug=two-sum lang=php\n"));
-    CHECK(file.contains(
-        "\n\n// Definition for a singly-linked list.\nclass ListNode {}\n\n// @lc code=start\n"));
+    CHECK(file.contains("\n\n// Definition for a singly-linked list.\nclass ListNode {}\n"
+                        "// @leetvim end: delete this line to keep your changes above\n\n"
+                        "// @lc code=start\n"));
     CHECK(extract_code(file).starts_with("/**\n * Definition"));
 }
 
@@ -512,6 +423,64 @@ TEST_CASE("support files go in the language's directory and report failures") {
     std::filesystem::remove(dir.path / "cpp" / ".clangd");
     CHECK(ws.ensure_support(*find_language("cpp")).empty());
     CHECK(std::filesystem::is_regular_file(dir.path / "cpp" / ".clangd"));
+}
+
+TEST_CASE("leetvim keeps a solution's head up to date until told not to") {
+    const TempDir dir;
+    const Workspace ws(dir.path);
+    auto q = two_sum();
+    const auto* cpp = find_language("cpp");
+    const auto path = ws.ensure_solution(q, *cpp, "url");
+    REQUIRE(path.has_value());
+    std::string text;
+    REQUIRE(paths::read_file(*path, text));
+    CHECK(text.starts_with(render_head(q, *cpp, "url")));
+    // The user's code, and what they put between the head and the code, stay.
+    text = str::replace_all(text, "class Solution {\n};", "class Solution { int mine; };");
+    text = str::replace_all(text, "\n// @lc code=start",
+                            "\n#include \"debug.h\"\n\n// @lc code=start");
+    REQUIRE(paths::write_file(*path, text));
+    q.snippets[0].code = "// Definition for singly-linked list.\n// struct ListNode {};\n\n"
+                         "class Solution {\n};";
+    REQUIRE(ws.ensure_solution(q, *cpp, "url").has_value());
+    std::string fresh;
+    REQUIRE(paths::read_file(*path, fresh));
+    CHECK(fresh.contains("// url\n\n// Definition for singly-linked list.\nstruct ListNode {};\n"
+                         "// @leetvim end"));
+    CHECK(fresh.contains("// @leetvim end: delete this line to keep your changes above\n\n"
+                         "#include \"debug.h\"\n"));
+    CHECK(extract_code(fresh) == "class Solution { int mine; };\n");
+
+    // Without its end line, the head is the user's.
+    const auto mine = str::replace_all(
+        fresh, "// @leetvim end: delete this line to keep your changes above\n", "");
+    REQUIRE(paths::write_file(*path, mine));
+    q.title = "Renamed";
+    REQUIRE(ws.ensure_solution(q, *cpp, "url").has_value());
+    REQUIRE(paths::read_file(*path, fresh));
+    CHECK(fresh == mine);
+
+    // A paid-only problem without Premium has no snippets to say what the head holds.
+    REQUIRE(paths::write_file(*path, text));
+    q.snippets.clear();
+    REQUIRE(ws.ensure_solution(q, *cpp, "url").has_value());
+    REQUIRE(paths::read_file(*path, fresh));
+    CHECK(fresh == text);
+}
+
+TEST_CASE("a solution's head is found between its header and its end line") {
+    const auto q = two_sum();
+    const auto* php = find_language("php");
+    const auto head = render_head(q, *php, "url");
+    const auto file = render_solution(q, *php, "url");
+    CHECK(replace_head(file, head) == file);
+    // The opening line stays, and so does a mention of the end marker in the code.
+    const auto code = str::replace_all(file, "class Solution", "// @leetvim end\nclass Solution");
+    CHECK(replace_head(code, "// new head\n")
+          == "<?php\n// new head\n" + code.substr(code.find("\n// @lc code=start")));
+    CHECK_FALSE(replace_head("// @lc code=start\n// @leetvim end\n", "x").has_value());
+    CHECK_FALSE(replace_head("// @leetvim end: deleted header\n", "x").has_value());
+    CHECK_FALSE(replace_head("no header", "x").has_value());
 }
 
 TEST_CASE("support files make the workspace a project for Java and Rust servers") {

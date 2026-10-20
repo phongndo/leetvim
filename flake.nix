@@ -149,7 +149,7 @@
               '';
 
           shellcheck = pkgs.runCommand "leetvim-shellcheck" { nativeBuildInputs = [ pkgs.shellcheck ]; } ''
-            shellcheck ${self}/scripts/install.sh
+            shellcheck ${self}/scripts/install.sh ${self}/nix/check-heads.sh
             touch $out
           '';
 
@@ -184,6 +184,33 @@
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
           # A second compiler and standard library catch non-portable code.
           gcc = strict (leetvim.override { stdenv = pkgs.gccStdenv; });
+
+          # What leetvim uncomments from real problems' starter code, compiled by each
+          # language's own tools (nix/check-heads.sh). Linux only: the heads are the same on
+          # macOS, where those tools haven't been tried.
+          heads = (strict leetvim).overrideAttrs (old: {
+            pname = "leetvim-heads";
+            nativeBuildInputs = old.nativeBuildInputs ++ [
+              llvm.clang
+              pkgs.go
+              pkgs.jdk
+              pkgs.nodejs
+              pkgs.php
+              pkgs.pyright
+              pkgs.python3
+              pkgs.ruby
+              pkgs.ruff
+              pkgs.rustc
+              pkgs.typescript
+            ];
+            preCheck = ''
+              export LEETVIM_HEADS_DIR=$TMPDIR/heads
+            '';
+            postCheck = ''
+              bash ${./nix/check-heads.sh} "$LEETVIM_HEADS_DIR"
+            '';
+            installPhase = "touch $out";
+          });
         }
       );
     };

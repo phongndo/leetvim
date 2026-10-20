@@ -200,6 +200,7 @@ directory):
 # @leetvim id=1 slug=two-sum lang=python3
 # 1. Two Sum (Easy)
 # https://leetcode.com/problems/two-sum/
+# @leetvim end: delete this line to keep your changes above
 
 # @lc code=start
 class Solution:
@@ -212,7 +213,8 @@ Only the code between the markers is sent to LeetCode (leetcode.nvim's `@leet st
 `@leet end` markers work too), so includes and helpers for your LSP can live outside them.
 
 Your LSP sees what LeetCode provides implicitly, so it reports your mistakes rather than
-missing headers.
+missing headers or APIs. It does so through what language servers read on their own, the
+workspace and the solution file, so it works whatever your editor's configuration.
 
 For C and C++ (with clangd) and Python3 (with pyright or ruff), leetvim keeps config files in
 the workspace that give it the headers and `using namespace std;` or the imports, so solution
@@ -230,11 +232,21 @@ Gradle build or `Cargo.toml` configures that tool. `lsp_files = false` in `[solu
 all this.
 
 What has to be in the file itself goes above the markers: Java's and C#'s imports, Go's
-`package`, Rust's `struct Solution;`, PHP's `<?php` and Racket's `#lang`, and the types the
-starter code only shows in a comment, like `ListNode` and `TreeNode`. The
-`[solution.inject_before]` / `[solution.inject_after]` config tables replace that text per
-language (`java = ""` leaves it out), and can put the headers back into C and C++ files for an
-LSP other than clangd.
+`package`, Rust's `struct Solution;` and Racket's `#lang`, the types the starter code only
+shows in a comment, like `ListNode` and `TreeNode`, and the APIs it describes there, like
+`isBadVersion` or `MountainArray`. For C, C++, Go, Java, PHP, Python, Rust and TypeScript,
+those are declared without the prose around them, with bodies that compile and the class a
+solution extends (`VersionControl`) where LeetCode only names it; other languages keep the
+description a comment. PHP files open with `<?php`, before the header. The
+`[solution.inject_before]` / `[solution.inject_after]` config tables replace the language's
+text per language (`java = ""` leaves it out), and can put the headers back into C and C++
+files for an LSP other than clangd.
+
+leetvim keeps those lines up to date: when a solution opens, it rewrites them, from the
+`@leetvim` header to the `@leetvim end` line, if they've changed, as after an update that
+declares more or a change to `[solution.inject_before]`. What you write after the end line
+stays; delete the end line to keep your changes above it. A file without one, like one an
+older leetvim wrote, is left as it is: delete it and open the problem again to get one.
 
 Custom testcases are stored one input line per parameter.
 
@@ -296,6 +308,11 @@ cmake --build build && ctest --test-dir build
 fails the test. `LEETVIM_LIVE_TESTS=1 ./build/test_leetcode` also queries the real public API,
 and `nix fmt` formats everything (clang-format, nixfmt, gersemi).
 
+`tests/fixtures/snippets/` holds LeetCode's starter code for problems that describe APIs or
+types, and `tests/fixtures/heads/` the top of each language's solution file for them, which
+`test_core` compares. After a change to what leetvim declares, `LEETVIM_UPDATE_GOLDEN=1
+./build/test_core` rewrites those for review in the diff, and the `heads` check compiles them.
+
 ### Checks
 
 `nix flake check` runs the same checks as CI, which runs each one as its own job on Linux
@@ -309,7 +326,8 @@ and `nix fmt` formats everything (clang-format, nixfmt, gersemi).
 | `gcc` | non-portable code, by building with GCC and libstdc++ (Linux) |
 | `clang-tidy` | bug-prone patterns and static-analyzer findings in `src/`, `tests/` and `fuzz/` |
 | `fuzz` | crashes on the fuzz seeds and past findings, plus a fixed-seed burst of mutations |
-| `format`, `actionlint`, `shellcheck` | unformatted files, mistakes in the CI workflows and the install script |
+| `heads` | declarations and types from LeetCode's starter code that the language's own compiler or checker rejects (Linux; `nix/check-heads.sh`) |
+| `format`, `actionlint`, `shellcheck` | unformatted files, mistakes in the CI workflows and the scripts |
 
 ### Fuzzing
 

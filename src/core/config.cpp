@@ -716,9 +716,10 @@ std::string default_config_text() {
         }
         if (section.name == "solution") {
             out += "\n"
-                   + comment("Text added before the code in new solution files, per "
-                             "language; [solution.inject_after] adds it after. It isn't "
-                             "submitted. By default Java, C#, Go, Rust and Racket get the "
+                   + comment("Text added before the code in solution files, per language, "
+                             "and kept up to date with the rest of their head; "
+                             "[solution.inject_after] adds it after the code of new ones. It "
+                             "isn't submitted. By default Java, C#, Go, Rust and Racket get the "
                              "imports or declarations LeetCode provides that the file must "
                              "hold for your LSP to see them; an entry replaces that, and \"\" "
                              "leaves it out. C, C++ and Python3 get theirs from the "

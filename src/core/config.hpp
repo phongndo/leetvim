@@ -25,8 +25,8 @@ struct Config {
         std::map<std::string, std::string, std::less<>> inject_before;
         std::map<std::string, std::string, std::less<>> inject_after;
 
-        /// The text for a new file in language `slug`: its inject_before entry, or else the
-        /// language's prelude; an entry of "" turns the prelude off.
+        /// The text before the code in language `slug`'s files: its inject_before entry, or
+        /// else the language's prelude; an entry of "" turns the prelude off.
         [[nodiscard]] std::string_view before(std::string_view slug) const;
         [[nodiscard]] std::string_view after(std::string_view slug) const;
     };

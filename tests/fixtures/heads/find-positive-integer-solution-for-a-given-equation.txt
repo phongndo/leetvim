@@ -1,0 +1,146 @@
+=== cpp
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=cpp
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+// This is the custom function interface.
+// You should not implement it, or speculate about its implementation
+class CustomFunction {
+public:
+    // Returns f(x, y) for any given positive integers x and y.
+    // Note that f(x, y) is increasing with respect to both x and y.
+    // i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
+    int f(int x, int y);
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=java
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+import java.util.*;
+
+// This is the custom function interface.
+// You should not implement it, or speculate about its implementation
+class CustomFunction {
+    // Returns f(x, y) for any given positive integers x and y.
+    // Note that f(x, y) is increasing with respect to both x and y.
+    // i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
+    public int f(int x, int y) { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=python3
+# 1237. Find Positive Integer Solution for a Given Equation (Medium)
+# https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+# This is the custom function interface.
+class CustomFunction:
+    # Returns f(x, y) for any given positive integers x and y.
+    # Note that f(x, y) is increasing with respect to both x and y.
+    # i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
+    def f(self, x, y) -> Any:
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=python
+# 1237. Find Positive Integer Solution for a Given Equation (Medium)
+# https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+# This is the custom function interface.
+class CustomFunction:
+    # Returns f(x, y) for any given positive integers x and y.
+    # Note that f(x, y) is increasing with respect to both x and y.
+    # i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
+    def f(self, x, y) -> Any:
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=javascript
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=typescript
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+// This is the CustomFunction's API interface.
+// You should not implement it, or speculate about its implementation
+declare class CustomFunction {
+     f(x: number, y: number): number;
+}
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=csharp
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=c
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=golang
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+//go:build ignore
+
+package main
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=kotlin
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=swift
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=rust
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+struct Solution;
+
+// This is the custom function interface.
+// You should not implement it, or speculate about its implementation
+struct CustomFunction;
+impl CustomFunction {
+   pub fn f(&self, x:i32,y:i32)->i32 { unimplemented!() }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=ruby
+# 1237. Find Positive Integer Solution for a Given Equation (Medium)
+# https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=php
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+
+// This is the custom function interface.
+// You should not implement it, or speculate about its implementation
+class CustomFunction {
+    // Returns f(x, y) for any given positive integers x and y.
+    // Note that f(x, y) is increasing with respect to both x and y.
+    // i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
+    public function f($x, $y) {}
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=1237 slug=find-positive-integer-solution-for-a-given-equation lang=scala
+// 1237. Find Positive Integer Solution for a Given Equation (Medium)
+// https://leetcode.com/problems/find-positive-integer-solution-for-a-given-equation/
+// @leetvim end: delete this line to keep your changes above
