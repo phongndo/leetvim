@@ -1,0 +1,216 @@
+=== cpp
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=cpp
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=java
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+import java.util.*;
+
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=138 slug=copy-list-with-random-pointer lang=python3
+# 138. Copy List with Random Pointer (Medium)
+# https://leetcode.com/problems/copy-list-with-random-pointer/
+
+# Definition for a Node.
+class Node:
+    def __init__(self, x: int, next: 'Node' = None, random: 'Node' = None):  # pyright: ignore[reportArgumentType]
+        self.val = int(x)
+        self.next = next
+        self.random = random
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=138 slug=copy-list-with-random-pointer lang=python
+# 138. Copy List with Random Pointer (Medium)
+# https://leetcode.com/problems/copy-list-with-random-pointer/
+
+# Definition for a Node.
+class Node:
+    def __init__(self, x, next=None, random=None):
+        self.val = int(x)
+        self.next = next
+        self.random = random
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=javascript
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for a _Node.
+function _Node(val, next, random) {
+   this.val = val;
+   this.next = next;
+   this.random = random;
+};
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=typescript
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for _Node.
+class _Node {
+    val: number
+    next: _Node | null
+    random: _Node | null
+
+    constructor(val?: number, next?: _Node, random?: _Node) {
+        this.val = (val===undefined ? 0 : val)
+        this.next = (next===undefined ? null : next)
+        this.random = (random===undefined ? null : random)
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=csharp
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// Definition for a Node.
+public class Node {
+    public int val;
+    public Node next;
+    public Node random;
+
+    public Node(int _val) {
+        val = _val;
+        next = null;
+        random = null;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=c
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for a Node.
+struct Node {
+    int val;
+    struct Node *next;
+    struct Node *random;
+};
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=golang
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+//go:build ignore
+
+package main
+
+// Definition for a Node.
+type Node struct {
+    Val int
+    Next *Node
+    Random *Node
+}
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=kotlin
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for a Node.
+class Node(var `val`: Int) {
+    var next: Node? = null
+    var random: Node? = null
+}
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=swift
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for a Node.
+public class Node {
+    public var val: Int
+    public var next: Node?
+    public var random: Node?
+    public init(_ val: Int) {
+        self.val = val
+        self.next = nil
+   	   self.random = nil
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=138 slug=copy-list-with-random-pointer lang=ruby
+# 138. Copy List with Random Pointer (Medium)
+# https://leetcode.com/problems/copy-list-with-random-pointer/
+
+# Definition for Node.
+class Node
+    attr_accessor :val, :next, :random
+    def initialize(val = 0)
+        @val = val
+		  @next = nil
+		  @random = nil
+    end
+end
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=php
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for a Node.
+class Node {
+    public $val = null;
+    public $next = null;
+    public $random = null;
+    function __construct($val = 0) {
+        $this->val = $val;
+        $this->next = null;
+        $this->random = null;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=138 slug=copy-list-with-random-pointer lang=scala
+// 138. Copy List with Random Pointer (Medium)
+// https://leetcode.com/problems/copy-list-with-random-pointer/
+
+// Definition for a Node.
+class Node(var _value: Int) {
+  var value: Int = _value
+  var next: Node = null
+  var random: Node = null
+}
+// @leetvim end: delete this line to keep your changes above

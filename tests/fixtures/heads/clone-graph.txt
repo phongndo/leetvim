@@ -1,0 +1,222 @@
+=== cpp
+// @leetvim id=133 slug=clone-graph lang=cpp
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+    Node() {
+        val = 0;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val) {
+        val = _val;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=133 slug=clone-graph lang=java
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+import java.util.*;
+
+// Definition for a Node.
+class Node {
+    public int val;
+    public List<Node> neighbors;
+    public Node() {
+        val = 0;
+        neighbors = new ArrayList<Node>();
+    }
+    public Node(int _val) {
+        val = _val;
+        neighbors = new ArrayList<Node>();
+    }
+    public Node(int _val, ArrayList<Node> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=133 slug=clone-graph lang=python3
+# 133. Clone Graph (Medium)
+# https://leetcode.com/problems/clone-graph/
+
+# Definition for a Node.
+class Node:
+    def __init__(self, val = 0, neighbors = None):  # pyright: ignore[reportArgumentType]
+        self.val = val
+        self.neighbors = neighbors if neighbors is not None else []
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=133 slug=clone-graph lang=python
+# 133. Clone Graph (Medium)
+# https://leetcode.com/problems/clone-graph/
+
+# Definition for a Node.
+class Node(object):
+    def __init__(self, val = 0, neighbors = None):  # pyright: ignore[reportArgumentType]
+        self.val = val
+        self.neighbors = neighbors if neighbors is not None else []
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=133 slug=clone-graph lang=javascript
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for a _Node.
+function _Node(val, neighbors) {
+   this.val = val === undefined ? 0 : val;
+   this.neighbors = neighbors === undefined ? [] : neighbors;
+};
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=133 slug=clone-graph lang=typescript
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for _Node.
+class _Node {
+    val: number
+    neighbors: _Node[]
+
+    constructor(val?: number, neighbors?: _Node[]) {
+        this.val = (val===undefined ? 0 : val)
+        this.neighbors = (neighbors===undefined ? [] : neighbors)
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=133 slug=clone-graph lang=csharp
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// Definition for a Node.
+public class Node {
+    public int val;
+    public IList<Node> neighbors;
+
+    public Node() {
+        val = 0;
+        neighbors = new List<Node>();
+    }
+
+    public Node(int _val) {
+        val = _val;
+        neighbors = new List<Node>();
+    }
+
+    public Node(int _val, List<Node> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=133 slug=clone-graph lang=c
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for a Node.
+struct Node {
+    int val;
+    int numNeighbors;
+    struct Node** neighbors;
+};
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=133 slug=clone-graph lang=golang
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+//go:build ignore
+
+package main
+
+// Definition for a Node.
+type Node struct {
+    Val int
+    Neighbors []*Node
+}
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=133 slug=clone-graph lang=kotlin
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for a Node.
+class Node(var `val`: Int) {
+    var neighbors: ArrayList<Node?> = ArrayList<Node?>()
+}
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=133 slug=clone-graph lang=swift
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for a Node.
+public class Node {
+    public var val: Int
+    public var neighbors: [Node?]
+    public init(_ val: Int) {
+        self.val = val
+        self.neighbors = []
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=133 slug=clone-graph lang=ruby
+# 133. Clone Graph (Medium)
+# https://leetcode.com/problems/clone-graph/
+
+# Definition for a Node.
+class Node
+    attr_accessor :val, :neighbors
+    def initialize(val = 0, neighbors = nil)
+		  @val = val
+		  neighbors = [] if neighbors.nil?
+        @neighbors = neighbors
+    end
+end
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=133 slug=clone-graph lang=php
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for a Node.
+class Node {
+    public $val = null;
+    public $neighbors = null;
+    function __construct($val = 0) {
+        $this->val = $val;
+        $this->neighbors = array();
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=133 slug=clone-graph lang=scala
+// 133. Clone Graph (Medium)
+// https://leetcode.com/problems/clone-graph/
+
+// Definition for a Node.
+class Node(var _value: Int) {
+  var value: Int = _value
+  var neighbors: List[Node] = List()
+}
+// @leetvim end: delete this line to keep your changes above

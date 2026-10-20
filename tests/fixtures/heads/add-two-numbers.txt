@@ -1,0 +1,254 @@
+=== cpp
+// @leetvim id=2 slug=add-two-numbers lang=cpp
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=2 slug=add-two-numbers lang=java
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+import java.util.*;
+
+// Definition for singly-linked list.
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=2 slug=add-two-numbers lang=python3
+# 2. Add Two Numbers (Medium)
+# https://leetcode.com/problems/add-two-numbers/
+
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=2 slug=add-two-numbers lang=python
+# 2. Add Two Numbers (Medium)
+# https://leetcode.com/problems/add-two-numbers/
+
+# Definition for singly-linked list.
+class ListNode(object):
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=2 slug=add-two-numbers lang=javascript
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val)
+    this.next = (next===undefined ? null : next)
+}
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=2 slug=add-two-numbers lang=typescript
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+class ListNode {
+    val: number
+    next: ListNode | null
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val===undefined ? 0 : val)
+        this.next = (next===undefined ? null : next)
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=2 slug=add-two-numbers lang=csharp
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// Definition for singly-linked list.
+public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=2 slug=add-two-numbers lang=c
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=2 slug=add-two-numbers lang=golang
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+//go:build ignore
+
+package main
+
+// Definition for singly-linked list.
+type ListNode struct {
+    Val int
+    Next *ListNode
+}
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=2 slug=add-two-numbers lang=kotlin
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+class ListNode(var `val`: Int) {
+    var next: ListNode? = null
+}
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=2 slug=add-two-numbers lang=swift
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=2 slug=add-two-numbers lang=rust
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+struct Solution;
+
+// Definition for singly-linked list.
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+  pub val: i32,
+  pub next: Option<Box<ListNode>>
+}
+
+impl ListNode {
+  #[inline]
+  fn new(val: i32) -> Self {
+    ListNode {
+      next: None,
+      val
+    }
+  }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=2 slug=add-two-numbers lang=ruby
+# 2. Add Two Numbers (Medium)
+# https://leetcode.com/problems/add-two-numbers/
+
+# Definition for singly-linked list.
+class ListNode
+    attr_accessor :val, :next
+    def initialize(val = 0, _next = nil)
+        @val = val
+        @next = _next
+    end
+end
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=2 slug=add-two-numbers lang=php
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for a singly-linked list.
+class ListNode {
+    public $val = 0;
+    public $next = null;
+    function __construct($val = 0, $next = null) {
+        $this->val = $val;
+        $this->next = $next;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== dart
+// @leetvim id=2 slug=add-two-numbers lang=dart
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+class ListNode {
+  int val;
+  ListNode? next;
+  ListNode([this.val = 0, this.next]);
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=2 slug=add-two-numbers lang=scala
+// 2. Add Two Numbers (Medium)
+// https://leetcode.com/problems/add-two-numbers/
+
+// Definition for singly-linked list.
+class ListNode(_x: Int = 0, _next: ListNode = null) {
+  var next: ListNode = _next
+  var x: Int = _x
+}
+// @leetvim end: delete this line to keep your changes above
+=== elixir
+# @leetvim id=2 slug=add-two-numbers lang=elixir
+# 2. Add Two Numbers (Medium)
+# https://leetcode.com/problems/add-two-numbers/
+
+# Definition for singly-linked list.
+defmodule ListNode do
+  @type t :: %__MODULE__{
+          val: integer,
+          next: ListNode.t() | nil
+        }
+  defstruct val: 0, next: nil
+end
+# @leetvim end: delete this line to keep your changes above
+=== erlang
+% @leetvim id=2 slug=add-two-numbers lang=erlang
+% 2. Add Two Numbers (Medium)
+% https://leetcode.com/problems/add-two-numbers/
+
+% Definition for singly-linked list.
+-record(list_node, {val = 0 :: integer(),
+                    next = null :: 'null' | #list_node{}}).
+% @leetvim end: delete this line to keep your changes above
+=== racket
+; @leetvim id=2 slug=add-two-numbers lang=racket
+; 2. Add Two Numbers (Medium)
+; https://leetcode.com/problems/add-two-numbers/
+
+#lang racket
+; @leetvim end: delete this line to keep your changes above

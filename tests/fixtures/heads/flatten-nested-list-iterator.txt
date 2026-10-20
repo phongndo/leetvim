@@ -1,0 +1,252 @@
+=== cpp
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=cpp
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+class NestedInteger {
+  public:
+    // Return true if this NestedInteger holds a single integer, rather than a nested list.
+    bool isInteger() const;
+
+    // Return the single integer that this NestedInteger holds, if it holds a single integer
+    // The result is undefined if this NestedInteger holds a nested list
+    int getInteger() const;
+
+    // Return the nested list that this NestedInteger holds, if it holds a nested list
+    // The result is undefined if this NestedInteger holds a single integer
+    const vector<NestedInteger> &getList() const;
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=java
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+import java.util.*;
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+class NestedInteger {
+
+    // @return true if this NestedInteger holds a single integer, rather than a nested list.
+    public boolean isInteger() { throw new UnsupportedOperationException(); }
+
+    // @return the single integer that this NestedInteger holds, if it holds a single integer
+    // Return null if this NestedInteger holds a nested list
+    public Integer getInteger() { throw new UnsupportedOperationException(); }
+
+    // @return the nested list that this NestedInteger holds, if it holds a nested list
+    // Return empty list if this NestedInteger holds a single integer
+    public List<NestedInteger> getList() { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=341 slug=flatten-nested-list-iterator lang=python3
+# 341. Flatten Nested List Iterator (Medium)
+# https://leetcode.com/problems/flatten-nested-list-iterator/
+
+# This is the interface that allows for creating nested lists.
+class NestedInteger:
+    def isInteger(self) -> bool:
+        """
+        @return True if this NestedInteger holds a single integer, rather than a nested list.
+        """
+        raise NotImplementedError
+
+    def getInteger(self) -> int:
+        """
+        @return the single integer that this NestedInteger holds, if it holds a single integer
+        Return None if this NestedInteger holds a nested list
+        """
+        raise NotImplementedError
+
+    def getList(self) -> "list[NestedInteger]":
+        """
+        @return the nested list that this NestedInteger holds, if it holds a nested list
+        Return None if this NestedInteger holds a single integer
+        """
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=341 slug=flatten-nested-list-iterator lang=python
+# 341. Flatten Nested List Iterator (Medium)
+# https://leetcode.com/problems/flatten-nested-list-iterator/
+
+# This is the interface that allows for creating nested lists.
+class NestedInteger(object):
+    def isInteger(self) -> Any:
+        """
+        @return True if this NestedInteger holds a single integer, rather than a nested list.
+        :rtype bool
+        """
+        raise NotImplementedError
+
+    def getInteger(self) -> Any:
+        """
+        @return the single integer that this NestedInteger holds, if it holds a single integer
+        Return None if this NestedInteger holds a nested list
+        :rtype int
+        """
+        raise NotImplementedError
+
+    def getList(self) -> Any:
+        """
+        @return the nested list that this NestedInteger holds, if it holds a nested list
+        Return None if this NestedInteger holds a single integer
+        :rtype List[NestedInteger]
+        """
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=javascript
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=typescript
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+declare class NestedInteger {
+    constructor(value?: number);
+
+    isInteger(): boolean;
+
+    getInteger(): number | null;
+
+    setInteger(value: number): any;
+
+    add(elem: NestedInteger): any;
+
+    getList(): NestedInteger[];
+}
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=csharp
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=c
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+
+typedef struct NestedInteger NestedInteger;
+// Return true if this NestedInteger holds a single integer, rather than a nested list.
+bool NestedIntegerIsInteger(struct NestedInteger *);
+
+// Return the single integer that this NestedInteger holds, if it holds a single integer
+// The result is undefined if this NestedInteger holds a nested list
+int NestedIntegerGetInteger(struct NestedInteger *);
+
+// Return the nested list that this NestedInteger holds, if it holds a nested list
+// The result is undefined if this NestedInteger holds a single integer
+struct NestedInteger **NestedIntegerGetList(struct NestedInteger *);
+
+// Return the nested list's size that this NestedInteger holds, if it holds a nested list
+// The result is undefined if this NestedInteger holds a single integer
+int NestedIntegerGetListSize(struct NestedInteger *);
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=golang
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+//go:build ignore
+
+package main
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+type NestedInteger struct {}
+
+// Return true if this NestedInteger holds a single integer, rather than a nested list.
+func (this NestedInteger) IsInteger() bool { panic("") }
+
+// Return the single integer that this NestedInteger holds, if it holds a single integer
+// The result is undefined if this NestedInteger holds a nested list
+// So before calling this method, you should have a check
+func (this NestedInteger) GetInteger() int { panic("") }
+
+// Set this NestedInteger to hold a single integer.
+func (n *NestedInteger) SetInteger(value int) { panic("") }
+
+// Set this NestedInteger to hold a nested list and adds a nested integer to it.
+func (this *NestedInteger) Add(elem NestedInteger) { panic("") }
+
+// Return the nested list that this NestedInteger holds, if it holds a nested list
+// The list length is zero if this NestedInteger holds a single integer
+// You can access NestedInteger's List element directly if you want to modify it
+func (this NestedInteger) GetList() []*NestedInteger { panic("") }
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=kotlin
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=swift
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=rust
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+struct Solution;
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=341 slug=flatten-nested-list-iterator lang=ruby
+# 341. Flatten Nested List Iterator (Medium)
+# https://leetcode.com/problems/flatten-nested-list-iterator/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=php
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+class NestedInteger {
+
+    // if value is not specified, initializes an empty list.
+    // Otherwise initializes a single integer equal to value.
+    function __construct($value = null) {}
+
+    // Return true if this NestedInteger holds a single integer, rather than a nested list.
+    function isInteger() : bool {}
+
+    // Return the single integer that this NestedInteger holds, if it holds a single integer
+    // The result is undefined if this NestedInteger holds a nested list
+    function getInteger() {}
+
+    // Set this NestedInteger to hold a single integer.
+    function setInteger($i) : void {}
+
+    // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+    function add($ni) : void {}
+
+    // Return the nested list that this NestedInteger holds, if it holds a nested list
+    // The result is undefined if this NestedInteger holds a single integer
+    function getList() : array {}
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=341 slug=flatten-nested-list-iterator lang=scala
+// 341. Flatten Nested List Iterator (Medium)
+// https://leetcode.com/problems/flatten-nested-list-iterator/
+// @leetvim end: delete this line to keep your changes above

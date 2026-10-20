@@ -1,0 +1,351 @@
+=== cpp
+// @leetvim id=385 slug=mini-parser lang=cpp
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+class NestedInteger {
+  public:
+    // Constructor initializes an empty nested list.
+    NestedInteger();
+
+    // Constructor initializes a single integer.
+    NestedInteger(int value);
+
+    // Return true if this NestedInteger holds a single integer, rather than a nested list.
+    bool isInteger() const;
+
+    // Return the single integer that this NestedInteger holds, if it holds a single integer
+    // The result is undefined if this NestedInteger holds a nested list
+    int getInteger() const;
+
+    // Set this NestedInteger to hold a single integer.
+    void setInteger(int value);
+
+    // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+    void add(const NestedInteger &ni);
+
+    // Return the nested list that this NestedInteger holds, if it holds a nested list
+    // The result is undefined if this NestedInteger holds a single integer
+    const vector<NestedInteger> &getList() const;
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=385 slug=mini-parser lang=java
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+import java.util.*;
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+class NestedInteger {
+    // Constructor initializes an empty nested list.
+    public NestedInteger() { throw new UnsupportedOperationException(); }
+
+    // Constructor initializes a single integer.
+    public NestedInteger(int value) { throw new UnsupportedOperationException(); }
+
+    // @return true if this NestedInteger holds a single integer, rather than a nested list.
+    public boolean isInteger() { throw new UnsupportedOperationException(); }
+
+    // @return the single integer that this NestedInteger holds, if it holds a single integer
+    // Return null if this NestedInteger holds a nested list
+    public Integer getInteger() { throw new UnsupportedOperationException(); }
+
+    // Set this NestedInteger to hold a single integer.
+    public void setInteger(int value) { throw new UnsupportedOperationException(); }
+
+    // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+    public void add(NestedInteger ni) { throw new UnsupportedOperationException(); }
+
+    // @return the nested list that this NestedInteger holds, if it holds a nested list
+    // Return empty list if this NestedInteger holds a single integer
+    public List<NestedInteger> getList() { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=385 slug=mini-parser lang=python3
+# 385. Mini Parser (Medium)
+# https://leetcode.com/problems/mini-parser/
+
+# This is the interface that allows for creating nested lists.
+class NestedInteger:
+    def __init__(self, value=None):
+        """
+        If value is not specified, initializes an empty list.
+        Otherwise initializes a single integer equal to value.
+        """
+        raise NotImplementedError
+
+    def isInteger(self) -> Any:
+        """
+        @return True if this NestedInteger holds a single integer, rather than a nested list.
+        :rtype bool
+        """
+        raise NotImplementedError
+
+    def add(self, elem) -> Any:
+        """
+        Set this NestedInteger to hold a nested list and adds a nested integer elem to it.
+        :rtype void
+        """
+        raise NotImplementedError
+
+    def setInteger(self, value) -> Any:
+        """
+        Set this NestedInteger to hold a single integer equal to value.
+        :rtype void
+        """
+        raise NotImplementedError
+
+    def getInteger(self) -> Any:
+        """
+        @return the single integer that this NestedInteger holds, if it holds a single integer
+        The result is undefined if this NestedInteger holds a nested list
+        :rtype int
+        """
+        raise NotImplementedError
+
+    def getList(self) -> Any:
+        """
+        @return the nested list that this NestedInteger holds, if it holds a nested list
+        The result is undefined if this NestedInteger holds a single integer
+        :rtype List[NestedInteger]
+        """
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=385 slug=mini-parser lang=python
+# 385. Mini Parser (Medium)
+# https://leetcode.com/problems/mini-parser/
+
+# This is the interface that allows for creating nested lists.
+class NestedInteger(object):
+    def __init__(self, value=None):
+        """
+        If value is not specified, initializes an empty list.
+        Otherwise initializes a single integer equal to value.
+        """
+        raise NotImplementedError
+
+    def isInteger(self) -> Any:
+        """
+        @return True if this NestedInteger holds a single integer, rather than a nested list.
+        :rtype bool
+        """
+        raise NotImplementedError
+
+    def add(self, elem) -> Any:
+        """
+        Set this NestedInteger to hold a nested list and adds a nested integer elem to it.
+        :rtype void
+        """
+        raise NotImplementedError
+
+    def setInteger(self, value) -> Any:
+        """
+        Set this NestedInteger to hold a single integer equal to value.
+        :rtype void
+        """
+        raise NotImplementedError
+
+    def getInteger(self) -> Any:
+        """
+        @return the single integer that this NestedInteger holds, if it holds a single integer
+        Return None if this NestedInteger holds a nested list
+        :rtype int
+        """
+        raise NotImplementedError
+
+    def getList(self) -> Any:
+        """
+        @return the nested list that this NestedInteger holds, if it holds a nested list
+        Return None if this NestedInteger holds a single integer
+        :rtype List[NestedInteger]
+        """
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=385 slug=mini-parser lang=javascript
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=385 slug=mini-parser lang=typescript
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+declare class NestedInteger {
+    constructor(value?: number);
+
+    isInteger(): boolean;
+
+    getInteger(): number | null;
+
+    setInteger(value: number): any;
+
+    add(elem: NestedInteger): any;
+
+    getList(): NestedInteger[];
+}
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=385 slug=mini-parser lang=csharp
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=385 slug=mini-parser lang=c
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+
+typedef struct NestedInteger NestedInteger;
+// Initializes an empty nested list and return a reference to the nested integer.
+struct NestedInteger *NestedIntegerInit();
+
+// Return true if this NestedInteger holds a single integer, rather than a nested list.
+bool NestedIntegerIsInteger(struct NestedInteger *);
+
+// Return the single integer that this NestedInteger holds, if it holds a single integer
+// The result is undefined if this NestedInteger holds a nested list
+int NestedIntegerGetInteger(struct NestedInteger *);
+
+// Set this NestedInteger to hold a single integer.
+void NestedIntegerSetInteger(struct NestedInteger *ni, int value);
+
+// Set this NestedInteger to hold a nested list and adds a nested integer elem to it.
+void NestedIntegerAdd(struct NestedInteger *ni, struct NestedInteger *elem);
+
+// Return the nested list that this NestedInteger holds, if it holds a nested list
+// The result is undefined if this NestedInteger holds a single integer
+struct NestedInteger **NestedIntegerGetList(struct NestedInteger *);
+
+// Return the nested list's size that this NestedInteger holds, if it holds a nested list
+// The result is undefined if this NestedInteger holds a single integer
+int NestedIntegerGetListSize(struct NestedInteger *);
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=385 slug=mini-parser lang=golang
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+//go:build ignore
+
+package main
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+type NestedInteger struct {}
+
+// Return true if this NestedInteger holds a single integer, rather than a nested list.
+func (n NestedInteger) IsInteger() bool { panic("") }
+
+// Return the single integer that this NestedInteger holds, if it holds a single integer
+// The result is undefined if this NestedInteger holds a nested list
+// So before calling this method, you should have a check
+func (n NestedInteger) GetInteger() int { panic("") }
+
+// Set this NestedInteger to hold a single integer.
+func (n *NestedInteger) SetInteger(value int) { panic("") }
+
+// Set this NestedInteger to hold a nested list and adds a nested integer to it.
+func (n *NestedInteger) Add(elem NestedInteger) { panic("") }
+
+// Return the nested list that this NestedInteger holds, if it holds a nested list
+// The list length is zero if this NestedInteger holds a single integer
+// You can access NestedInteger's List element directly if you want to modify it
+func (n NestedInteger) GetList() []*NestedInteger { panic("") }
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=385 slug=mini-parser lang=kotlin
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=385 slug=mini-parser lang=swift
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=385 slug=mini-parser lang=rust
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+struct Solution;
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=385 slug=mini-parser lang=ruby
+# 385. Mini Parser (Medium)
+# https://leetcode.com/problems/mini-parser/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=385 slug=mini-parser lang=php
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+
+// This is the interface that allows for creating nested lists.
+// You should not implement it, or speculate about its implementation
+class NestedInteger {
+
+    // if value is not specified, initializes an empty list.
+    // Otherwise initializes a single integer equal to value.
+    function __construct($value = null) {}
+
+    // Return true if this NestedInteger holds a single integer, rather than a nested list.
+    function isInteger() : bool {}
+
+    // Return the single integer that this NestedInteger holds, if it holds a single integer
+    // The result is undefined if this NestedInteger holds a nested list
+    function getInteger() {}
+
+    // Set this NestedInteger to hold a single integer.
+    function setInteger($i) : void {}
+
+    // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+    function add($ni) : void {}
+
+    // Return the nested list that this NestedInteger holds, if it holds a nested list
+    // The result is undefined if this NestedInteger holds a single integer
+    function getList() : array {}
+}
+// @leetvim end: delete this line to keep your changes above
+=== dart
+// @leetvim id=385 slug=mini-parser lang=dart
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=385 slug=mini-parser lang=scala
+// 385. Mini Parser (Medium)
+// https://leetcode.com/problems/mini-parser/
+// @leetvim end: delete this line to keep your changes above
+=== elixir
+# @leetvim id=385 slug=mini-parser lang=elixir
+# 385. Mini Parser (Medium)
+# https://leetcode.com/problems/mini-parser/
+# @leetvim end: delete this line to keep your changes above
+=== erlang
+% @leetvim id=385 slug=mini-parser lang=erlang
+% 385. Mini Parser (Medium)
+% https://leetcode.com/problems/mini-parser/
+% @leetvim end: delete this line to keep your changes above
+=== racket
+; @leetvim id=385 slug=mini-parser lang=racket
+; 385. Mini Parser (Medium)
+; https://leetcode.com/problems/mini-parser/
+
+#lang racket
+; @leetvim end: delete this line to keep your changes above

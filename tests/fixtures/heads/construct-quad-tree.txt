@@ -1,0 +1,313 @@
+=== cpp
+// @leetvim id=427 slug=construct-quad-tree lang=cpp
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+// Definition for a QuadTree node.
+class Node {
+public:
+    bool val;
+    bool isLeaf;
+    Node* topLeft;
+    Node* topRight;
+    Node* bottomLeft;
+    Node* bottomRight;
+
+    Node() {
+        val = false;
+        isLeaf = false;
+        topLeft = NULL;
+        topRight = NULL;
+        bottomLeft = NULL;
+        bottomRight = NULL;
+    }
+
+    Node(bool _val, bool _isLeaf) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = NULL;
+        topRight = NULL;
+        bottomLeft = NULL;
+        bottomRight = NULL;
+    }
+
+    Node(bool _val, bool _isLeaf, Node* _topLeft, Node* _topRight, Node* _bottomLeft, Node* _bottomRight) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = _topLeft;
+        topRight = _topRight;
+        bottomLeft = _bottomLeft;
+        bottomRight = _bottomRight;
+    }
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=427 slug=construct-quad-tree lang=java
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+import java.util.*;
+
+// Definition for a QuadTree node.
+class Node {
+    public boolean val;
+    public boolean isLeaf;
+    public Node topLeft;
+    public Node topRight;
+    public Node bottomLeft;
+    public Node bottomRight;
+
+    public Node() {
+        this.val = false;
+        this.isLeaf = false;
+        this.topLeft = null;
+        this.topRight = null;
+        this.bottomLeft = null;
+        this.bottomRight = null;
+    }
+
+    public Node(boolean val, boolean isLeaf) {
+        this.val = val;
+        this.isLeaf = isLeaf;
+        this.topLeft = null;
+        this.topRight = null;
+        this.bottomLeft = null;
+        this.bottomRight = null;
+    }
+
+    public Node(boolean val, boolean isLeaf, Node topLeft, Node topRight, Node bottomLeft, Node bottomRight) {
+        this.val = val;
+        this.isLeaf = isLeaf;
+        this.topLeft = topLeft;
+        this.topRight = topRight;
+        this.bottomLeft = bottomLeft;
+        this.bottomRight = bottomRight;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=427 slug=construct-quad-tree lang=python3
+# 427. Construct Quad Tree (Medium)
+# https://leetcode.com/problems/construct-quad-tree/
+
+# Definition for a QuadTree node.
+class Node:
+    def __init__(self, val, isLeaf, topLeft, topRight, bottomLeft, bottomRight):
+        self.val = val
+        self.isLeaf = isLeaf
+        self.topLeft = topLeft
+        self.topRight = topRight
+        self.bottomLeft = bottomLeft
+        self.bottomRight = bottomRight
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=427 slug=construct-quad-tree lang=python
+# 427. Construct Quad Tree (Medium)
+# https://leetcode.com/problems/construct-quad-tree/
+
+# Definition for a QuadTree node.
+class Node(object):
+    def __init__(self, val=False, isLeaf=False, topLeft=None, topRight=None, bottomLeft=None, bottomRight=None):
+        self.val = val
+        self.isLeaf = isLeaf
+        self.topLeft = topLeft
+        self.topRight = topRight
+        self.bottomLeft = bottomLeft
+        self.bottomRight = bottomRight
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=427 slug=construct-quad-tree lang=javascript
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+// Definition for a QuadTree node.
+function _Node(val,isLeaf,topLeft,topRight,bottomLeft,bottomRight) {
+   this.val = val;
+   this.isLeaf = isLeaf;
+   this.topLeft = topLeft;
+   this.topRight = topRight;
+   this.bottomLeft = bottomLeft;
+   this.bottomRight = bottomRight;
+};
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=427 slug=construct-quad-tree lang=typescript
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+// Definition for _Node.
+class _Node {
+    val: boolean
+    isLeaf: boolean
+    topLeft: _Node | null
+	topRight: _Node | null
+	bottomLeft: _Node | null
+	bottomRight: _Node | null
+	constructor(val?: boolean, isLeaf?: boolean, topLeft?: _Node, topRight?: _Node, bottomLeft?: _Node, bottomRight?: _Node) {
+        this.val = (val===undefined ? false : val)
+        this.isLeaf = (isLeaf===undefined ? false : isLeaf)
+        this.topLeft = (topLeft===undefined ? null : topLeft)
+        this.topRight = (topRight===undefined ? null : topRight)
+        this.bottomLeft = (bottomLeft===undefined ? null : bottomLeft)
+        this.bottomRight = (bottomRight===undefined ? null : bottomRight)
+  }
+}
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=427 slug=construct-quad-tree lang=csharp
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// Definition for a QuadTree node.
+public class Node {
+    public bool val;
+    public bool isLeaf;
+    public Node topLeft;
+    public Node topRight;
+    public Node bottomLeft;
+    public Node bottomRight;
+
+    public Node() {
+        val = false;
+        isLeaf = false;
+        topLeft = null;
+        topRight = null;
+        bottomLeft = null;
+        bottomRight = null;
+    }
+
+    public Node(bool _val, bool _isLeaf) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = null;
+        topRight = null;
+        bottomLeft = null;
+        bottomRight = null;
+    }
+
+    public Node(bool _val,bool _isLeaf,Node _topLeft,Node _topRight,Node _bottomLeft,Node _bottomRight) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = _topLeft;
+        topRight = _topRight;
+        bottomLeft = _bottomLeft;
+        bottomRight = _bottomRight;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=427 slug=construct-quad-tree lang=golang
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+//go:build ignore
+
+package main
+
+// Definition for a QuadTree node.
+type Node struct {
+    Val bool
+    IsLeaf bool
+    TopLeft *Node
+    TopRight *Node
+    BottomLeft *Node
+    BottomRight *Node
+}
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=427 slug=construct-quad-tree lang=kotlin
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+// Definition for a QuadTree node.
+class Node(var `val`: Boolean, var isLeaf: Boolean) {
+    var topLeft: Node? = null
+    var topRight: Node? = null
+    var bottomLeft: Node? = null
+    var bottomRight: Node? = null
+}
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=427 slug=construct-quad-tree lang=swift
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+// Definition for a QuadTree node.
+public class Node {
+    public var val: Bool
+    public var isLeaf: Bool
+    public var topLeft: Node?
+    public var topRight: Node?
+    public var bottomLeft: Node?
+    public var bottomRight: Node?
+    public init(_ val: Bool, _ isLeaf: Bool) {
+        self.val = val
+        self.isLeaf = isLeaf
+        self.topLeft = nil
+        self.topRight = nil
+        self.bottomLeft = nil
+        self.bottomRight = nil
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=427 slug=construct-quad-tree lang=ruby
+# 427. Construct Quad Tree (Medium)
+# https://leetcode.com/problems/construct-quad-tree/
+
+# Definition for a QuadTree node.
+class Node
+    attr_accessor :val, :isLeaf, :topLeft, :topRight, :bottomLeft, :bottomRight
+    def initialize(val=false, isLeaf=false, topLeft=nil, topRight=nil, bottomLeft=nil, bottomRight=nil)
+        @val = val
+        @isLeaf = isLeaf
+        @topLeft = topLeft
+        @topRight = topRight
+        @bottomLeft = bottomLeft
+        @bottomRight = bottomRight
+    end
+end
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=427 slug=construct-quad-tree lang=php
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+// Definition for a QuadTree node.
+class Node {
+    public $val = null;
+    public $isLeaf = null;
+    public $topLeft = null;
+    public $topRight = null;
+    public $bottomLeft = null;
+    public $bottomRight = null;
+    function __construct($val, $isLeaf) {
+        $this->val = $val;
+        $this->isLeaf = $isLeaf;
+        $this->topLeft = null;
+        $this->topRight = null;
+        $this->bottomLeft = null;
+        $this->bottomRight = null;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=427 slug=construct-quad-tree lang=scala
+// 427. Construct Quad Tree (Medium)
+// https://leetcode.com/problems/construct-quad-tree/
+
+// Definition for a QuadTree node.
+class Node(var _value: Boolean, var _isLeaf: Boolean) {
+  var value: Int = _value
+  var isLeaf: Boolean = _isLeaf
+  var topLeft: Node = null
+  var topRight: Node = null
+  var bottomLeft: Node = null
+  var bottomRight: Node = null
+}
+// @leetvim end: delete this line to keep your changes above

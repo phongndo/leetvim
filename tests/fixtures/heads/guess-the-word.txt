@@ -1,0 +1,147 @@
+=== cpp
+// @leetvim id=843 slug=guess-the-word lang=cpp
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+// This is the Master's API interface.
+// You should not implement it, or speculate about its implementation
+class Master {
+  public:
+    int guess(string word);
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=843 slug=guess-the-word lang=java
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+import java.util.*;
+
+// This is the Master's API interface.
+// You should not implement it, or speculate about its implementation
+class Master {
+    public int guess(String word) { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=843 slug=guess-the-word lang=python3
+# 843. Guess the Word (Hard)
+# https://leetcode.com/problems/guess-the-word/
+
+# This is Master's API interface.
+class Master:
+    def guess(self, word: str) -> int:
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=843 slug=guess-the-word lang=python
+# 843. Guess the Word (Hard)
+# https://leetcode.com/problems/guess-the-word/
+
+# This is Master's API interface.
+class Master(object):
+    def guess(self, word) -> Any:
+        """
+        :type word: str
+        :rtype int
+        """
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=843 slug=guess-the-word lang=javascript
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=843 slug=guess-the-word lang=typescript
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+// This is the Master's API interface.
+// You should not implement it, or speculate about its implementation
+declare class Master {
+     guess(word: string): number;
+}
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=843 slug=guess-the-word lang=csharp
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=843 slug=guess-the-word lang=c
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+// This is the Master's API interface.
+// You should not implement it, or speculate about its implementation
+
+typedef struct Master Master;
+int guess(Master *, char *word);
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=843 slug=guess-the-word lang=golang
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+//go:build ignore
+
+package main
+
+// This is the Master's API interface.
+// You should not implement it, or speculate about its implementation
+type Master struct {}
+
+func (this *Master) Guess(word string) int { panic("") }
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=843 slug=guess-the-word lang=kotlin
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=843 slug=guess-the-word lang=swift
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=843 slug=guess-the-word lang=rust
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+struct Solution;
+
+// This is the Master's API interface.
+// You should not implement it, or speculate about its implementation
+struct Master;
+impl Master {
+    fn guess(&self, word:String)->i32 { unimplemented!() }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=843 slug=guess-the-word lang=ruby
+# 843. Guess the Word (Hard)
+# https://leetcode.com/problems/guess-the-word/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=843 slug=guess-the-word lang=php
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+
+// This is the Master's API interface.
+// You should not implement it, or speculate about its implementation
+class Master {
+    function guess($word) {}
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=843 slug=guess-the-word lang=scala
+// 843. Guess the Word (Hard)
+// https://leetcode.com/problems/guess-the-word/
+// @leetvim end: delete this line to keep your changes above

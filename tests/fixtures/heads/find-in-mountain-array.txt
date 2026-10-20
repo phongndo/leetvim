@@ -1,0 +1,163 @@
+=== cpp
+// @leetvim id=1095 slug=find-in-mountain-array lang=cpp
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+// This is the MountainArray's API interface.
+// You should not implement it, or speculate about its implementation
+class MountainArray {
+  public:
+    int get(int index);
+    int length();
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=1095 slug=find-in-mountain-array lang=java
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+import java.util.*;
+
+// This is MountainArray's API interface.
+// You should not implement it, or speculate about its implementation
+class MountainArray {
+    public int get(int index) { throw new UnsupportedOperationException(); }
+    public int length() { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=1095 slug=find-in-mountain-array lang=python3
+# 1095. Find in Mountain Array (Hard)
+# https://leetcode.com/problems/find-in-mountain-array/
+
+# This is MountainArray's API interface.
+class MountainArray:
+    def get(self, index: int) -> int:
+        raise NotImplementedError
+    def length(self) -> int:
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=1095 slug=find-in-mountain-array lang=python
+# 1095. Find in Mountain Array (Hard)
+# https://leetcode.com/problems/find-in-mountain-array/
+
+# This is MountainArray's API interface.
+class MountainArray(object):
+    def get(self, index) -> Any:
+        """
+        :type index: int
+        :rtype int
+        """
+        raise NotImplementedError
+
+    def length(self) -> Any:
+        """
+        :rtype int
+        """
+        raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=1095 slug=find-in-mountain-array lang=javascript
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=1095 slug=find-in-mountain-array lang=typescript
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+// This is the MountainArray's API interface.
+// You should not implement it, or speculate about its implementation
+declare class MountainArray {
+     get(index: number): number;
+
+     length(): number;
+}
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=1095 slug=find-in-mountain-array lang=csharp
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=1095 slug=find-in-mountain-array lang=c
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+// This is the MountainArray's API interface.
+// You should not implement it, or speculate about its implementation
+
+typedef struct MountainArray MountainArray;
+int get(MountainArray *, int index);
+int length(MountainArray *);
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=1095 slug=find-in-mountain-array lang=golang
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+//go:build ignore
+
+package main
+
+// This is the MountainArray's API interface.
+// You should not implement it, or speculate about its implementation
+type MountainArray struct {}
+
+func (this *MountainArray) get(index int) int { panic("") }
+func (this *MountainArray) length() int { panic("") }
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=1095 slug=find-in-mountain-array lang=kotlin
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=1095 slug=find-in-mountain-array lang=swift
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=1095 slug=find-in-mountain-array lang=rust
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+struct Solution;
+
+// This is the MountainArray's API interface.
+// You should not implement it, or speculate about its implementation
+ struct MountainArray;
+ impl MountainArray {
+    fn get(&self, index:i32)->i32 { unimplemented!() }
+    fn length(&self)->i32 { unimplemented!() }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=1095 slug=find-in-mountain-array lang=ruby
+# 1095. Find in Mountain Array (Hard)
+# https://leetcode.com/problems/find-in-mountain-array/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=1095 slug=find-in-mountain-array lang=php
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+
+// This is MountainArray's API interface.
+// You should not implement it, or speculate about its implementation
+class MountainArray {
+    function get($index) {}
+    function length() {}
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=1095 slug=find-in-mountain-array lang=scala
+// 1095. Find in Mountain Array (Hard)
+// https://leetcode.com/problems/find-in-mountain-array/
+// @leetvim end: delete this line to keep your changes above

@@ -1,0 +1,181 @@
+=== cpp
+// @leetvim id=690 slug=employee-importance lang=cpp
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+// Definition for Employee.
+class Employee {
+public:
+    int id;
+    int importance;
+    vector<int> subordinates;
+};
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=690 slug=employee-importance lang=java
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+import java.util.*;
+
+// Definition for Employee.
+class Employee {
+    public int id;
+    public int importance;
+    public List<Integer> subordinates;
+};
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=690 slug=employee-importance lang=python3
+# 690. Employee Importance (Medium)
+# https://leetcode.com/problems/employee-importance/
+
+# Definition for Employee.
+class Employee:
+    def __init__(self, id: int, importance: int, subordinates: List[int]):
+        self.id = id
+        self.importance = importance
+        self.subordinates = subordinates
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=690 slug=employee-importance lang=python
+# 690. Employee Importance (Medium)
+# https://leetcode.com/problems/employee-importance/
+
+# Definition for Employee.
+class Employee(object):
+    def __init__(self, id, importance, subordinates):
+    	#################
+        :type id: int
+        :type importance: int
+        :type subordinates: List[int]
+        #################
+        self.id = id
+        self.importance = importance
+        self.subordinates = subordinates
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=690 slug=employee-importance lang=javascript
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+// Definition for Employee.
+function Employee(id, importance, subordinates) {
+    this.id = id;
+    this.importance = importance;
+    this.subordinates = subordinates;
+}
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=690 slug=employee-importance lang=typescript
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+// Definition for Employee.
+class Employee {
+    id: number
+    importance: number
+    subordinates: number[]
+    constructor(id: number, importance: number, subordinates: number[]) {
+        this.id = (id === undefined) ? 0 : id;
+        this.importance = (importance === undefined) ? 0 : importance;
+        this.subordinates = (subordinates === undefined) ? [] : subordinates;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=690 slug=employee-importance lang=csharp
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// Definition for Employee.
+class Employee {
+    public int id;
+    public int importance;
+    public IList<int> subordinates;
+}
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=690 slug=employee-importance lang=golang
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+//go:build ignore
+
+package main
+
+// Definition for Employee.
+type Employee struct {
+    Id int
+    Importance int
+    Subordinates []int
+}
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=690 slug=employee-importance lang=kotlin
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+// Definition for Employee.
+class Employee {
+	var id:Int = 0
+	var importance:Int = 0
+	var subordinates:List<Int> = listOf()
+}
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=690 slug=employee-importance lang=swift
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+// Definition for Employee.
+public class Employee {
+    public var id: Int
+    public var importance: Int
+    public var subordinates: [Int]
+    public init(_ id: Int, _ importance: Int, _ subordinates: [Int]) {
+        self.id = id
+        self.importance = importance
+        self.subordinates = subordinates
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=690 slug=employee-importance lang=ruby
+# 690. Employee Importance (Medium)
+# https://leetcode.com/problems/employee-importance/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=690 slug=employee-importance lang=php
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+// Definition for Employee.
+class Employee {
+    public $id = null;
+    public $importance = null;
+    public $subordinates = array();
+    function __construct($id, $importance, $subordinates) {
+        $this->id = $id;
+        $this->importance = $importance;
+        $this->subordinates = $subordinates;
+    }
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=690 slug=employee-importance lang=scala
+// 690. Employee Importance (Medium)
+// https://leetcode.com/problems/employee-importance/
+
+// Definition for Employee.
+class Employee() {
+    var id: Int = 0
+    var importance: Int = 0
+    var subordinates: List[Int] = List()
+};
+// @leetvim end: delete this line to keep your changes above

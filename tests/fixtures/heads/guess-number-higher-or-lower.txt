@@ -1,0 +1,122 @@
+=== cpp
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=cpp
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+// Forward declaration of guess API.
+int guess(int num);
+// @leetvim end: delete this line to keep your changes above
+=== java
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=java
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+import java.util.*;
+
+// Forward declaration of guess API.
+class GuessGame {
+    int guess(int num) { throw new UnsupportedOperationException(); }
+}
+// @leetvim end: delete this line to keep your changes above
+=== python3
+# @leetvim id=374 slug=guess-number-higher-or-lower lang=python3
+# 374. Guess Number Higher or Lower (Easy)
+# https://leetcode.com/problems/guess-number-higher-or-lower/
+
+# The guess API is already defined for you.
+def guess(num: int) -> int:
+    raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== python
+# @leetvim id=374 slug=guess-number-higher-or-lower lang=python
+# 374. Guess Number Higher or Lower (Easy)
+# https://leetcode.com/problems/guess-number-higher-or-lower/
+
+# The guess API is already defined for you.
+def guess(num) -> Any:
+    raise NotImplementedError
+# @leetvim end: delete this line to keep your changes above
+=== javascript
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=javascript
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+// @leetvim end: delete this line to keep your changes above
+=== typescript
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=typescript
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+// Forward declaration of guess API.
+declare function guess(num: any): any;
+export {}; // a module, so these names are its own
+// @leetvim end: delete this line to keep your changes above
+=== csharp
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=csharp
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+// @leetvim end: delete this line to keep your changes above
+=== c
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=c
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+// Forward declaration of guess API.
+int guess(int num);
+// @leetvim end: delete this line to keep your changes above
+=== golang
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=golang
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+//go:build ignore
+
+package main
+
+// Forward declaration of guess API.
+func guess(num int) int { panic("") }
+// @leetvim end: delete this line to keep your changes above
+=== kotlin
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=kotlin
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+// @leetvim end: delete this line to keep your changes above
+=== swift
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=swift
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+// @leetvim end: delete this line to keep your changes above
+=== rust
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=rust
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+struct Solution;
+
+// Forward declaration of guess API.
+unsafe fn guess(num: i32) -> i32 { unimplemented!() }
+// @leetvim end: delete this line to keep your changes above
+=== ruby
+# @leetvim id=374 slug=guess-number-higher-or-lower lang=ruby
+# 374. Guess Number Higher or Lower (Easy)
+# https://leetcode.com/problems/guess-number-higher-or-lower/
+# @leetvim end: delete this line to keep your changes above
+=== php
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=php
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
+// The API guess is defined in the parent class.
+class GuessGame {
+    public function guess($num) {}
+}
+// @leetvim end: delete this line to keep your changes above
+=== scala
+// @leetvim id=374 slug=guess-number-higher-or-lower lang=scala
+// 374. Guess Number Higher or Lower (Easy)
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+// @leetvim end: delete this line to keep your changes above

@@ -213,7 +213,8 @@ Only the code between the markers is sent to LeetCode (leetcode.nvim's `@leet st
 `@leet end` markers work too), so includes and helpers for your LSP can live outside them.
 
 Your LSP sees what LeetCode provides implicitly, so it reports your mistakes rather than
-missing headers.
+missing headers or APIs. It does so through what language servers read on their own, the
+workspace and the solution file, so it works whatever your editor's configuration.
 
 For C and C++ (with clangd) and Python3 (with pyright or ruff), leetvim keeps config files in
 the workspace that give it the headers and `using namespace std;` or the imports, so solution
@@ -231,11 +232,15 @@ Gradle build or `Cargo.toml` configures that tool. `lsp_files = false` in `[solu
 all this.
 
 What has to be in the file itself goes above the markers: Java's and C#'s imports, Go's
-`package`, Rust's `struct Solution;`, PHP's `<?php` and Racket's `#lang`, and the types the
-starter code only shows in a comment, like `ListNode` and `TreeNode`. The
-`[solution.inject_before]` / `[solution.inject_after]` config tables replace that text per
-language (`java = ""` leaves it out), and can put the headers back into C and C++ files for an
-LSP other than clangd.
+`package`, Rust's `struct Solution;` and Racket's `#lang`, the types the starter code only
+shows in a comment, like `ListNode` and `TreeNode`, and the APIs it describes there, like
+`isBadVersion` or `MountainArray`. For C, C++, Go, Java, PHP, Python, Rust and TypeScript,
+those are declared without the prose around them, with bodies that compile and the class a
+solution extends (`VersionControl`) where LeetCode only names it; other languages keep the
+description a comment. PHP files open with `<?php`, before the header. The
+`[solution.inject_before]` / `[solution.inject_after]` config tables replace the language's
+text per language (`java = ""` leaves it out), and can put the headers back into C and C++
+files for an LSP other than clangd.
 
 leetvim keeps those lines up to date: when a solution opens, it rewrites them, from the
 `@leetvim` header to the `@leetvim end` line, if they've changed, as after an update that
@@ -302,6 +307,11 @@ cmake --build build && ctest --test-dir build
 `LEETVIM_SANITIZE` takes `address,undefined` (or `ON`) or `thread`, and any sanitizer report
 fails the test. `LEETVIM_LIVE_TESTS=1 ./build/test_leetcode` also queries the real public API,
 and `nix fmt` formats everything (clang-format, nixfmt, gersemi).
+
+`tests/fixtures/snippets/` holds LeetCode's starter code for problems that describe APIs or
+types, and `tests/fixtures/heads/` the top of each language's solution file for them, which
+`test_core` compares. After a change to what leetvim declares, `LEETVIM_UPDATE_GOLDEN=1
+./build/test_core` rewrites those for review in the diff.
 
 ### Checks
 
